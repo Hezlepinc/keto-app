@@ -42,12 +42,13 @@
   }
   .tab {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 3px; padding: 8px 0 7px; cursor: pointer; border: none; background: none;
+    gap: 3px; padding: 9px 0 8px; min-height: 52px; cursor: pointer; border: none; background: none;
     color: #5a5a66; font-family: inherit; font-size: 0.62rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.15s;
+    text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.15s, transform 0.08s;
   }
   .tab svg { width: 22px; height: 22px; display: block; }
   .tab.active { color: #2a9a5a; }
+  .tab:active { transform: scale(0.88); opacity: 0.7; }
 
   /* Loading shimmer */
   .loader { position: absolute; left: 0; right: 0; top: 45px; bottom: 56px; display: flex; align-items: center; justify-content: center; background: #fff; color: #aaa; font-size: 0.8rem; z-index: 2; }
@@ -97,6 +98,7 @@
   var loader = document.getElementById('loader');
   var sectionName = document.getElementById('section-name');
   var tabs = Array.from(document.querySelectorAll('.tab'));
+  var loaderTimer = null;
 
   function activate(tab, save) {
     tabs.forEach(function(t){ t.classList.toggle('active', t === tab); });
@@ -104,9 +106,15 @@
     loader.classList.remove('hide');
     frame.src = tab.dataset.src;
     if (save !== false) { try { localStorage.setItem(TAB_KEY, tab.dataset.tab); } catch(e){} }
+    // safety net: never let the loader overlay get stuck if 'load' doesn't fire
+    if (loaderTimer) clearTimeout(loaderTimer);
+    loaderTimer = setTimeout(function(){ loader.classList.add('hide'); }, 4000);
   }
 
-  frame.addEventListener('load', function(){ loader.classList.add('hide'); });
+  frame.addEventListener('load', function(){
+    if (loaderTimer) clearTimeout(loaderTimer);
+    loader.classList.add('hide');
+  });
 
   tabs.forEach(function(tab) {
     tab.addEventListener('click', function(){ activate(tab, true); });

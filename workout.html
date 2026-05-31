@@ -47,7 +47,11 @@
   .module { margin-top: 15px; }
   .module-label { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #5a8aaa; margin-bottom: 6px; }
   .opt { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: #0f0f13; border: 1px solid #20202a; border-radius: 8px; margin-bottom: 5px; cursor: pointer; font-size: 0.82rem; color: #ccc; line-height: 1.4; transition: all 0.12s; }
-  .opt:active { background: #161620; }
+  .opt { transition: all 0.12s, transform 0.08s; }
+  .opt:active { background: #161620; transform: scale(0.985); }
+  .day-head { transition: background 0.1s; }
+  .day-head:active { background: #16161c; }
+  .day-check:active, .reset-week:active { transform: scale(0.92); }
   .opt.sel { background: #11251a; border-color: #2a8a52; color: #eafff0; }
   .opt .pick { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #444; flex-shrink: 0; position: relative; }
   .opt.sel .pick { background: #2a9a5a; border-color: #2a9a5a; }

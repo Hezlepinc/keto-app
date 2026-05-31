@@ -35,7 +35,8 @@
   .sc-costco { background: #c0392b; } .sc-publix { background: #1f7a3f; } .sc-amazon { background: #c8a040; }
 
   .items { border: 1px solid #ddd; border-top: none; border-radius: 0 0 6px 6px; overflow: hidden; }
-  .item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #f0f0f0; font-size: 0.85rem; cursor: pointer; user-select: none; transition: opacity 0.15s; }
+  .item { display: flex; align-items: flex-start; gap: 12px; padding: 11px 14px; border-bottom: 1px solid #f0f0f0; font-size: 0.85rem; cursor: pointer; user-select: none; transition: opacity 0.15s, background 0.1s, transform 0.08s; }
+  .item:active { background: #eef4f0; transform: scale(0.995); }
   .item:last-child { border-bottom: none; }
   .item:nth-child(even) { background: #fafafa; }
   .item.checked { opacity: 0.4; }

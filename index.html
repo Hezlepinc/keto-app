@@ -107,7 +107,7 @@
 </header>
 
 <div class="intro">
-  <strong>How this works.</strong> Every recipe in this folder has been cross-checked against keto-recipe-cross-check.md — no seed oils, no maltitol/sucralose, no dirty seasoning packets, no processed cheese. All net carbs/serving fit the keto protocol carb ceilings. Click a row to open its printable card.
+  <strong>How this works.</strong> Every recipe in this folder has been cross-checked against <a href="../keto-recipe-cross-check.md">keto-recipe-cross-check.md</a> — no seed oils, no maltitol/sucralose, no dirty seasoning packets, no processed cheese. All net carbs/serving fit the keto protocol carb ceilings. Click a row to open its printable card.
 </div>
 
 <h2>Shopping Lists</h2>
@@ -293,7 +293,7 @@
 </div>
 
 <footer>
-  Keto Recipe Cookbook &nbsp;|&nbsp; Cross-checked against clean-keto filter &nbsp;|&nbsp; Companion to keto-plan.md &nbsp;|&nbsp; Created 2026-05-30
+  Keto Recipe Cookbook &nbsp;|&nbsp; Cross-checked against <a href="../keto-recipe-cross-check.md">clean-keto filter</a> &nbsp;|&nbsp; Companion to <a href="../keto-plan.md">keto-plan.md</a> &nbsp;|&nbsp; Created 2026-05-30
 </footer>
 
 <style>
@@ -306,6 +306,11 @@
     z-index: 5; transition: all 0.15s; padding: 0;
   }
   .add-week:hover { border-color: #1f7a3f; color: #1f7a3f; }
+  .add-week { transition: all 0.12s, transform 0.08s; }
+  .add-week:active { transform: translateY(-50%) scale(0.85); }
+  .recipe { transition: background 0.1s; }
+  .recipe:active { background: #ececec; }
+  .plan-tray a.build:active, .plan-tray button.clear:active { transform: scale(0.95); }
   .add-week.in { background: #1f7a3f; border-color: #1f7a3f; color: #fff; }
   .plan-tray {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;

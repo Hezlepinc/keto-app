@@ -86,8 +86,8 @@
     position: relative;
     transition: background 0.15s, border-color 0.15s;
   }
-  .item { cursor: pointer; transition: opacity 0.15s; user-select: none; }
-  .item:active { background: #f0f0f0; }
+  .item { cursor: pointer; transition: opacity 0.15s, background 0.1s, transform 0.08s; user-select: none; }
+  .item:active { background: #eef4f0; transform: scale(0.995); }
   .item.checked { opacity: 0.4; }
   .item.checked .checkbox { background: #1a7a5a; border-color: #1a7a5a; }
   .item.checked .checkbox::after {
@@ -570,7 +570,7 @@
 </div>
 
 <footer>
-  Shopping List By Store &nbsp;|&nbsp; <a href="index.html">← Cookbook</a> &nbsp;|&nbsp; <a href="shopping-list.html">By-category version</a> &nbsp;|&nbsp; Master grocery list &nbsp;|&nbsp; Updated 2026-05-30
+  Shopping List By Store &nbsp;|&nbsp; <a href="index.html">← Cookbook</a> &nbsp;|&nbsp; <a href="shopping-list.html">By-category version</a> &nbsp;|&nbsp; <a href="../grocery-list.html">Master grocery list</a> &nbsp;|&nbsp; Updated 2026-05-30
 </footer>
 
 <script>

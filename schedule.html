@@ -31,7 +31,9 @@
   .day-name { font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #777; }
   .day-name .today-pill { background: #2a4a7a; color: #bcd; font-size: 0.58rem; padding: 1px 6px; border-radius: 7px; margin-left: 6px; letter-spacing: 0.04em; }
   .day-type { font-size: 0.98rem; font-weight: 700; color: #eee; margin-top: 1px; }
-  .check { width: 25px; height: 25px; border: 2px solid #333; border-radius: 50%; flex-shrink: 0; position: relative; cursor: pointer; }
+  .check { width: 25px; height: 25px; border: 2px solid #333; border-radius: 50%; flex-shrink: 0; position: relative; cursor: pointer; transition: transform 0.08s; }
+  .check:active { transform: scale(0.86); }
+  .reset:active { transform: scale(0.94); }
   .day.done .check { background: #2a6a4a; border-color: #2a6a4a; }
   .day.done .check::after { content: ''; position: absolute; left: 8px; top: 3px; width: 5px; height: 11px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
 

@@ -352,6 +352,9 @@
   .plan-tray button.clear { background: transparent; border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 7px 10px; border-radius: 7px; font-size: 0.7rem; cursor: pointer; font-family: inherit; }
   .plan-tray button.clear:active { transform: scale(0.95); }
   body { padding-bottom: 74px; }
+  h2.collapsible { cursor: pointer; position: relative; padding-right: 28px; user-select: none; }
+  h2.collapsible::after { content: '▾'; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); transition: transform 0.2s; font-size: 0.8rem; opacity: 0.8; }
+  h2.collapsible.collapsed::after { transform: translateY(-50%) rotate(-90deg); }
 </style>
 
 <div class="plan-tray" id="plan-tray">
@@ -443,6 +446,25 @@
   });
 
   refreshTray();
+
+  // Collapsible category headers — any <h2> that has a recipe-list under it.
+  document.querySelectorAll('h2').forEach(function(h) {
+    var sibs = [], el = h.nextElementSibling;
+    while (el && el.tagName !== 'H2') { sibs.push(el); el = el.nextElementSibling; }
+    if (!sibs.some(function(s){ return s.classList && s.classList.contains('recipe-list'); })) return;
+    h.classList.add('collapsible');
+    var key = 'cat-collapsed:' + h.textContent.trim().slice(0, 40);
+    function apply(collapsed) {
+      sibs.forEach(function(s){ s.style.display = collapsed ? 'none' : ''; });
+      h.classList.toggle('collapsed', collapsed);
+    }
+    apply(localStorage.getItem(key) === '1');
+    h.addEventListener('click', function() {
+      var now = !h.classList.contains('collapsed');
+      apply(now);
+      localStorage.setItem(key, now ? '1' : '0');
+    });
+  });
 })();
 </script>
 

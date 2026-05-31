@@ -19,7 +19,10 @@
   .chip.on { background: #1a4a2a; border-color: #2a8a52; color: #8ce0a8; }
   .cat-h { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: #5a8aaa; margin: 18px 0 8px; }
   .move { background: #131318; border: 1px solid #1e1e26; border-radius: 10px; padding: 12px 14px; margin-bottom: 7px; }
+  .m-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .m-name { font-size: 0.95rem; font-weight: 700; color: #eee; }
+  .m-video { flex-shrink: 0; font-size: 0.72rem; font-weight: 800; color: #fff; background: #c0392b; padding: 6px 12px; border-radius: 14px; text-decoration: none; transition: transform 0.08s; }
+  .m-video:active { transform: scale(0.93); }
   .m-cue { font-size: 0.82rem; color: #c5ccd2; margin-top: 4px; line-height: 1.45; }
   .m-scale { font-size: 0.76rem; color: #8a9; margin-top: 6px; line-height: 1.4; }
   .m-scale b { color: #6ad08a; font-weight: 700; }
@@ -117,7 +120,9 @@
     order.forEach(function(cat) {
       html += '<div class="cat-h">' + cat + '</div>';
       byCat[cat].forEach(function(m) {
-        html += '<div class="move"><div class="m-name">' + m[0] + '</div>' +
+        var yt = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(m[0] + ' proper form technique');
+        html += '<div class="move"><div class="m-top"><div class="m-name">' + m[0] + '</div>' +
+          '<a class="m-video" href="' + yt + '" target="_blank" rel="noopener">▶ Demo</a></div>' +
           '<div class="m-cue">' + m[2] + '</div>' +
           '<div class="m-scale"><b>Scale:</b> ' + m[3] + '</div></div>';
       });

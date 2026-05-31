@@ -447,7 +447,7 @@
     setStart(Date.now());
   });
   document.getElementById('reset-fast').addEventListener('click', function() {
-    if (confirm('Clear the fast timer?')) {
+    if (confirm('⚠️ Clear your fast?\n\nThis erases your current timer and start time — it cannot be undone. Tap Cancel to keep fasting.')) {
       localStorage.removeItem(KEY_START);
       localStorage.removeItem(KEY_ACK);
       document.getElementById('ms-banner').classList.remove('show');

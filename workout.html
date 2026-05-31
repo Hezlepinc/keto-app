@@ -321,21 +321,27 @@
     }
   });
 
-  // Module pick selection (single-select per module, persisted)
+  // Module pick selection (single-select per module, persisted).
+  // Stores both the index (PICKS) and the human label (LABELS) so the
+  // Schedule tab can show what you picked without duplicating the option lists.
   var PICKS = 'workout-picks';
-  function getPicks() { try { return JSON.parse(localStorage.getItem(PICKS) || '{}'); } catch(e) { return {}; } }
-  function setPicks(s) { localStorage.setItem(PICKS, JSON.stringify(s)); }
+  var LABELS = 'workout-pick-labels';
+  function getJSON(k) { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch(e) { return {}; } }
+  function setJSON(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
   document.querySelectorAll('.module[data-mod]').forEach(function(mod) {
     var id = mod.dataset.mod;
     var opts = Array.prototype.slice.call(mod.querySelectorAll('.opt'));
-    var picks = getPicks();
+    var picks = getJSON(PICKS);
     if (picks[id] != null && opts[picks[id]]) opts[picks[id]].classList.add('sel');
     opts.forEach(function(opt, i) {
       opt.addEventListener('click', function() {
-        var s = getPicks();
-        if (s[id] === i) { delete s[id]; opt.classList.remove('sel'); }
-        else { s[id] = i; opts.forEach(function(o){ o.classList.remove('sel'); }); opt.classList.add('sel'); }
-        setPicks(s);
+        var s = getJSON(PICKS), lab = getJSON(LABELS);
+        if (s[id] === i) { delete s[id]; delete lab[id]; opt.classList.remove('sel'); }
+        else {
+          s[id] = i; lab[id] = (opt.textContent || '').replace(/\s+/g, ' ').trim();
+          opts.forEach(function(o){ o.classList.remove('sel'); }); opt.classList.add('sel');
+        }
+        setJSON(PICKS, s); setJSON(LABELS, lab);
       });
     });
   });

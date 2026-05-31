@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Schedule</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d0d0f; color: #e8e8e8; padding: 20px; max-width: 760px; margin: 0 auto; padding-bottom: 60px; }
+  header { text-align: center; margin-bottom: 16px; }
+  h1 { font-size: 1.3rem; font-weight: 800; color: #fff; }
+  .subtitle { font-size: 0.75rem; color: #666; margin-top: 4px; }
+  .intro { background: #11160f; border-left: 4px solid #2a9a5a; padding: 12px 15px; border-radius: 0 8px 8px 0; font-size: 0.8rem; line-height: 1.5; color: #bbb; margin-bottom: 16px; }
+  .intro a { color: #6ad08a; text-decoration: none; font-weight: 700; }
+
+  .summary-bar { display: flex; align-items: center; gap: 12px; background: #131318; border: 1px solid #1e1e26; border-radius: 10px; padding: 12px 15px; margin-bottom: 16px; }
+  .summary-bar .big { font-size: 1.1rem; font-weight: 800; color: #fff; }
+  .summary-bar .lbl { font-size: 0.7rem; color: #777; text-transform: uppercase; letter-spacing: 0.06em; }
+  .summary-bar .track { flex: 1; height: 8px; background: #1e1e26; border-radius: 4px; overflow: hidden; }
+  .summary-bar .fill { height: 100%; background: linear-gradient(to right,#1a7a5a,#2a9a5a); width: 0%; transition: width 0.3s; }
+  .reset { font-size: 0.66rem; color: #777; background: none; border: 1px solid #2a2a33; border-radius: 6px; padding: 6px 11px; cursor: pointer; font-family: inherit; }
+
+  .day { background: #131318; border: 1px solid #1e1e26; border-radius: 12px; margin-bottom: 9px; overflow: hidden; }
+  .day.done { border-color: #2a5a3a; }
+  .day.today { border-color: #4a6aaa; box-shadow: 0 0 14px rgba(74,106,170,0.18); }
+  .day-top { display: flex; align-items: center; gap: 13px; padding: 13px 15px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .s-high .dot { background: #e0703a; } .s-mod .dot { background: #4a8ad0; } .s-low .dot { background: #4a9a5a; }
+  .day-meta { flex: 1; min-width: 0; }
+  .day-name { font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #777; }
+  .day-name .today-pill { background: #2a4a7a; color: #bcd; font-size: 0.58rem; padding: 1px 6px; border-radius: 7px; margin-left: 6px; letter-spacing: 0.04em; }
+  .day-type { font-size: 0.98rem; font-weight: 700; color: #eee; margin-top: 1px; }
+  .check { width: 25px; height: 25px; border: 2px solid #333; border-radius: 50%; flex-shrink: 0; position: relative; cursor: pointer; }
+  .day.done .check { background: #2a6a4a; border-color: #2a6a4a; }
+  .day.done .check::after { content: ''; position: absolute; left: 8px; top: 3px; width: 5px; height: 11px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
+
+  .picks { padding: 0 15px 13px 37px; }
+  .pick-line { font-size: 0.8rem; color: #cbd; padding: 3px 0; line-height: 1.4; display: flex; gap: 8px; }
+  .pick-k { color: #5a8aaa; font-weight: 700; font-size: 0.72rem; min-width: 74px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.03em; padding-top: 1px; }
+  .pick-v { flex: 1; color: #cfd6dd; }
+  .pick-v.empty { color: #5a5a66; font-style: italic; }
+  .note-line { font-size: 0.8rem; color: #9aa; padding: 2px 0; line-height: 1.45; }
+
+  footer { margin-top: 26px; padding-top: 14px; border-top: 1px solid #1e1e26; font-size: 0.68rem; color: #555; text-align: center; line-height: 1.6; }
+  footer a { color: #6ad08a; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Weekly Schedule</h1>
+  <p class="subtitle">Your week at a glance · picks pulled from the Train builder</p>
+</header>
+
+<div class="intro">
+  This mirrors what you picked in <strong>Train</strong>. Tap a day's circle to mark it done. To change a workout, open the <a href="workout.html">builder →</a> and tap new options.
+</div>
+
+<div class="summary-bar">
+  <div><span class="big" id="done-count">0/7</span><div class="lbl">days done</div></div>
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <button class="reset" id="reset">Reset week</button>
+</div>
+
+<div id="week"></div>
+
+<footer>
+  Weekly Schedule · open the <a href="workout.html">Train builder</a> to pick or change workouts
+</footer>
+
+<script>
+(function() {
+  var DONE = 'workout-week-done';
+  var LABELS = 'workout-pick-labels';
+
+  var WEEK = [
+    { day:'mon', name:'Monday',    type:'Bodyweight',         cls:'s-mod',  mods:[['Session','mon-session'],['Scheme','mon-scheme'],['Core','mon-core']] },
+    { day:'tue', name:'Tuesday',   type:'Lower — Squat',      cls:'s-high', mods:[['Squat','tue-a'],['Unilateral','tue-b'],['Posterior','tue-c'],['Calves/core','tue-d']] },
+    { day:'wed', name:'Wednesday', type:'Medium Run 2–3 mi',  cls:'s-mod',  note:'Conversational pace · Zone 3 · engine builder.' },
+    { day:'thu', name:'Thursday',  type:'Upper Body',         cls:'s-mod',  mods:[['H-press','thu-a'],['V-pull','thu-b'],['V-press','thu-c'],['H-pull','thu-d'],['Arms','thu-e']] },
+    { day:'fri', name:'Friday',    type:'WOD',                cls:'s-high', mods:[['Skill','fri-skill'],['WOD','fri-wod']] },
+    { day:'sat', name:'Saturday',  type:'Long Run',           cls:'s-mod',  note:'Build 3 → 6 mi · Zone 2–3 · biggest engine day.' },
+    { day:'sun', name:'Sunday',    type:'Rest / Mobility',    cls:'s-low',  note:'Easy walk + mobility. No lifting, no metcon.' }
+  ];
+
+  function getJSON(k){ try { return JSON.parse(localStorage.getItem(k)||'{}'); } catch(e){ return {}; } }
+  function setJSON(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+
+  var jsToIdx = { 0:'sun',1:'mon',2:'tue',3:'wed',4:'thu',5:'fri',6:'sat' };
+  var todayKey = jsToIdx[new Date().getDay()];
+
+  function render() {
+    var done = getJSON(DONE), labels = getJSON(LABELS);
+    var weekEl = document.getElementById('week');
+    var html = '';
+    var doneN = 0;
+
+    WEEK.forEach(function(d) {
+      var isDone = !!done[d.day]; if (isDone) doneN++;
+      var isToday = d.day === todayKey;
+      var cls = 'day ' + d.cls + (isDone ? ' done' : '') + (isToday ? ' today' : '');
+      html += '<div class="' + cls + '" data-day="' + d.day + '">';
+      html += '<div class="day-top"><div class="dot"></div><div class="day-meta">' +
+        '<div class="day-name">' + d.name + (isToday ? '<span class="today-pill">today</span>' : '') + '</div>' +
+        '<div class="day-type">' + d.type + '</div></div>' +
+        '<div class="check" data-check="' + d.day + '"></div></div>';
+      html += '<div class="picks">';
+      if (d.mods) {
+        d.mods.forEach(function(m) {
+          var v = labels[m[1]];
+          html += '<div class="pick-line"><span class="pick-k">' + m[0] + '</span>' +
+            '<span class="pick-v' + (v ? '' : ' empty') + '">' + (v || '— not picked —') + '</span></div>';
+        });
+      }
+      if (d.note) html += '<div class="note-line">' + d.note + '</div>';
+      html += '</div></div>';
+    });
+
+    weekEl.innerHTML = html;
+    document.getElementById('done-count').textContent = doneN + '/7';
+    document.getElementById('fill').style.width = (doneN / 7 * 100) + '%';
+
+    document.querySelectorAll('.check').forEach(function(box) {
+      box.addEventListener('click', function() {
+        var day = box.dataset.check;
+        var s = getJSON(DONE);
+        if (s[day]) delete s[day]; else s[day] = 1;
+        setJSON(DONE, s);
+        render();
+      });
+    });
+  }
+
+  document.getElementById('reset').addEventListener('click', function() {
+    if (confirm('Reset all day checkmarks? (Your workout picks stay saved.)')) {
+      localStorage.removeItem(DONE);
+      render();
+    }
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>

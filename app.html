@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="robots" content="noindex,nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <title>Keto</title>
@@ -114,10 +113,18 @@
   var startTab = tabs.find(function(t){ return t.dataset.tab === last; }) || tabs[0];
   activate(startTab, false);
 
-  // Register service worker for offline
+  // Register service worker for offline; auto-reload once when a new worker takes over
   if ('serviceWorker' in navigator) {
+    var refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('sw.js').catch(function(){});
+      navigator.serviceWorker.register('sw.js').then(function(reg) {
+        reg.update();
+      }).catch(function(){});
     });
   }
 })();

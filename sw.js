@@ -1,9 +1,10 @@
-/* Keto app service worker — offline cache.
- * Precaches the shell + core pages; runtime-caches everything else (recipe cards)
- * as they're visited. Network-first would defeat offline, so we use cache-first
- * with a network fallback that backfills the cache.
+/* Keto app service worker — NETWORK-FIRST.
+ * Always tries the network so redeploys show up immediately; falls back to
+ * cache only when offline. (The old v1 was cache-first, which served stale
+ * pages after redeploys — fixed here.)
+ * Bump CACHE on any change to force old caches out.
  */
-const CACHE = 'keto-v1';
+const CACHE = 'keto-v3';
 
 const CORE = [
   'app.html',
@@ -43,18 +44,17 @@ self.addEventListener('activate', function(e) {
 self.addEventListener('fetch', function(e) {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(function(cached) {
-      if (cached) return cached;
-      return fetch(e.request).then(function(resp) {
-        // backfill cache for same-origin GETs (recipe cards, etc.)
-        if (resp && resp.status === 200 && resp.type === 'basic') {
-          var copy = resp.clone();
-          caches.open(CACHE).then(function(c){ c.put(e.request, copy); });
-        }
-        return resp;
-      }).catch(function() {
-        // offline & uncached: fall back to the app shell for navigations
-        if (e.request.mode === 'navigate') return caches.match('app.html');
+    fetch(e.request).then(function(resp) {
+      // refresh the cache copy whenever we successfully reach the network
+      if (resp && resp.status === 200 && resp.type === 'basic') {
+        var copy = resp.clone();
+        caches.open(CACHE).then(function(c){ c.put(e.request, copy); });
+      }
+      return resp;
+    }).catch(function() {
+      // offline: serve from cache; for navigations fall back to the shell
+      return caches.match(e.request).then(function(cached) {
+        return cached || (e.request.mode === 'navigate' ? caches.match('app.html') : undefined);
       });
     })
   );

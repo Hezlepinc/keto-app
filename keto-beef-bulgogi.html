@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keto Beef Bulgogi — Keto Recipe Card</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff; color: #1a1a1a; padding: 32px; max-width: 800px; margin: 0 auto; }
+header { border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; margin-bottom: 24px; }
+h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em; }
+.subtitle { font-size: 0.82rem; color: #666; margin-top: 4px; }
+.back { font-size: 0.75rem; color: #888; text-decoration: none; }
+.tags { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 12px; background: #f0f0f0; color: #555; }
+.tag-meal { background: #1a7a5a; color: #fff; }
+.tag-swap { background: #b05c20; color: #fff; }
+.macros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0 8px; }
+.macro-card { background: #fafafa; border: 1px solid #ddd; border-radius: 8px; padding: 14px; text-align: center; }
+.macro-num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.macro-unit { font-size: 0.7rem; color: #888; margin-top: 4px; }
+.macro-name { font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+.cal-num { color: #1a1a1a; } .fat-num { color: #c8a040; } .pro-num { color: #1a7a5a; } .carb-num { color: #6a4a8a; }
+.macros-sub { text-align: center; font-size: 0.75rem; color: #888; margin-bottom: 24px; font-style: italic; }
+.meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; font-size: 0.85rem; }
+.meta-item { background: #f5f5f5; padding: 10px 14px; border-radius: 6px; }
+.meta-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: #888; }
+.meta-val { margin-top: 2px; font-weight: 600; }
+h2 { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: #fff; background: #1a1a1a; padding: 6px 10px; margin-top: 28px; border-radius: 4px 4px 0 0; }
+.section-body { border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px; padding: 14px 18px; }
+.ingredients { list-style: none; }
+.ingredients li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; display: flex; gap: 10px; align-items: flex-start; }
+.ingredients li:last-child { border-bottom: none; }
+.ing-check { width: 14px; height: 14px; border: 1.5px solid #bbb; border-radius: 2px; flex-shrink: 0; margin-top: 4px; }
+.ing-amt { font-weight: 700; min-width: 110px; flex-shrink: 0; }
+.ing-name { flex: 1; }
+.ing-note { font-size: 0.72rem; color: #888; font-style: italic; display: block; margin-top: 2px; }
+.steps { counter-reset: step; list-style: none; }
+.steps li { counter-increment: step; padding: 10px 0 10px 40px; position: relative; font-size: 0.9rem; line-height: 1.5; border-bottom: 1px solid #f0f0f0; }
+.steps li:last-child { border-bottom: none; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 8px; width: 26px; height: 26px; background: #1a1a1a; color: #fff; border-radius: 50%; text-align: center; line-height: 26px; font-weight: 700; font-size: 0.75rem; }
+.plan-fit { background: #e8f5ee; border-left: 4px solid #1a7a5a; padding: 14px 18px; margin-top: 28px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.plan-fit-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #1a5a3a; margin-bottom: 4px; }
+.swap { background: #ffefe6; border-left: 4px solid #b05c20; padding: 14px 18px; margin-top: 16px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.swap-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #8a3c10; margin-bottom: 4px; }
+footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #ddd; font-size: 0.72rem; color: #888; text-align: center; }
+footer a { color: #555; text-decoration: none; }
+@media print { body { padding: 20px; } .ing-check { display: none; } .back { display: none; } }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Cookbook</a>
+<header>
+  <h1>Keto Beef Bulgogi</h1>
+  <p class="subtitle">Korean BBQ ribeye with garlic-ginger-sesame marinade. 30 minutes + marinade. Cleaned up — monk fruit replaces brown sugar.</p>
+  <div class="tags">
+    <span class="tag tag-meal">Meal 1 / Meal 3</span>
+    <span class="tag tag-swap">Cleaned-up version</span>
+    <span class="tag">Marinate ahead</span>
+  </div>
+</header>
+
+<div class="meta">
+  <div class="meta-item"><div class="meta-label">Prep</div><div class="meta-val">15 min + marinate</div></div>
+  <div class="meta-item"><div class="meta-label">Cook</div><div class="meta-val">10 min</div></div>
+  <div class="meta-item"><div class="meta-label">Servings</div><div class="meta-val">4</div></div>
+</div>
+
+<div class="macros">
+  <div class="macro-card"><div class="macro-num cal-num">543</div><div class="macro-unit">kcal</div><div class="macro-name">Calories</div></div>
+  <div class="macro-card"><div class="macro-num fat-num">44</div><div class="macro-unit">grams</div><div class="macro-name">Fat</div></div>
+  <div class="macro-card"><div class="macro-num pro-num">29</div><div class="macro-unit">grams</div><div class="macro-name">Protein</div></div>
+  <div class="macro-card"><div class="macro-num carb-num">5</div><div class="macro-unit">net grams</div><div class="macro-name">Net Carbs</div></div>
+</div>
+<p class="macros-sub">Per serving (6 oz beef + marinade glaze)</p>
+
+<h2>Ingredients</h2>
+<div class="section-body">
+<ul class="ingredients">
+  <li><div class="ing-check"></div><div class="ing-amt">1.5 lb</div><div class="ing-name">Ribeye, thinly sliced<span class="ing-note">freeze 30 min before slicing for 1/8" thickness; or ask butcher for "shabu shabu cut"</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1/4 cup</div><div class="ing-name">Coconut aminos<span class="ing-note">replaces soy sauce — milder, slightly sweeter</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">2 tbsp</div><div class="ing-name">Sesame oil (toasted, dark)</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">2 tbsp</div><div class="ing-name">Monk fruit / erythritol blend<span class="ing-note">Lakanto Golden mimics brown sugar; NEVER use sucralose</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">6 cloves</div><div class="ing-name">Garlic, finely minced or grated</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 tbsp</div><div class="ing-name">Fresh ginger, grated</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">2</div><div class="ing-name">Green onions, sliced (whites + greens separated)</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 tsp</div><div class="ing-name">Red pepper flakes (gochugaru if available)</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 tbsp</div><div class="ing-name">Rice vinegar (unseasoned)</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">2 tbsp</div><div class="ing-name">Toasted sesame seeds (garnish)</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">2 tbsp</div><div class="ing-name">Avocado oil (for searing)</div></li>
+</ul>
+</div>
+
+<h2>Instructions</h2>
+<div class="section-body">
+<ol class="steps">
+  <li>Whisk marinade: coconut aminos, sesame oil, monk fruit, garlic, ginger, white parts of green onions, red pepper flakes, rice vinegar.</li>
+  <li>Add sliced ribeye, toss to fully coat. Marinate at least 30 minutes (2-4 hours ideal). Beef gets more tender the longer it marinates.</li>
+  <li>Heat a large cast iron skillet or wok over high heat until smoking. Add avocado oil.</li>
+  <li>Add beef in a single layer in batches (don't crowd the pan — that steams it instead of searing). Cook 60-90 seconds per side until edges char and beef is just cooked through.</li>
+  <li>Remove each batch to a plate. After all batches, pour any remaining marinade into the hot pan, let it bubble and reduce 60 seconds, then pour over the cooked beef.</li>
+  <li>Garnish with green parts of green onions and toasted sesame seeds. Serve immediately.</li>
+</ol>
+</div>
+
+<div class="plan-fit">
+  <div class="plan-fit-label">DeLauer Plan Fit</div>
+  <strong>Meal 1 (noon, post-WOD):</strong> 1 serving over cauliflower rice + kimchi + 1/2 avocado = ~700 cal / 8g net carbs. Excellent ribeye-forward refuel after a hard fasted training session.<br>
+  <strong>Lettuce wrap option:</strong> Bibb lettuce cups + bulgogi + sliced cucumber + sesame seeds. Lower-cal, higher-volume for a satisfying meal without piling on calories.
+</div>
+
+<div class="swap">
+  <div class="swap-label">Clean-keto swaps applied</div>
+  <strong>Brown sugar → monk fruit / erythritol blend.</strong> Traditional bulgogi uses 2-3 tbsp brown sugar per pound (~25g carbs added). Lakanto Golden monk fruit mimics the molasses note of brown sugar without any blood sugar impact. Also swapped: soy sauce → coconut aminos, sesame oil for cooking high-heat → avocado oil for the sear (sesame oil only as a finishing/flavor oil), "seasoned" rice vinegar → unseasoned (no added sugar). NEVER use bottled bulgogi marinade — they all contain corn syrup or sugar.
+</div>
+
+<footer>
+  Keto Beef Bulgogi &nbsp;|&nbsp; <a href="index.html">← Back to Cookbook</a> &nbsp;|&nbsp; Cross-checked clean-keto 2026-05-30
+</footer>
+
+</body>
+</html>

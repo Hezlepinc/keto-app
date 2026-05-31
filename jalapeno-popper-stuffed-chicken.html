@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jalapeño Popper Stuffed Chicken — Keto Recipe Card</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff; color: #1a1a1a; padding: 32px; max-width: 800px; margin: 0 auto; }
+header { border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; margin-bottom: 24px; }
+h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em; }
+.subtitle { font-size: 0.82rem; color: #666; margin-top: 4px; }
+.back { font-size: 0.75rem; color: #888; text-decoration: none; }
+.tags { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 12px; background: #f0f0f0; color: #555; }
+.tag-meal { background: #1a7a5a; color: #fff; }
+.tag-clean { background: #c8a040; color: #fff; }
+.macros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0 8px; }
+.macro-card { background: #fafafa; border: 1px solid #ddd; border-radius: 8px; padding: 14px; text-align: center; }
+.macro-num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.macro-unit { font-size: 0.7rem; color: #888; margin-top: 4px; }
+.macro-name { font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+.cal-num { color: #1a1a1a; } .fat-num { color: #c8a040; } .pro-num { color: #1a7a5a; } .carb-num { color: #6a4a8a; }
+.macros-sub { text-align: center; font-size: 0.75rem; color: #888; margin-bottom: 24px; font-style: italic; }
+.meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; font-size: 0.85rem; }
+.meta-item { background: #f5f5f5; padding: 10px 14px; border-radius: 6px; }
+.meta-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: #888; }
+.meta-val { margin-top: 2px; font-weight: 600; }
+h2 { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: #fff; background: #1a1a1a; padding: 6px 10px; margin-top: 28px; border-radius: 4px 4px 0 0; }
+.section-body { border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px; padding: 14px 18px; }
+.ingredients { list-style: none; }
+.ingredients li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; display: flex; gap: 10px; align-items: flex-start; }
+.ingredients li:last-child { border-bottom: none; }
+.ing-check { width: 14px; height: 14px; border: 1.5px solid #bbb; border-radius: 2px; flex-shrink: 0; margin-top: 4px; }
+.ing-amt { font-weight: 700; min-width: 110px; flex-shrink: 0; }
+.ing-name { flex: 1; }
+.ing-note { font-size: 0.72rem; color: #888; font-style: italic; display: block; margin-top: 2px; }
+.steps { counter-reset: step; list-style: none; }
+.steps li { counter-increment: step; padding: 10px 0 10px 40px; position: relative; font-size: 0.9rem; line-height: 1.5; border-bottom: 1px solid #f0f0f0; }
+.steps li:last-child { border-bottom: none; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 8px; width: 26px; height: 26px; background: #1a1a1a; color: #fff; border-radius: 50%; text-align: center; line-height: 26px; font-weight: 700; font-size: 0.75rem; }
+.plan-fit { background: #e8f5ee; border-left: 4px solid #1a7a5a; padding: 14px 18px; margin-top: 28px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.plan-fit-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #1a5a3a; margin-bottom: 4px; }
+.note { background: #fef9e6; border-left: 4px solid #c8a040; padding: 14px 18px; margin-top: 16px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.note-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #8a6a20; margin-bottom: 4px; }
+footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #ddd; font-size: 0.72rem; color: #888; text-align: center; }
+footer a { color: #555; text-decoration: none; }
+@media print { body { padding: 20px; } .ing-check { display: none; } .back { display: none; } }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Cookbook</a>
+<header>
+  <h1>Jalapeño Popper Stuffed Chicken</h1>
+  <p class="subtitle">Cream cheese, jalapeño, cheddar, wrapped in bacon. The "doesn't taste keto" benchmark.</p>
+  <div class="tags">
+    <span class="tag tag-meal">Meal 1 / Meal 3</span>
+    <span class="tag tag-clean">Clean as-written</span>
+    <span class="tag">High protein</span>
+  </div>
+</header>
+
+<div class="meta">
+  <div class="meta-item"><div class="meta-label">Prep</div><div class="meta-val">15 min</div></div>
+  <div class="meta-item"><div class="meta-label">Cook</div><div class="meta-val">30 min</div></div>
+  <div class="meta-item"><div class="meta-label">Servings</div><div class="meta-val">4</div></div>
+</div>
+
+<div class="macros">
+  <div class="macro-card"><div class="macro-num cal-num">499</div><div class="macro-unit">kcal</div><div class="macro-name">Calories</div></div>
+  <div class="macro-card"><div class="macro-num fat-num">33</div><div class="macro-unit">grams</div><div class="macro-name">Fat</div></div>
+  <div class="macro-card"><div class="macro-num pro-num">55</div><div class="macro-unit">grams</div><div class="macro-name">Protein</div></div>
+  <div class="macro-card"><div class="macro-num carb-num">2.5</div><div class="macro-unit">net grams</div><div class="macro-name">Net Carbs</div></div>
+</div>
+<p class="macros-sub">Per serving (1 stuffed chicken breast)</p>
+
+<h2>Ingredients</h2>
+<div class="section-body">
+<ul class="ingredients">
+  <li><div class="ing-check"></div><div class="ing-amt">4 (6oz)</div><div class="ing-name">Chicken breasts<span class="ing-note">boneless, skinless</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">4 oz</div><div class="ing-name">Cream cheese<span class="ing-note">softened, full fat</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 cup</div><div class="ing-name">Shredded cheddar<span class="ing-note">block cheese, shred fresh</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">4 medium</div><div class="ing-name">Jalapeños<span class="ing-note">seeded and finely diced — keep seeds for more heat</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">8 slices</div><div class="ing-name">Bacon<span class="ing-note">Pederson's or Applegate — sugar-free, uncured</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 tsp</div><div class="ing-name">Garlic powder, salt, black pepper</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 tbsp</div><div class="ing-name">Avocado oil<span class="ing-note">for searing — NEVER use canola/vegetable</span></div></li>
+</ul>
+</div>
+
+<h2>Instructions</h2>
+<div class="section-body">
+<ol class="steps">
+  <li>Preheat oven to 400°F. In a bowl, mix cream cheese, cheddar, diced jalapeños, garlic powder, salt, and pepper.</li>
+  <li>Butterfly each chicken breast: slice horizontally three-quarters of the way through, open like a book. Pound lightly to even thickness.</li>
+  <li>Divide cream cheese filling into 4 portions. Spoon onto one side of each butterflied breast and fold the other side over to enclose.</li>
+  <li>Wrap each stuffed breast with 2 slices of bacon, tucking ends underneath. Secure with toothpicks if needed.</li>
+  <li>Heat avocado oil in an oven-safe skillet (cast iron ideal) over medium-high heat. Sear bacon-wrapped chicken 2-3 min per side until bacon starts to crisp.</li>
+  <li>Transfer skillet to oven. Bake 18-22 minutes until internal temperature reaches 165°F.</li>
+  <li>Rest 5 minutes before serving. Remove toothpicks.</li>
+</ol>
+</div>
+
+<div class="plan-fit">
+  <div class="plan-fit-label">DeLauer Plan Fit</div>
+  <strong>Meal 1 (noon, post-WOD):</strong> 1 breast + side salad with avocado = ~700 cal / 5g net carbs. Excellent post-WOD protein refuel (55g protein).<br>
+  <strong>Meal 3 (7pm):</strong> 1 breast + roasted Brussels sprouts in avocado oil. Hits fat + protein targets with minimal carbs.
+</div>
+
+<div class="note">
+  <div class="note-label">Why this is clean</div>
+  Single-ingredient foods only. Real chicken, real cream cheese, real cheddar (block), sugar-free bacon, real jalapeños. The seared-then-baked method gets the bacon crisp without needing any breading or seed oils.
+</div>
+
+<footer>
+  Jalapeño Popper Stuffed Chicken &nbsp;|&nbsp; <a href="index.html">← Back to Cookbook</a> &nbsp;|&nbsp; Cross-checked clean-keto 2026-05-30
+</footer>
+
+</body>
+</html>

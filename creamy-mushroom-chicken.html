@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creamy Mushroom Chicken — Keto Recipe Card</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff; color: #1a1a1a; padding: 32px; max-width: 800px; margin: 0 auto; }
+header { border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; margin-bottom: 24px; }
+h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em; }
+.subtitle { font-size: 0.82rem; color: #666; margin-top: 4px; }
+.back { font-size: 0.75rem; color: #888; text-decoration: none; }
+.tags { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 12px; background: #f0f0f0; color: #555; }
+.tag-meal { background: #1a7a5a; color: #fff; }
+.tag-clean { background: #c8a040; color: #fff; }
+.macros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0 8px; }
+.macro-card { background: #fafafa; border: 1px solid #ddd; border-radius: 8px; padding: 14px; text-align: center; }
+.macro-num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.macro-unit { font-size: 0.7rem; color: #888; margin-top: 4px; }
+.macro-name { font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+.cal-num { color: #1a1a1a; } .fat-num { color: #c8a040; } .pro-num { color: #1a7a5a; } .carb-num { color: #6a4a8a; }
+.macros-sub { text-align: center; font-size: 0.75rem; color: #888; margin-bottom: 24px; font-style: italic; }
+.meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; font-size: 0.85rem; }
+.meta-item { background: #f5f5f5; padding: 10px 14px; border-radius: 6px; }
+.meta-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: #888; }
+.meta-val { margin-top: 2px; font-weight: 600; }
+h2 { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: #fff; background: #1a1a1a; padding: 6px 10px; margin-top: 28px; border-radius: 4px 4px 0 0; }
+.section-body { border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px; padding: 14px 18px; }
+.ingredients { list-style: none; }
+.ingredients li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; display: flex; gap: 10px; align-items: flex-start; }
+.ingredients li:last-child { border-bottom: none; }
+.ing-check { width: 14px; height: 14px; border: 1.5px solid #bbb; border-radius: 2px; flex-shrink: 0; margin-top: 4px; }
+.ing-amt { font-weight: 700; min-width: 110px; flex-shrink: 0; }
+.ing-name { flex: 1; }
+.ing-note { font-size: 0.72rem; color: #888; font-style: italic; display: block; margin-top: 2px; }
+.steps { counter-reset: step; list-style: none; }
+.steps li { counter-increment: step; padding: 10px 0 10px 40px; position: relative; font-size: 0.9rem; line-height: 1.5; border-bottom: 1px solid #f0f0f0; }
+.steps li:last-child { border-bottom: none; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 8px; width: 26px; height: 26px; background: #1a1a1a; color: #fff; border-radius: 50%; text-align: center; line-height: 26px; font-weight: 700; font-size: 0.75rem; }
+.plan-fit { background: #e8f5ee; border-left: 4px solid #1a7a5a; padding: 14px 18px; margin-top: 28px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.plan-fit-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #1a5a3a; margin-bottom: 4px; }
+.note { background: #fef9e6; border-left: 4px solid #c8a040; padding: 14px 18px; margin-top: 16px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.note-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #8a6a20; margin-bottom: 4px; }
+footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #ddd; font-size: 0.72rem; color: #888; text-align: center; }
+footer a { color: #555; text-decoration: none; }
+@media print { body { padding: 20px; } .ing-check { display: none; } .back { display: none; } }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Cookbook</a>
+<header>
+  <h1>Creamy Mushroom Chicken</h1>
+  <p class="subtitle">Restaurant-quality skillet dinner. Bone-in chicken thighs in a thyme-mushroom cream sauce.</p>
+  <div class="tags">
+    <span class="tag tag-meal">Meal 1 / Meal 3</span>
+    <span class="tag tag-clean">Clean as-written</span>
+    <span class="tag">One pan</span>
+  </div>
+</header>
+
+<div class="meta">
+  <div class="meta-item"><div class="meta-label">Prep</div><div class="meta-val">10 min</div></div>
+  <div class="meta-item"><div class="meta-label">Cook</div><div class="meta-val">25 min</div></div>
+  <div class="meta-item"><div class="meta-label">Servings</div><div class="meta-val">4</div></div>
+</div>
+
+<div class="macros">
+  <div class="macro-card"><div class="macro-num cal-num">669</div><div class="macro-unit">kcal</div><div class="macro-name">Calories</div></div>
+  <div class="macro-card"><div class="macro-num fat-num">58</div><div class="macro-unit">grams</div><div class="macro-name">Fat</div></div>
+  <div class="macro-card"><div class="macro-num pro-num">33</div><div class="macro-unit">grams</div><div class="macro-name">Protein</div></div>
+  <div class="macro-card"><div class="macro-num carb-num">3.5</div><div class="macro-unit">net grams</div><div class="macro-name">Net Carbs</div></div>
+</div>
+<p class="macros-sub">Per serving (1 thigh + 1/4 sauce)</p>
+
+<h2>Ingredients</h2>
+<div class="section-body">
+<ul class="ingredients">
+  <li><div class="ing-check"></div><div class="ing-amt">4 (6oz)</div><div class="ing-name">Bone-in skin-on chicken thighs<span class="ing-note">skin-on is non-negotiable — that's where the fat lives</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">2 tbsp</div><div class="ing-name">Avocado oil<span class="ing-note">high-heat sear; NEVER canola/vegetable</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">2 tbsp</div><div class="ing-name">Grass-fed butter<span class="ing-note">Kerrygold</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">8 oz</div><div class="ing-name">Cremini or baby bella mushrooms<span class="ing-note">sliced</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">4 cloves</div><div class="ing-name">Garlic<span class="ing-note">minced</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 cup</div><div class="ing-name">Heavy whipping cream<span class="ing-note">full fat — not "light cream"</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1/2 cup</div><div class="ing-name">Chicken broth<span class="ing-note">bone broth preferred — Kettle &amp; Fire or homemade</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">2 tsp</div><div class="ing-name">Fresh thyme leaves<span class="ing-note">or 1 tsp dried</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1/4 cup</div><div class="ing-name">Grated Parmesan<span class="ing-note">block, freshly grated</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">to taste</div><div class="ing-name">Salt, black pepper</div></li>
+</ul>
+</div>
+
+<h2>Instructions</h2>
+<div class="section-body">
+<ol class="steps">
+  <li>Pat chicken thighs completely dry with paper towels. Season generously with salt and pepper on both sides.</li>
+  <li>Heat avocado oil in a large cast iron or stainless skillet over medium-high heat. Sear chicken skin-side down for 6-7 minutes until skin is deep golden and crisp. Flip and sear 4 more minutes.</li>
+  <li>Transfer chicken to a plate (it will not be cooked through yet — that's fine). Drain off all but 2 tbsp of fat.</li>
+  <li>Add butter to the skillet. When melted, add mushrooms in a single layer. Don't stir for 3 minutes — let them brown. Then stir and cook 2 more minutes until deeply colored.</li>
+  <li>Add garlic and thyme. Cook 30 seconds until fragrant. Pour in chicken broth, scraping up any browned bits.</li>
+  <li>Reduce heat to medium. Add heavy cream and Parmesan. Whisk until sauce thickens slightly, about 2 minutes.</li>
+  <li>Return chicken thighs to skillet, skin-side up, nestled into the sauce (don't submerge the skin). Reduce heat to medium-low, cover, and cook 8-10 minutes until chicken reaches 165°F internal.</li>
+  <li>Taste and adjust salt. Serve with cauliflower mash or steamed asparagus.</li>
+</ol>
+</div>
+
+<div class="plan-fit">
+  <div class="plan-fit-label">DeLauer Plan Fit</div>
+  <strong>Meal 1 (noon, post-WOD):</strong> 1 thigh + sauce over cauliflower mash = ~750 cal / 7g net carbs. Hits fat target hard, refuels protein after fasted training.<br>
+  <strong>Meal 3 (7pm):</strong> 1 thigh + sauce + side salad. Stays under 5g net carbs, keeps insulin low going into the overnight fast.
+</div>
+
+<div class="note">
+  <div class="note-label">Why this is clean</div>
+  Avocado oil + butter for fat, real cream (no thickeners), bone broth, fresh herbs. No "cream of mushroom soup" shortcut (which contains seed oils + modified food starch). Parmesan provides umami without any MSG-containing seasoning blend.
+</div>
+
+<footer>
+  Creamy Mushroom Chicken &nbsp;|&nbsp; <a href="index.html">← Back to Cookbook</a> &nbsp;|&nbsp; Cross-checked clean-keto 2026-05-30
+</footer>
+
+</body>
+</html>

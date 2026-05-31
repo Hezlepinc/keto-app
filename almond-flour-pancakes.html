@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Almond Flour Pancakes — Keto Recipe Card</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff; color: #1a1a1a; padding: 32px; max-width: 800px; margin: 0 auto; }
+header { border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; margin-bottom: 24px; }
+h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em; }
+.subtitle { font-size: 0.82rem; color: #666; margin-top: 4px; }
+.back { font-size: 0.75rem; color: #888; text-decoration: none; }
+.tags { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 12px; background: #f0f0f0; color: #555; }
+.tag-meal { background: #1a7a5a; color: #fff; }
+.tag-clean { background: #c8a040; color: #fff; }
+.macros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0 8px; }
+.macro-card { background: #fafafa; border: 1px solid #ddd; border-radius: 8px; padding: 14px; text-align: center; }
+.macro-num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.macro-unit { font-size: 0.7rem; color: #888; margin-top: 4px; }
+.macro-name { font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+.cal-num { color: #1a1a1a; } .fat-num { color: #c8a040; } .pro-num { color: #1a7a5a; } .carb-num { color: #6a4a8a; }
+.macros-sub { text-align: center; font-size: 0.75rem; color: #888; margin-bottom: 24px; font-style: italic; }
+.meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; font-size: 0.85rem; }
+.meta-item { background: #f5f5f5; padding: 10px 14px; border-radius: 6px; }
+.meta-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: #888; }
+.meta-val { margin-top: 2px; font-weight: 600; }
+h2 { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: #fff; background: #1a1a1a; padding: 6px 10px; margin-top: 28px; border-radius: 4px 4px 0 0; }
+.section-body { border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px; padding: 14px 18px; }
+.ingredients { list-style: none; }
+.ingredients li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; display: flex; gap: 10px; align-items: flex-start; }
+.ingredients li:last-child { border-bottom: none; }
+.ing-check { width: 14px; height: 14px; border: 1.5px solid #bbb; border-radius: 2px; flex-shrink: 0; margin-top: 4px; }
+.ing-amt { font-weight: 700; min-width: 110px; flex-shrink: 0; }
+.ing-name { flex: 1; }
+.ing-note { font-size: 0.72rem; color: #888; font-style: italic; display: block; margin-top: 2px; }
+.steps { counter-reset: step; list-style: none; }
+.steps li { counter-increment: step; padding: 10px 0 10px 40px; position: relative; font-size: 0.9rem; line-height: 1.5; border-bottom: 1px solid #f0f0f0; }
+.steps li:last-child { border-bottom: none; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 8px; width: 26px; height: 26px; background: #1a1a1a; color: #fff; border-radius: 50%; text-align: center; line-height: 26px; font-weight: 700; font-size: 0.75rem; }
+.plan-fit { background: #e8f5ee; border-left: 4px solid #1a7a5a; padding: 14px 18px; margin-top: 28px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.plan-fit-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #1a5a3a; margin-bottom: 4px; }
+.note { background: #fef9e6; border-left: 4px solid #c8a040; padding: 14px 18px; margin-top: 16px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.note-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #8a6a20; margin-bottom: 4px; }
+footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #ddd; font-size: 0.72rem; color: #888; text-align: center; }
+footer a { color: #555; text-decoration: none; }
+@media print { body { padding: 20px; } .ing-check { display: none; } .back { display: none; } }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Cookbook</a>
+<header>
+  <h1>Almond Flour Pancakes</h1>
+  <p class="subtitle">Light, fluffy, butter-cooked. 7.5g net carbs per serving including berries.</p>
+  <div class="tags">
+    <span class="tag tag-meal">Meal 1 — Breakfast</span>
+    <span class="tag tag-clean">Clean as-written</span>
+    <span class="tag">Saturday breakfast</span>
+  </div>
+</header>
+
+<div class="meta">
+  <div class="meta-item"><div class="meta-label">Prep</div><div class="meta-val">5 min</div></div>
+  <div class="meta-item"><div class="meta-label">Cook</div><div class="meta-val">10 min</div></div>
+  <div class="meta-item"><div class="meta-label">Servings</div><div class="meta-val">2 (4 pancakes)</div></div>
+</div>
+
+<div class="macros">
+  <div class="macro-card"><div class="macro-num cal-num">710</div><div class="macro-unit">kcal</div><div class="macro-name">Calories</div></div>
+  <div class="macro-card"><div class="macro-num fat-num">66</div><div class="macro-unit">grams</div><div class="macro-name">Fat</div></div>
+  <div class="macro-card"><div class="macro-num pro-num">25</div><div class="macro-unit">grams</div><div class="macro-name">Protein</div></div>
+  <div class="macro-card"><div class="macro-num carb-num">7.5</div><div class="macro-unit">net grams</div><div class="macro-name">Net Carbs</div></div>
+</div>
+<p class="macros-sub">Per serving (2 pancakes + butter + berries)</p>
+
+<h2>Ingredients</h2>
+<div class="section-body">
+<ul class="ingredients">
+  <li><div class="ing-check"></div><div class="ing-amt">1 cup</div><div class="ing-name">Almond flour<span class="ing-note">blanched, fine grind — NOT almond meal</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">4 large</div><div class="ing-name">Eggs<span class="ing-note">pasture-raised, room temp</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">2 tbsp</div><div class="ing-name">Heavy whipping cream</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">2 tbsp</div><div class="ing-name">Grass-fed butter, melted (for batter)</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 tsp</div><div class="ing-name">Baking powder</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 tsp</div><div class="ing-name">Vanilla extract<span class="ing-note">pure, not imitation</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1-2 tbsp</div><div class="ing-name">Monk fruit / erythritol blend<span class="ing-note">Lakanto or Swerve — NEVER use sucralose-blend "Splenda Naturals"</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">Pinch</div><div class="ing-name">Sea salt</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">2 tbsp</div><div class="ing-name">Grass-fed butter (for cooking)</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1/4 cup</div><div class="ing-name">Fresh raspberries or blackberries (topping)<span class="ing-note">small handful — 5-8g net per cup</span></div></li>
+</ul>
+</div>
+
+<h2>Instructions</h2>
+<div class="section-body">
+<ol class="steps">
+  <li>Whisk eggs in a medium bowl until smooth. Add cream, melted butter, vanilla. Whisk to combine.</li>
+  <li>Add almond flour, baking powder, sweetener, salt. Stir until just combined — don't over-mix. Let batter rest 3 minutes (this is critical for fluffy texture — almond flour needs to hydrate).</li>
+  <li>Heat a non-stick or cast iron skillet over medium-LOW heat. Almond flour browns fast — keep heat below where wheat pancakes would cook.</li>
+  <li>Add 1/2 tbsp butter to skillet. When melted, scoop 1/4 cup batter per pancake. Cook 2-3 minutes until small bubbles form and edges look set.</li>
+  <li>Flip gently with a thin spatula. Cook 90 seconds more. Almond flour pancakes are more delicate than wheat — flip carefully or two-stage flip with two spatulas.</li>
+  <li>Transfer to plate, repeat with remaining batter, adding butter between batches.</li>
+  <li>Top each serving with a tablespoon of butter and a small handful of berries. Skip the syrup unless you have a sugar-free option (most "sugar-free" pancake syrups use sucralose — not approved).</li>
+</ol>
+</div>
+
+<div class="plan-fit">
+  <div class="plan-fit-label">DeLauer Plan Fit</div>
+  <strong>Meal 1 (noon, post-WOD) — Saturday breakfast option:</strong> 2 pancakes + 4oz bacon + 2 eggs = ~1100 cal / 9g net carbs. Hits fat target hard, satisfies carb-replacement craving without spiking insulin.<br>
+  <strong>Don't make these daily.</strong> Almond flour is high in omega-6; treat as a 1-2x/week option, not a default breakfast.
+</div>
+
+<div class="note">
+  <div class="note-label">Why this is clean</div>
+  Only erythritol or monk fruit sweetener (NEVER sucralose, NEVER maltitol). Real butter for cooking — not vegetable oil "buttery spread." Pure vanilla extract, not imitation (which can contain corn syrup). Skip flavored "keto pancake mixes" — most contain modified food starch and undisclosed sweeteners.
+</div>
+
+<footer>
+  Almond Flour Pancakes &nbsp;|&nbsp; <a href="index.html">← Back to Cookbook</a> &nbsp;|&nbsp; Cross-checked clean-keto 2026-05-30
+</footer>
+
+</body>
+</html>

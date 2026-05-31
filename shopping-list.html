@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keto Recipe Shopping List — 14 Recipe Collection</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff; color: #1a1a1a; padding: 32px; max-width: 1000px; margin: 0 auto; }
+
+  header { margin-bottom: 28px; border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; }
+  h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.01em; }
+  .subtitle { font-size: 0.82rem; color: #666; margin-top: 4px; }
+  .back { font-size: 0.75rem; color: #888; text-decoration: none; }
+
+  .intro { background: #fef9e6; border-left: 4px solid #c8a040; padding: 14px 18px; margin: 16px 0 28px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+  .intro strong { color: #8a6a20; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .section { break-inside: avoid; }
+  .section-title {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #fff;
+    background: #1a1a1a;
+    padding: 6px 10px;
+    margin-bottom: 0;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .items {
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    overflow: hidden;
+  }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.82rem;
+  }
+  .item:last-child { border-bottom: none; }
+  .item:nth-child(even) { background: #fafafa; }
+
+  .checkbox {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid #bbb;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 3px;
+    position: relative;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .item { cursor: pointer; transition: opacity 0.15s; user-select: none; }
+  .item:active { background: #f0f0f0; }
+  .item.checked { opacity: 0.4; }
+  .item.checked .checkbox { background: #1a7a5a; border-color: #1a7a5a; }
+  .item.checked .checkbox::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0px;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .item.checked .item-name, .item.checked .item-qty { text-decoration: line-through; }
+
+  .progress-bar {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .progress-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .progress-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #888; }
+  .progress-count { font-size: 1rem; font-weight: 800; color: #1a1a1a; min-width: 70px; }
+  .progress-track { flex: 1; height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden; min-width: 120px; }
+  .progress-fill { height: 100%; background: linear-gradient(to right, #1a7a5a, #2a9a6a); transition: width 0.3s; width: 0%; }
+  .reset-btn {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 7px 14px; background: transparent; border: 1px solid #ddd; border-radius: 6px;
+    cursor: pointer; color: #888; font-family: inherit;
+  }
+  .reset-btn:hover, .reset-btn:active { background: #fbe9e7; border-color: #c0392b; color: #c0392b; }
+
+  .item-body { flex: 1; }
+  .item-qty { font-weight: 700; color: #1a1a1a; }
+  .item-name { font-weight: 500; }
+  .item-note { font-size: 0.72rem; color: #888; font-style: italic; display: block; margin-top: 1px; }
+  .item-for { font-size: 0.68rem; color: #6a4a8a; margin-top: 2px; display: block; }
+
+  .star { color: #c8a040; font-size: 0.75rem; margin-left: 2px; }
+
+  h2 { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: #555; margin-top: 32px; margin-bottom: 12px; }
+
+  .full-width-section { margin-top: 24px; }
+  .full-items {
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .full-items .item { border-right: 1px solid #f0f0f0; }
+  .full-items .item:nth-child(2n) { border-right: none; }
+
+  .have-section { margin-top: 28px; }
+  .have-title {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #fff;
+    background: #555;
+    padding: 6px 10px;
+    border-radius: 4px 4px 0 0;
+  }
+  .have-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    overflow: hidden;
+  }
+  .have-item {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+    border-bottom: 1px solid #f0f0f0;
+    border-right: 1px solid #f0f0f0;
+    color: #666;
+  }
+  .have-item:nth-child(3n) { border-right: none; }
+
+  .legend {
+    margin-top: 24px;
+    font-size: 0.75rem;
+    color: #666;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #ddd; font-size: 0.72rem; color: #888; text-align: center; }
+  footer a { color: #555; text-decoration: none; }
+
+  @media print {
+    body { padding: 15px; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  }
+
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr; }
+    .have-grid { grid-template-columns: 1fr 1fr; }
+    .full-items { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Cookbook</a>
+<header>
+  <h1>Keto Recipe Shopping List</h1>
+  <p class="subtitle">All 14 recipes &nbsp;|&nbsp; Clean-keto vetted &nbsp;|&nbsp; <span class="star">★</span> = brand specificity matters</p>
+</header>
+
+<div class="intro">
+  <strong>How to use this list.</strong> Tap any row to check it off — progress saves automatically on your phone. Reset clears everything. Covers ingredients to make all 14 recipes once. Items already on the master keto grocery list are noted at the bottom.
+</div>
+
+<div class="progress-bar" id="progress-bar">
+  <div class="progress-row">
+    <span class="progress-label">Progress</span>
+    <span class="progress-count" id="progress-count">0 / 0</span>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <button class="reset-btn" id="reset-list">Reset</button>
+  </div>
+</div>
+
+<div class="grid">
+
+  <div class="section">
+    <div class="section-title">Proteins (Meat &amp; Seafood)</div>
+    <div class="items">
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">3.5 lb</span> <span class="item-name">Chicken breasts</span>
+        <span class="item-note">boneless skinless; 4 (6oz) + 2 lb for crack chicken</span>
+        <span class="item-for">→ Jalapeño popper, crack chicken</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">12</span> <span class="item-name">Chicken thighs, bone-in skin-on</span>
+        <span class="item-note">~5-6 oz each; skin-on non-negotiable</span>
+        <span class="item-for">→ Creamy mushroom (4), crispy thighs (8)</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">2 lb</span> <span class="item-name">Chicken thighs, boneless skinless</span>
+        <span class="item-for">→ Indian butter chicken</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">12 oz</span> <span class="item-name">Wild-caught salmon fillets <span class="star">★</span></span>
+        <span class="item-note">2 (6oz) skin-on; sockeye or king preferred over farmed Atlantic</span>
+        <span class="item-for">→ Pan-seared salmon</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 lb</span> <span class="item-name">Large shrimp</span>
+        <span class="item-note">peeled, deveined; wild Gulf preferred</span>
+        <span class="item-for">→ Shrimp scampi</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">2 lb</span> <span class="item-name">Grass-fed ground beef, 80/20 <span class="star">★</span></span>
+        <span class="item-note">NOT 93/7 — fat matters</span>
+        <span class="item-for">→ Bacon cheeseburger casserole</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 lb</span> <span class="item-name">Ground pork</span>
+        <span class="item-note">or ground chicken thigh as substitute</span>
+        <span class="item-for">→ Egg roll in a bowl</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1.5 lb</span> <span class="item-name">Ribeye, thinly sliced <span class="star">★</span></span>
+        <span class="item-note">freeze 30 min before slicing; or ask butcher for "shabu shabu cut"</span>
+        <span class="item-for">→ Beef bulgogi</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">3 packs</span> <span class="item-name">Bacon, sugar-free uncured <span class="star">★</span></span>
+        <span class="item-note">Pederson's, Applegate Naturals, or Niman Ranch — ~24 slices total</span>
+        <span class="item-for">→ Popper, crack, cheeseburger casserole</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">16 slices</span> <span class="item-name">Pepperoni, uncured <span class="star">★</span></span>
+        <span class="item-note">Applegate uncured — most supermarket pepperoni has dextrose</span>
+        <span class="item-for">→ Fathead pizza</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 dozen</span> <span class="item-name">Eggs, pasture-raised <span class="star">★</span></span>
+        <span class="item-note">10 needed across recipes; buy 18 if making 2x</span>
+        <span class="item-for">→ Pizza, chaffles, pancakes, cheeseburger casserole</span>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Dairy</div>
+    <div class="items">
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1.5 lb</span> <span class="item-name">Block mozzarella <span class="star">★</span></span>
+        <span class="item-note">BUY BLOCK — shred yourself; pre-shredded has cellulose</span>
+        <span class="item-for">→ Pizza crust + topping, chaffles</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 lb</span> <span class="item-name">Block sharp cheddar <span class="star">★</span></span>
+        <span class="item-note">block, shred fresh</span>
+        <span class="item-for">→ Popper, crack, cheeseburger casserole</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">small block</span> <span class="item-name">Parmesan</span>
+        <span class="item-note">freshly grated — Parmigiano-Reggiano</span>
+        <span class="item-for">→ Mushroom chicken, scampi (optional)</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1.5 lb</span> <span class="item-name">Cream cheese, full fat <span class="star">★</span></span>
+        <span class="item-note">Philadelphia or Organic Valley; 2 tbsp + 4oz + 8oz + 4oz + 8oz across recipes</span>
+        <span class="item-for">→ Pizza, popper, crack, cheeseburger, fat bombs</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 quart</span> <span class="item-name">Heavy whipping cream <span class="star">★</span></span>
+        <span class="item-note">full fat only — not "light cream"; ~3 cups needed</span>
+        <span class="item-for">→ Mushroom chicken, butter chicken, cheeseburger, pancakes, fat bombs</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 lb</span> <span class="item-name">Grass-fed butter <span class="star">★</span></span>
+        <span class="item-note">Kerrygold preferred; ~18 tbsp needed</span>
+        <span class="item-for">→ Mushroom chicken, scampi, butter chicken, pancakes, fat bombs</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small tub</span> <span class="item-name">Full-fat sour cream</span>
+        <span class="item-note">"cultured cream" only — no thickeners; ~3/4 cup needed</span>
+        <span class="item-for">→ Salmon dill cream, crispy thighs sauce</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small tub</span> <span class="item-name">Full-fat plain Greek yogurt <span class="star">★</span></span>
+        <span class="item-note">Fage 5% or similar; for butter chicken marinade</span>
+        <span class="item-for">→ Indian butter chicken</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small jar</span> <span class="item-name">Ghee (optional)</span>
+        <span class="item-note">or use butter — for butter chicken aromatics</span>
+        <span class="item-for">→ Indian butter chicken</span>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Produce</div>
+    <div class="items">
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">4 medium</span> <span class="item-name">Jalapeños</span>
+        <span class="item-note">seed for less heat, keep seeds for more</span>
+        <span class="item-for">→ Jalapeño popper chicken</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">8 oz</span> <span class="item-name">Cremini or baby bella mushrooms</span>
+        <span class="item-for">→ Creamy mushroom chicken</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">2 medium</span> <span class="item-name">Zucchini</span>
+        <span class="item-note">for spiralizing into noodles</span>
+        <span class="item-for">→ Shrimp scampi</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">2 heads</span> <span class="item-name">Garlic</span>
+        <span class="item-note">fresh — buy a head, not the jarred minced</span>
+        <span class="item-for">→ Most recipes</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 medium</span> <span class="item-name">Yellow onion</span>
+        <span class="item-for">→ Cheeseburger casserole</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bunch</span> <span class="item-name">Green onions / scallions</span>
+        <span class="item-for">→ Crack chicken, egg roll bowl, bulgogi, cheeseburger</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 (3-in) knob</span> <span class="item-name">Fresh ginger</span>
+        <span class="item-for">→ Egg roll bowl, bulgogi, butter chicken</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">3</span> <span class="item-name">Lemons</span>
+        <span class="item-for">→ Salmon dill, scampi, crispy thighs, pancakes</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small bunch</span> <span class="item-name">Fresh dill</span>
+        <span class="item-for">→ Salmon dill cream, crispy thighs</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small pack</span> <span class="item-name">Fresh thyme</span>
+        <span class="item-note">or use dried</span>
+        <span class="item-for">→ Creamy mushroom chicken</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bunch</span> <span class="item-name">Fresh parsley</span>
+        <span class="item-for">→ Shrimp scampi</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small bunch</span> <span class="item-name">Fresh cilantro</span>
+        <span class="item-for">→ Indian butter chicken</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 (14oz) bag</span> <span class="item-name">Coleslaw mix</span>
+        <span class="item-note">shredded cabbage + carrot</span>
+        <span class="item-for">→ Egg roll in a bowl</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 head</span> <span class="item-name">Bibb lettuce (optional)</span>
+        <span class="item-note">for bulgogi lettuce wraps</span>
+        <span class="item-for">→ Bulgogi</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small pack</span> <span class="item-name">Cherry tomatoes (garnish)</span>
+        <span class="item-for">→ Cheeseburger casserole</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small head</span> <span class="item-name">Shredded lettuce (garnish)</span>
+        <span class="item-for">→ Cheeseburger casserole</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 pack</span> <span class="item-name">Fresh raspberries or blackberries</span>
+        <span class="item-note">~1/4 cup needed; small handful</span>
+        <span class="item-for">→ Pancakes topping</span>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Pantry — Condiments &amp; Sauces</div>
+    <div class="items">
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">making own</span> <span class="item-name">Ketchup — DIY from tomato paste + ACV + spices + monk fruit</span>
+        <span class="item-note">see DIY notes below — all ingredients on this list</span>
+        <span class="item-for">→ Cheeseburger casserole</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">making own</span> <span class="item-name">Mayo — DIY from egg + avocado oil + mustard + ACV + lemon</span>
+        <span class="item-note">immersion blender method, 60 sec; all ingredients on this list</span>
+        <span class="item-for">→ Salmon dill cream, crispy thighs sauce</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Coconut aminos <span class="star">★</span></span>
+        <span class="item-note">replaces soy sauce — lower carb, no soy/wheat</span>
+        <span class="item-for">→ Egg roll bowl, bulgogi</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Rice vinegar, UNSEASONED <span class="star">★</span></span>
+        <span class="item-note">"seasoned" version has added sugar</span>
+        <span class="item-for">→ Egg roll bowl, bulgogi</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 jar</span> <span class="item-name">Marinara sauce <span class="star">★</span></span>
+        <span class="item-note">Rao's Sensitive or Primal Kitchen — ≤4g carbs/serving, no sugar</span>
+        <span class="item-for">→ Fathead pizza</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">3 cans</span> <span class="item-name">Tomato paste, no added sugar</span>
+        <span class="item-note">1 for butter chicken + 2 for DIY ketchup batches</span>
+        <span class="item-for">→ Butter chicken, DIY ketchup</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Yellow mustard, no sugar added</span>
+        <span class="item-for">→ Cheeseburger casserole, DIY mayo</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 jar</span> <span class="item-name">Dijon mustard, no sugar added</span>
+        <span class="item-note">smoother emulsifier than yellow; sharper flavor for Caesar</span>
+        <span class="item-for">→ Caesar dressing, optional in mayo</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 tube/tin</span> <span class="item-name">Anchovy paste OR oil-packed anchovy filets</span>
+        <span class="item-note">paste = easiest; tin filets = more flexible; ~1 tsp per Caesar batch</span>
+        <span class="item-for">→ Caesar dressing</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Apple cider vinegar — raw/unfiltered <span class="star">★</span></span>
+        <span class="item-note">Bragg's; you likely have this already</span>
+        <span class="item-for">→ DIY mayo, DIY ketchup, ranch (if no buttermilk)</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Worcestershire sauce</span>
+        <span class="item-for">→ Cheeseburger casserole</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">2 boxes</span> <span class="item-name">Chicken bone broth <span class="star">★</span></span>
+        <span class="item-note">Kettle &amp; Fire or homemade</span>
+        <span class="item-for">→ Mushroom chicken, crack chicken</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 jar</span> <span class="item-name">Pickles (no sugar) — garnish</span>
+        <span class="item-for">→ Cheeseburger casserole</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small jar</span> <span class="item-name">Capers (optional)</span>
+        <span class="item-for">→ Salmon dill cream</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle (optional)</span> <span class="item-name">Dry white wine</span>
+        <span class="item-note">or sub bone broth — carbs cook off</span>
+        <span class="item-for">→ Shrimp scampi</span>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Pantry — Oils &amp; Fats</div>
+    <div class="items">
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">large bottle</span> <span class="item-name">Avocado oil <span class="star">★</span></span>
+        <span class="item-note">high-heat searing; NEVER canola/vegetable</span>
+        <span class="item-for">→ Most cooked recipes</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Extra virgin olive oil</span>
+        <span class="item-note">low/cold use only — don't smoke it</span>
+        <span class="item-for">→ Scampi, salad dressings</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small bottle</span> <span class="item-name">Toasted sesame oil (dark) <span class="star">★</span></span>
+        <span class="item-note">finishing/flavor oil only</span>
+        <span class="item-for">→ Egg roll bowl, bulgogi</span>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Pantry — Dry Goods &amp; Baking</div>
+    <div class="items">
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 lb bag</span> <span class="item-name">Almond flour, blanched fine grind <span class="star">★</span></span>
+        <span class="item-note">NOT almond meal; ~2 cups needed across recipes</span>
+        <span class="item-for">→ Pizza, pancakes, chaffles</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small bag</span> <span class="item-name">Unsweetened cocoa powder</span>
+        <span class="item-note">Dutch-process for darker; regular works</span>
+        <span class="item-for">→ Fat bombs</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small can</span> <span class="item-name">Baking powder</span>
+        <span class="item-for">→ Pancakes</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bag</span> <span class="item-name">Powdered erythritol or monk fruit <span class="star">★</span></span>
+        <span class="item-note">Lakanto Powdered Monk Fruit or Swerve Confectioners — NEVER sucralose or maltitol blends</span>
+        <span class="item-for">→ Fat bombs, pancakes, bulgogi</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bag (optional)</span> <span class="item-name">Lakanto Golden Monk Fruit <span class="star">★</span></span>
+        <span class="item-note">brown-sugar mimic for bulgogi marinade</span>
+        <span class="item-for">→ Bulgogi</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small bottle</span> <span class="item-name">Pure vanilla extract</span>
+        <span class="item-note">pure, not imitation (imitation can contain corn syrup)</span>
+        <span class="item-for">→ Pancakes, fat bombs</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small jar</span> <span class="item-name">Toasted sesame seeds</span>
+        <span class="item-for">→ Egg roll bowl, bulgogi</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 roll</span> <span class="item-name">Parchment paper</span>
+        <span class="item-for">→ Pizza crust, fat bombs, sheet pan thighs</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 box</span> <span class="item-name">Toothpicks</span>
+        <span class="item-for">→ Popper chicken (bacon wrap)</span>
+      </div></div>
+    </div>
+  </div>
+
+</div>
+
+<h2>Spices &amp; Dried Herbs</h2>
+<div class="full-width-section">
+  <div class="section-title">Spices &amp; Dried Herbs (check what you have first)</div>
+  <div class="full-items">
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Smoked paprika</span> <span class="item-for">→ Crispy thighs</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Regular paprika</span> <span class="item-for">→ Butter chicken</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Garam masala</span> <span class="item-for">→ Butter chicken</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Ground cumin</span> <span class="item-for">→ Butter chicken</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Ground turmeric</span> <span class="item-for">→ Butter chicken</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Italian seasoning</span> <span class="item-for">→ Pizza</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Garlic powder</span> <span class="item-for">→ Most recipes — buy large container</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Onion powder</span> <span class="item-for">→ Ranch seasoning, crispy thighs</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Dried parsley</span> <span class="item-for">→ Homemade ranch seasoning</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Dried dill</span> <span class="item-for">→ Homemade ranch seasoning</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Dried chives</span> <span class="item-for">→ Homemade ranch seasoning</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Dried thyme</span> <span class="item-for">→ Crispy thighs, mushroom chicken (sub)</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Ground allspice</span> <span class="item-for">→ DIY ketchup</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Ground cloves</span> <span class="item-for">→ DIY ketchup (tiny pinch)</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Ground cinnamon (optional)</span> <span class="item-for">→ DIY ketchup, BBQ sauce</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Red pepper flakes</span> <span class="item-for">→ Scampi, egg roll, bulgogi</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Gochugaru (optional)</span> <span class="item-for">→ Bulgogi (Korean red pepper)</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Kosher salt</span> <span class="item-for">→ All recipes</span></div></div>
+    <div class="item"><div class="checkbox"></div><div class="item-body"><span class="item-qty"></span> <span class="item-name">Black pepper, freshly ground</span> <span class="item-for">→ All recipes</span></div></div>
+  </div>
+</div>
+
+<div class="have-section">
+  <div class="have-title">You Probably Already Have These (Master Grocery List Staples)</div>
+  <div class="have-grid">
+    <div class="have-item">Avocados</div>
+    <div class="have-item">Spinach</div>
+    <div class="have-item">Arugula</div>
+    <div class="have-item">Brussels sprouts</div>
+    <div class="have-item">Asparagus</div>
+    <div class="have-item">Broccoli / Cauliflower</div>
+    <div class="have-item">Himalayan / sea salt</div>
+    <div class="have-item">Apple cider vinegar</div>
+    <div class="have-item">Coconut oil</div>
+    <div class="have-item">MCT oil</div>
+    <div class="have-item">Hot sauce</div>
+    <div class="have-item">Black coffee</div>
+  </div>
+</div>
+
+<div class="legend">
+  <span><span class="star">★</span> = brand specificity matters — don't substitute</span>
+  <span style="color: #6a4a8a;">Purple text = which recipe(s) need this item</span>
+  <span>Italic notes = important qualifier</span>
+</div>
+
+<footer>
+  Shopping List for 14-Recipe Collection &nbsp;|&nbsp; <a href="index.html">← Back to Cookbook</a> &nbsp;|&nbsp; Companion to master grocery list &nbsp;|&nbsp; Created 2026-05-30
+</footer>
+
+<script>
+(function() {
+  var STORAGE_KEY = 'keto-shop-by-category';
+
+  function hash(s) {
+    var h = 0;
+    for (var i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    return h.toString(36);
+  }
+  function getState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+    catch(e) { return {}; }
+  }
+  function setState(s) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch(e) {}
+  }
+
+  var items = Array.from(document.querySelectorAll('.item'));
+  var state = getState();
+
+  items.forEach(function(item) {
+    var key = hash((item.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 200));
+    item.dataset.key = key;
+    if (state[key]) item.classList.add('checked');
+    item.addEventListener('click', function(e) {
+      if (e.target.tagName === 'A') return;
+      var checked = item.classList.toggle('checked');
+      var s = getState();
+      if (checked) s[key] = 1; else delete s[key];
+      setState(s);
+      update();
+    });
+  });
+
+  function update() {
+    var total = items.length;
+    var done = items.filter(function(i) { return i.classList.contains('checked'); }).length;
+    var pct = total ? (done / total * 100) : 0;
+    var c = document.getElementById('progress-count');
+    var f = document.getElementById('progress-fill');
+    if (c) c.textContent = done + ' / ' + total;
+    if (f) f.style.width = pct.toFixed(1) + '%';
+  }
+  update();
+
+  var resetBtn = document.getElementById('reset-list');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function() {
+      if (confirm('Clear all checked items?')) {
+        try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+        items.forEach(function(i) { i.classList.remove('checked'); });
+        update();
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

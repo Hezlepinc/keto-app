@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Savory Chaffles — Keto Recipe Card</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff; color: #1a1a1a; padding: 32px; max-width: 800px; margin: 0 auto; }
+header { border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; margin-bottom: 24px; }
+h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em; }
+.subtitle { font-size: 0.82rem; color: #666; margin-top: 4px; }
+.back { font-size: 0.75rem; color: #888; text-decoration: none; }
+.tags { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 12px; background: #f0f0f0; color: #555; }
+.tag-meal { background: #1a7a5a; color: #fff; }
+.tag-clean { background: #c8a040; color: #fff; }
+.macros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0 8px; }
+.macro-card { background: #fafafa; border: 1px solid #ddd; border-radius: 8px; padding: 14px; text-align: center; }
+.macro-num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.macro-unit { font-size: 0.7rem; color: #888; margin-top: 4px; }
+.macro-name { font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+.cal-num { color: #1a1a1a; } .fat-num { color: #c8a040; } .pro-num { color: #1a7a5a; } .carb-num { color: #6a4a8a; }
+.macros-sub { text-align: center; font-size: 0.75rem; color: #888; margin-bottom: 24px; font-style: italic; }
+.meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; font-size: 0.85rem; }
+.meta-item { background: #f5f5f5; padding: 10px 14px; border-radius: 6px; }
+.meta-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: #888; }
+.meta-val { margin-top: 2px; font-weight: 600; }
+h2 { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: #fff; background: #1a1a1a; padding: 6px 10px; margin-top: 28px; border-radius: 4px 4px 0 0; }
+.section-body { border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px; padding: 14px 18px; }
+.ingredients { list-style: none; }
+.ingredients li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; display: flex; gap: 10px; align-items: flex-start; }
+.ingredients li:last-child { border-bottom: none; }
+.ing-check { width: 14px; height: 14px; border: 1.5px solid #bbb; border-radius: 2px; flex-shrink: 0; margin-top: 4px; }
+.ing-amt { font-weight: 700; min-width: 110px; flex-shrink: 0; }
+.ing-name { flex: 1; }
+.ing-note { font-size: 0.72rem; color: #888; font-style: italic; display: block; margin-top: 2px; }
+.steps { counter-reset: step; list-style: none; }
+.steps li { counter-increment: step; padding: 10px 0 10px 40px; position: relative; font-size: 0.9rem; line-height: 1.5; border-bottom: 1px solid #f0f0f0; }
+.steps li:last-child { border-bottom: none; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 8px; width: 26px; height: 26px; background: #1a1a1a; color: #fff; border-radius: 50%; text-align: center; line-height: 26px; font-weight: 700; font-size: 0.75rem; }
+.plan-fit { background: #e8f5ee; border-left: 4px solid #1a7a5a; padding: 14px 18px; margin-top: 28px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.plan-fit-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #1a5a3a; margin-bottom: 4px; }
+.note { background: #fef9e6; border-left: 4px solid #c8a040; padding: 14px 18px; margin-top: 16px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.note-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #8a6a20; margin-bottom: 4px; }
+footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #ddd; font-size: 0.72rem; color: #888; text-align: center; }
+footer a { color: #555; text-decoration: none; }
+@media print { body { padding: 20px; } .ing-check { display: none; } .back { display: none; } }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Cookbook</a>
+<header>
+  <h1>Savory Chaffles</h1>
+  <p class="subtitle">Cheese + egg waffles. Bread replacement, sandwich vehicle, taco shell. 3g net carbs.</p>
+  <div class="tags">
+    <span class="tag tag-meal">Meal 1 / 2 / 3</span>
+    <span class="tag tag-clean">Clean as-written</span>
+    <span class="tag">Bread sub</span>
+  </div>
+</header>
+
+<div class="meta">
+  <div class="meta-item"><div class="meta-label">Prep</div><div class="meta-val">3 min</div></div>
+  <div class="meta-item"><div class="meta-label">Cook</div><div class="meta-val">7 min</div></div>
+  <div class="meta-item"><div class="meta-label">Servings</div><div class="meta-val">1 (2 chaffles)</div></div>
+</div>
+
+<div class="macros">
+  <div class="macro-card"><div class="macro-num cal-num">280</div><div class="macro-unit">kcal</div><div class="macro-name">Calories</div></div>
+  <div class="macro-card"><div class="macro-num fat-num">20</div><div class="macro-unit">grams</div><div class="macro-name">Fat</div></div>
+  <div class="macro-card"><div class="macro-num pro-num">19</div><div class="macro-unit">grams</div><div class="macro-name">Protein</div></div>
+  <div class="macro-card"><div class="macro-num carb-num">3</div><div class="macro-unit">net grams</div><div class="macro-name">Net Carbs</div></div>
+</div>
+<p class="macros-sub">Per serving (2 mini chaffles, base recipe)</p>
+
+<h2>Equipment</h2>
+<div class="section-body">
+<p style="font-size: 0.85rem;">Mini waffle maker (Dash Mini, ~$15) — makes 4-inch chaffles ideal for sandwich-bread use. A full-size waffle iron works for larger pieces.</p>
+</div>
+
+<h2>Ingredients (Base Recipe)</h2>
+<div class="section-body">
+<ul class="ingredients">
+  <li><div class="ing-check"></div><div class="ing-amt">1 large</div><div class="ing-name">Egg<span class="ing-note">pasture-raised</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1/2 cup</div><div class="ing-name">Shredded mozzarella<span class="ing-note">block, shred fresh — pre-shredded contains cellulose</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 tbsp</div><div class="ing-name">Almond flour (optional, for crispiness)</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1/4 tsp</div><div class="ing-name">Garlic powder</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">Pinch</div><div class="ing-name">Salt</div></li>
+</ul>
+</div>
+
+<h2>Variations</h2>
+<div class="section-body">
+<ul class="ingredients">
+  <li><div class="ing-amt">Bacon Cheddar</div><div class="ing-name">Sub cheddar for mozzarella + 1 slice crumbled bacon. Excellent breakfast vehicle.</div></li>
+  <li><div class="ing-amt">Pizza</div><div class="ing-name">Add 1 tsp Italian seasoning + 1 tbsp tomato paste mixed in. Top with marinara + extra cheese, broil 1 min.</div></li>
+  <li><div class="ing-amt">Taco Shell</div><div class="ing-name">Base recipe; while warm, drape over a wooden spoon handle to form a shell shape. Fill with taco meat, cheese, sour cream.</div></li>
+  <li><div class="ing-amt">Everything Bagel</div><div class="ing-name">Add 1 tsp Everything Bagel seasoning before cooking. Trader Joe's blend is clean; verify no sugar in others.</div></li>
+</ul>
+</div>
+
+<h2>Instructions</h2>
+<div class="section-body">
+<ol class="steps">
+  <li>Preheat mini waffle maker. The Dash takes about 3 minutes to come to temp.</li>
+  <li>Whisk egg in a small bowl. Add mozzarella, almond flour, garlic powder, salt. Mix to combine.</li>
+  <li>Spoon HALF the mixture into the waffle maker. Close lid. Cook 3-4 minutes — go by golden-brown color, not the indicator light.</li>
+  <li>Carefully remove (use a fork at the edge). Repeat with remaining batter.</li>
+  <li>Let chaffles cool on a wire rack for 90 seconds — they crisp up significantly as they cool. Don't stack them while hot or they go soggy.</li>
+  <li>Use as sandwich bread, taco shell, pizza base, or pile with butter and eat plain.</li>
+</ol>
+</div>
+
+<div class="plan-fit">
+  <div class="plan-fit-label">DeLauer Plan Fit</div>
+  <strong>Versatile bread sub — fits any meal slot.</strong> Use 2 chaffles as a sandwich for bacon/egg/cheese, BLT with avocado, or burger bun. Pre-make a batch of 8 on Sunday, freeze between parchment, reheat in toaster.<br>
+  <strong>Meal 2 (4pm snack):</strong> 1 chaffle + butter + sliced cheese = quick fat hit during the eating window without breaking insulin discipline.
+</div>
+
+<div class="note">
+  <div class="note-label">Why this is clean</div>
+  Two real ingredients (egg + cheese) + optional spices. No commercial "keto bread mix" (most contain modified wheat starch + soybean oil + sweeteners). Block mozzarella shredded fresh — pre-shredded bagged cheese is coated with cellulose and potato starch as anti-caking agents.
+</div>
+
+<footer>
+  Savory Chaffles &nbsp;|&nbsp; <a href="index.html">← Back to Cookbook</a> &nbsp;|&nbsp; Cross-checked clean-keto 2026-05-30
+</footer>
+
+</body>
+</html>

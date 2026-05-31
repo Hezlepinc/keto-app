@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIY Keto Mayo — Recipe Card</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff; color: #1a1a1a; padding: 32px; max-width: 800px; margin: 0 auto; }
+header { border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; margin-bottom: 24px; }
+h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em; }
+.subtitle { font-size: 0.82rem; color: #666; margin-top: 4px; }
+.back { font-size: 0.75rem; color: #888; text-decoration: none; }
+.tags { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 12px; background: #f0f0f0; color: #555; }
+.tag-prep { background: #4a7aaa; color: #fff; }
+.tag-clean { background: #c8a040; color: #fff; }
+.macros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0 8px; }
+.macro-card { background: #fafafa; border: 1px solid #ddd; border-radius: 8px; padding: 14px; text-align: center; }
+.macro-num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.macro-unit { font-size: 0.7rem; color: #888; margin-top: 4px; }
+.macro-name { font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+.cal-num { color: #1a1a1a; } .fat-num { color: #c8a040; } .pro-num { color: #1a7a5a; } .carb-num { color: #6a4a8a; }
+.macros-sub { text-align: center; font-size: 0.75rem; color: #888; margin-bottom: 24px; font-style: italic; }
+.meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; font-size: 0.85rem; }
+.meta-item { background: #f5f5f5; padding: 10px 14px; border-radius: 6px; }
+.meta-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: #888; }
+.meta-val { margin-top: 2px; font-weight: 600; }
+h2 { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: #fff; background: #1a1a1a; padding: 6px 10px; margin-top: 28px; border-radius: 4px 4px 0 0; }
+.section-body { border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px; padding: 14px 18px; }
+.ingredients { list-style: none; }
+.ingredients li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; display: flex; gap: 10px; align-items: flex-start; }
+.ingredients li:last-child { border-bottom: none; }
+.ing-check { width: 14px; height: 14px; border: 1.5px solid #bbb; border-radius: 2px; flex-shrink: 0; margin-top: 4px; }
+.ing-amt { font-weight: 700; min-width: 110px; flex-shrink: 0; }
+.ing-name { flex: 1; }
+.ing-note { font-size: 0.72rem; color: #888; font-style: italic; display: block; margin-top: 2px; }
+.steps { counter-reset: step; list-style: none; }
+.steps li { counter-increment: step; padding: 10px 0 10px 40px; position: relative; font-size: 0.9rem; line-height: 1.5; border-bottom: 1px solid #f0f0f0; }
+.steps li:last-child { border-bottom: none; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 8px; width: 26px; height: 26px; background: #1a1a1a; color: #fff; border-radius: 50%; text-align: center; line-height: 26px; font-weight: 700; font-size: 0.75rem; }
+.plan-fit { background: #e8f5ee; border-left: 4px solid #1a7a5a; padding: 14px 18px; margin-top: 28px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.plan-fit-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #1a5a3a; margin-bottom: 4px; }
+.note { background: #fef9e6; border-left: 4px solid #c8a040; padding: 14px 18px; margin-top: 16px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+.note-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #8a6a20; margin-bottom: 4px; }
+footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #ddd; font-size: 0.72rem; color: #888; text-align: center; }
+footer a { color: #555; text-decoration: none; }
+@media print { body { padding: 20px; } .ing-check { display: none; } .back { display: none; } }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Cookbook</a>
+<header>
+  <h1>DIY Keto Mayo</h1>
+  <p class="subtitle">Immersion blender, 60 seconds, one jar. Replaces Primal Kitchen Avocado Mayo.</p>
+  <div class="tags">
+    <span class="tag tag-prep">DIY Batch Prep</span>
+    <span class="tag tag-clean">Clean as-written</span>
+    <span class="tag">2 jars yield</span>
+  </div>
+</header>
+
+<div class="meta">
+  <div class="meta-item"><div class="meta-label">Prep</div><div class="meta-val">2 min</div></div>
+  <div class="meta-item"><div class="meta-label">Active</div><div class="meta-val">60 seconds</div></div>
+  <div class="meta-item"><div class="meta-label">Yield</div><div class="meta-val">~1 cup (16 tbsp)</div></div>
+</div>
+
+<div class="macros">
+  <div class="macro-card"><div class="macro-num cal-num">125</div><div class="macro-unit">kcal</div><div class="macro-name">Calories</div></div>
+  <div class="macro-card"><div class="macro-num fat-num">14</div><div class="macro-unit">grams</div><div class="macro-name">Fat</div></div>
+  <div class="macro-card"><div class="macro-num pro-num">0.4</div><div class="macro-unit">grams</div><div class="macro-name">Protein</div></div>
+  <div class="macro-card"><div class="macro-num carb-num">0</div><div class="macro-unit">net grams</div><div class="macro-name">Net Carbs</div></div>
+</div>
+<p class="macros-sub">Per tablespoon</p>
+
+<h2>Ingredients</h2>
+<div class="section-body">
+<ul class="ingredients">
+  <li><div class="ing-check"></div><div class="ing-amt">1 large</div><div class="ing-name">Whole egg, room temperature<span class="ing-note">pasture-raised; room temp is critical for emulsion</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 cup</div><div class="ing-name">Avocado oil<span class="ing-note">Kirkland avocado oil; light olive oil also works (NOT EVOO — too bitter)</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 tbsp</div><div class="ing-name">Dijon mustard<span class="ing-note">helps emulsion stability; yellow works as backup</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 tbsp</div><div class="ing-name">Fresh lemon juice</div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1 tsp</div><div class="ing-name">Apple cider vinegar<span class="ing-note">Bragg's raw</span></div></li>
+  <li><div class="ing-check"></div><div class="ing-amt">1/2 tsp</div><div class="ing-name">Salt</div></li>
+</ul>
+</div>
+
+<h2>Instructions (Immersion Blender Method)</h2>
+<div class="section-body">
+<ol class="steps">
+  <li>Use a tall, narrow jar that fits your immersion blender head exactly (a wide-mouth pint mason jar works perfectly).</li>
+  <li>Crack the egg into the jar. Add Dijon, lemon juice, ACV, salt. Then pour avocado oil on top — it will float.</li>
+  <li>Insert the immersion blender all the way to the bottom of the jar so the head is over the egg. Don't lift yet.</li>
+  <li>Turn on full blast. Hold the blender at the bottom for 15-20 seconds — you'll see the mixture turn white and thick from the bottom up.</li>
+  <li>Once the bottom half is fully emulsified, SLOWLY raise the blender (about 5 seconds to reach the top) while still running.</li>
+  <li>Done. The mayo should be thick, pale yellow, glossy. Taste and adjust salt or lemon.</li>
+  <li>Lid the jar. Refrigerate. Use within 1 week (raw egg).</li>
+</ol>
+</div>
+
+<div class="plan-fit">
+  <div class="plan-fit-label">DIY Batch Prep Plan</div>
+  <strong>Sunday batch:</strong> double the recipe (2 eggs, 2 cups oil) → 2 mason jars. One jar for direct use, one becomes the base for the Ranch dressing recipe.<br>
+  <strong>Replaces:</strong> Primal Kitchen Avocado Mayo. Used in pan-seared salmon dill cream, crispy thighs sauce, ranch dressing.
+</div>
+
+<div class="note">
+  <div class="note-label">Why this beats store-bought</div>
+  Standard mayo brands use soybean or canola oil — both inflammatory seed oils flagged by DeLauer. Even "olive oil mayo" at the store typically blends 80% soybean oil + 20% olive. The DIY version is pure avocado oil + real egg + acid. Costs ~$2/jar vs $9 for Primal Kitchen.
+</div>
+
+<div class="note">
+  <div class="note-label">Emulsion troubleshooting</div>
+  If it breaks (looks like oily soup), don't toss. Crack a fresh egg into a new jar, blend it alone for 5 seconds, then SLOWLY drizzle in the broken mixture while blending. Saves the batch.
+</div>
+
+<footer>
+  DIY Keto Mayo &nbsp;|&nbsp; <a href="index.html">← Back to Cookbook</a> &nbsp;|&nbsp; Cross-checked clean-keto 2026-05-30
+</footer>
+
+</body>
+</html>

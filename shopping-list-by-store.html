@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keto Shopping List — By Store (Costco → Publix → Amazon)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff; color: #1a1a1a; padding: 32px; max-width: 1000px; margin: 0 auto; }
+
+  header { margin-bottom: 24px; border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; }
+  h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.01em; }
+  .subtitle { font-size: 0.82rem; color: #666; margin-top: 4px; }
+  .back { font-size: 0.75rem; color: #888; text-decoration: none; }
+
+  .intro { background: #fef9e6; border-left: 4px solid #c8a040; padding: 14px 18px; margin: 16px 0 28px; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
+  .intro strong { color: #8a6a20; }
+
+  .store-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 14px 16px;
+    color: #fff;
+    border-radius: 6px 6px 0 0;
+    margin-top: 32px;
+  }
+  .store-header h2 { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.01em; }
+  .store-header .priority { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.8; }
+  .store-header .count { margin-left: auto; font-size: 0.85rem; font-weight: 700; opacity: 0.9; }
+
+  .store-costco .store-header { background: #c0392b; }
+  .store-publix .store-header { background: #1f7a3f; }
+  .store-amazon .store-header { background: #c8a040; }
+
+  .store-notes {
+    font-size: 0.8rem;
+    color: #fff;
+    padding: 0 16px 14px;
+    opacity: 0.9;
+  }
+  .store-costco .store-notes { background: #c0392b; }
+  .store-publix .store-notes { background: #1f7a3f; }
+  .store-amazon .store-notes { background: #c8a040; }
+
+  .section-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    margin-bottom: 0;
+  }
+
+  .subsection-title {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #555;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #1a1a1a;
+    margin-bottom: 6px;
+  }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.82rem;
+  }
+  .item:last-child { border-bottom: none; }
+
+  .checkbox {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid #bbb;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 3px;
+    position: relative;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .item { cursor: pointer; transition: opacity 0.15s; user-select: none; }
+  .item:active { background: #f0f0f0; }
+  .item.checked { opacity: 0.4; }
+  .item.checked .checkbox { background: #1a7a5a; border-color: #1a7a5a; }
+  .item.checked .checkbox::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0px;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .item.checked .item-name, .item.checked .item-qty { text-decoration: line-through; }
+
+  .progress-bar {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .progress-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .progress-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #888; }
+  .progress-count { font-size: 1rem; font-weight: 800; color: #1a1a1a; min-width: 70px; }
+  .progress-track { flex: 1; height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden; min-width: 120px; }
+  .progress-fill { height: 100%; background: linear-gradient(to right, #1a7a5a, #2a9a6a); transition: width 0.3s; width: 0%; }
+  .reset-btn {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 7px 14px; background: transparent; border: 1px solid #ddd; border-radius: 6px;
+    cursor: pointer; color: #888; font-family: inherit;
+  }
+  .reset-btn:hover, .reset-btn:active { background: #fbe9e7; border-color: #c0392b; color: #c0392b; }
+  .per-store-progress {
+    margin-top: 10px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 0.78rem;
+    color: #555;
+  }
+  .per-store-progress span { display: inline-flex; align-items: center; gap: 5px; }
+  .per-store-progress .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .dot-costco { background: #c0392b; }
+  .dot-publix { background: #1f7a3f; }
+  .dot-amazon { background: #c8a040; }
+
+  .store-header-counter {
+    margin-left: auto;
+    background: rgba(255,255,255,0.18);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .item-body { flex: 1; }
+  .item-qty { font-weight: 700; color: #1a1a1a; }
+  .item-name { font-weight: 500; }
+  .item-note { font-size: 0.72rem; color: #888; font-style: italic; display: block; margin-top: 1px; }
+  .star { color: #c8a040; font-size: 0.75rem; margin-left: 2px; }
+
+  .summary {
+    background: #f5f5f5;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-top: 32px;
+    font-size: 0.85rem;
+  }
+  .summary h3 { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #555; margin-bottom: 10px; }
+  .summary ul { list-style: none; }
+  .summary li { padding: 4px 0; line-height: 1.5; }
+  .summary li::before { content: '→ '; color: #888; }
+
+  footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #ddd; font-size: 0.72rem; color: #888; text-align: center; }
+  footer a { color: #555; text-decoration: none; }
+
+  @media print {
+    body { padding: 15px; }
+    .store-header { page-break-before: always; margin-top: 0; }
+    .store-header:first-of-type { page-break-before: avoid; }
+  }
+
+  @media (max-width: 720px) {
+    .section-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← Cookbook</a>
+<header>
+  <h1>Keto Shopping List — By Store</h1>
+  <p class="subtitle">Costco (primary) → Publix (resource 2) → Amazon (resource 3) &nbsp;|&nbsp; <span class="star">★</span> = brand specificity matters</p>
+</header>
+
+<div class="intro">
+  <strong>Tap any row to check it off as you shop.</strong> Progress saves on your phone automatically. Order Amazon first (2-day delivery), then Costco for bulk, then Publix for gaps. Same items as the <a href="shopping-list.html">by-category list</a> — just regrouped for the trip.
+</div>
+
+<div class="progress-bar" id="progress-bar">
+  <div class="progress-row">
+    <span class="progress-label">Progress</span>
+    <span class="progress-count" id="progress-count">0 / 0</span>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <button class="reset-btn" id="reset-list">Reset</button>
+  </div>
+  <div class="per-store-progress">
+    <span><span class="dot dot-costco"></span> Costco: <strong id="count-costco">0/0</strong></span>
+    <span><span class="dot dot-publix"></span> Publix: <strong id="count-publix">0/0</strong></span>
+    <span><span class="dot dot-amazon"></span> Amazon: <strong id="count-amazon">0/0</strong></span>
+  </div>
+</div>
+
+<!-- ============ COSTCO ============ -->
+<div class="store-costco">
+  <div class="store-header">
+    <h2>Costco</h2>
+    <span class="priority">Primary — bulk &amp; staples</span>
+    <span class="count">~32 items</span>
+  </div>
+  <div class="store-notes">
+    Buy here in bulk. Most items will last multiple cooking cycles. Skip individual brands unless flagged ★.
+  </div>
+  <div class="section-grid">
+
+    <div>
+      <div class="subsection-title">Proteins</div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">3.5 lb</span> <span class="item-name">Chicken breasts</span>
+        <span class="item-note">organic Kirkland or Foster Farms bulk pack</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">12</span> <span class="item-name">Chicken thighs, bone-in skin-on</span>
+        <span class="item-note">family pack</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">2 lb</span> <span class="item-name">Chicken thighs, boneless skinless</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">12 oz</span> <span class="item-name">Wild salmon fillets <span class="star">★</span></span>
+        <span class="item-note">Kirkland frozen wild sockeye 2-pack ideal</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 lb</span> <span class="item-name">Wild Gulf shrimp <span class="star">★</span></span>
+        <span class="item-note">Kirkland frozen wild — NOT farmed Asian</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">2 lb</span> <span class="item-name">Grass-fed ground beef 80/20 <span class="star">★</span></span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1.5 lb</span> <span class="item-name">Ribeye (whole roast or steaks)</span>
+        <span class="item-note">slice thin at home; freeze 30 min first</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">18-ct</span> <span class="item-name">Organic eggs, pasture-raised</span>
+        <span class="item-note">Kirkland organic 24-pack works too</span>
+      </div></div>
+    </div>
+
+    <div>
+      <div class="subsection-title">Dairy</div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1.5 lb</span> <span class="item-name">Block mozzarella <span class="star">★</span></span>
+        <span class="item-note">shred at home — NOT pre-shredded</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 lb</span> <span class="item-name">Block sharp cheddar <span class="star">★</span></span>
+        <span class="item-note">Kirkland or Tillamook</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 wedge</span> <span class="item-name">Parmigiano-Reggiano</span>
+        <span class="item-note">grate fresh</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">3-pack</span> <span class="item-name">Philadelphia cream cheese <span class="star">★</span></span>
+        <span class="item-note">full fat blocks, ~1.5 lb total</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 quart</span> <span class="item-name">Heavy whipping cream</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 lb</span> <span class="item-name">Kerrygold grass-fed butter <span class="star">★</span></span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 large</span> <span class="item-name">Full-fat sour cream</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 tub</span> <span class="item-name">Fage 5% Greek yogurt <span class="star">★</span></span>
+        <span class="item-note">plain only</span>
+      </div></div>
+    </div>
+
+    <div>
+      <div class="subsection-title">Produce</div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">8 oz</span> <span class="item-name">Cremini mushrooms</span>
+        <span class="item-note">often in 8oz multi-packs</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bag</span> <span class="item-name">Garlic (peeled)</span>
+        <span class="item-note">large quantity needed across recipes</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bag</span> <span class="item-name">Yellow onions</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bag</span> <span class="item-name">Lemons</span>
+        <span class="item-note">6-8 ct organic bag</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 clamshell</span> <span class="item-name">Fresh raspberries or blackberries</span>
+        <span class="item-note">organic 2-pack</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 clamshell</span> <span class="item-name">Cherry tomatoes (garnish)</span>
+      </div></div>
+    </div>
+
+    <div>
+      <div class="subsection-title">Pantry &amp; Oils</div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">large bottle</span> <span class="item-name">Avocado oil <span class="star">★</span></span>
+        <span class="item-note">Kirkland</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">large bottle</span> <span class="item-name">Extra virgin olive oil</span>
+        <span class="item-note">Kirkland Italian</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bag</span> <span class="item-name">Almond flour <span class="star">★</span></span>
+        <span class="item-note">Kirkland Blue Diamond blanched fine grind</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Pure vanilla extract</span>
+        <span class="item-note">Kirkland large bottle — best value</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 roll</span> <span class="item-name">Parchment paper</span>
+        <span class="item-note">Kirkland large roll</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">3 packs</span> <span class="item-name">Bacon (if Kirkland has sugar-free uncured)</span>
+        <span class="item-note">otherwise grab at Publix or Amazon — verify sugar-free uncured nitrate-free</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">if available</span> <span class="item-name">Rao's Marinara</span>
+        <span class="item-note">3-pack sometimes; otherwise Publix</span>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ PUBLIX ============ -->
+<div class="store-publix">
+  <div class="store-header">
+    <h2>Publix</h2>
+    <span class="priority">Resource 2 — fresh produce, herbs, gap fillers</span>
+    <span class="count">~24 items</span>
+  </div>
+  <div class="store-notes">
+    Smaller quantities, fresh herbs, specialty produce that Costco doesn't carry in small amounts. Check the natural foods aisle for Primal Kitchen + Applegate.
+  </div>
+  <div class="section-grid">
+
+    <div>
+      <div class="subsection-title">Fresh Herbs &amp; Aromatics</div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small bunch</span> <span class="item-name">Fresh dill</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small pack</span> <span class="item-name">Fresh thyme</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bunch</span> <span class="item-name">Fresh parsley (Italian flat-leaf)</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small bunch</span> <span class="item-name">Fresh cilantro</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bunch</span> <span class="item-name">Green onions / scallions</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 (3-in) knob</span> <span class="item-name">Fresh ginger root</span>
+      </div></div>
+    </div>
+
+    <div>
+      <div class="subsection-title">Produce</div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">4 medium</span> <span class="item-name">Jalapeños</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">2 medium</span> <span class="item-name">Zucchini</span>
+        <span class="item-note">for zoodles — Costco bag too much</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 (14oz) bag</span> <span class="item-name">Coleslaw mix</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 head</span> <span class="item-name">Bibb lettuce</span>
+        <span class="item-note">for bulgogi wraps (optional)</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small head</span> <span class="item-name">Shredded lettuce (cheeseburger garnish)</span>
+      </div></div>
+    </div>
+
+    <div>
+      <div class="subsection-title">Meats — if Costco gaps</div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 lb</span> <span class="item-name">Ground pork</span>
+        <span class="item-note">if not at Costco</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">16 slices</span> <span class="item-name">Applegate uncured pepperoni <span class="star">★</span></span>
+        <span class="item-note">natural foods section</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">backup</span> <span class="item-name">Applegate sugar-free uncured bacon <span class="star">★</span></span>
+        <span class="item-note">if Costco didn't have clean bacon</span>
+      </div></div>
+    </div>
+
+    <div>
+      <div class="subsection-title">Condiments &amp; Pantry</div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Rice vinegar, UNSEASONED <span class="star">★</span></span>
+        <span class="item-note">NOT "seasoned" — that has sugar</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">3 cans</span> <span class="item-name">Tomato paste, no added sugar</span>
+        <span class="item-note">1 for butter chicken + 2 for DIY ketchup batches</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Yellow mustard (no sugar)</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 jar</span> <span class="item-name">Dijon mustard (no sugar)</span>
+        <span class="item-note">for Caesar dressing &amp; mayo</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 tube/tin</span> <span class="item-name">Anchovy paste OR oil-packed filets <span class="star">★</span></span>
+        <span class="item-note">for Caesar dressing</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Apple cider vinegar (Bragg's) <span class="star">★</span></span>
+        <span class="item-note">raw/unfiltered; if low, restock</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Worcestershire sauce</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small jar</span> <span class="item-name">Ground allspice</span>
+        <span class="item-note">for DIY ketchup</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small jar</span> <span class="item-name">Ground cloves</span>
+        <span class="item-note">for DIY ketchup (pinch)</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small jar</span> <span class="item-name">Ground cinnamon (optional)</span>
+        <span class="item-note">for DIY ketchup &amp; BBQ</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small bottle</span> <span class="item-name">Toasted sesame oil (dark) <span class="star">★</span></span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 jar</span> <span class="item-name">Pickles, no sugar added</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small jar</span> <span class="item-name">Capers (optional)</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle (optional)</span> <span class="item-name">Dry white wine</span>
+        <span class="item-note">for scampi — or sub bone broth</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small bag</span> <span class="item-name">Unsweetened cocoa powder</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 can</span> <span class="item-name">Baking powder</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 small jar</span> <span class="item-name">Toasted sesame seeds</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 box</span> <span class="item-name">Toothpicks</span>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ AMAZON ============ -->
+<div class="store-amazon">
+  <div class="store-header">
+    <h2>Amazon</h2>
+    <span class="priority">Resource 3 — clean-keto specialty items</span>
+    <span class="count">~7 items</span>
+  </div>
+  <div class="store-notes">
+    Items that are hard to find clean locally. Order ahead — these are the "no substitutes" items. Fewer items now that you're making your own ketchup &amp; mayo.
+  </div>
+  <div class="section-grid">
+
+    <div>
+      <div class="subsection-title">Sweeteners (NEVER substitute)</div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bag</span> <span class="item-name">Lakanto Powdered Monk Fruit <span class="star">★</span></span>
+        <span class="item-note">or Swerve Confectioners. NEVER buy "sugar-free powdered sweetener" generic — check for sucralose/maltitol</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bag (optional)</span> <span class="item-name">Lakanto Golden Monk Fruit <span class="star">★</span></span>
+        <span class="item-note">brown-sugar mimic — for bulgogi marinade</span>
+      </div></div>
+    </div>
+
+    <div>
+      <div class="subsection-title">Clean Condiments</div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">making own</span> <span class="item-name">Ketchup &amp; Mayo — DIY batch prep</span>
+        <span class="item-note">all ingredients on Costco + Publix lists; see batch-prep notes at bottom</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">1 bottle</span> <span class="item-name">Coconut aminos (Bragg's or Coconut Secret) <span class="star">★</span></span>
+        <span class="item-note">sometimes Costco; otherwise reliable on Amazon</span>
+      </div></div>
+    </div>
+
+    <div>
+      <div class="subsection-title">Specialty Pantry</div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">2 boxes</span> <span class="item-name">Kettle &amp; Fire Chicken Bone Broth <span class="star">★</span></span>
+        <span class="item-note">Costco sometimes stocks; Amazon reliable</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">backup</span> <span class="item-name">Pederson's sugar-free uncured bacon <span class="star">★</span></span>
+        <span class="item-note">if Costco AND Publix didn't have clean bacon</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">optional</span> <span class="item-name">Gochugaru (Korean red pepper flakes)</span>
+        <span class="item-note">bulgogi authenticity; sub regular red pepper flakes</span>
+      </div></div>
+      <div class="item"><div class="checkbox"></div><div class="item-body">
+        <span class="item-qty">optional</span> <span class="item-name">Ghee jar</span>
+        <span class="item-note">if not at Publix; or sub butter</span>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="summary">
+  <h3>Shopping Trip Strategy</h3>
+  <ul>
+    <li><strong>Order Amazon first</strong> — Lakanto Powdered Monk Fruit + Kettle &amp; Fire broth. 2-day delivery. Don't shop until they arrive.</li>
+    <li><strong>Costco is the big trip</strong> — meats, dairy, eggs, oils, almond flour, vanilla. One Saturday hit covers 2-3 weeks of these recipes.</li>
+    <li><strong>Publix mid-week</strong> — fresh herbs, jalapeños, zucchini, coleslaw + the new DIY-condiment items (extra tomato paste, Dijon, anchovy paste, allspice/cloves/cinnamon).</li>
+    <li><strong>Spices &amp; dried herbs</strong> — check your spice rack against the <a href="shopping-list.html#spices">spice list</a>. Most carry over from the master grocery list.</li>
+    <li><strong>The "have these already" check</strong> — hot sauce, salt, MCT oil, coconut oil, sparkling water — from the master DeLauer list.</li>
+  </ul>
+  <h3 style="margin-top: 22px;">DIY Batch Prep (Sunday afternoon, ~30 min, fills your 16 mason jars)</h3>
+  <ul>
+    <li><strong>Mayo</strong> — egg + avocado oil + Dijon + ACV + lemon. Immersion blender. 60 sec. 2 jars.</li>
+    <li><strong>Ketchup</strong> — tomato paste + ACV + monk fruit + allspice/cloves/cinnamon. Simmer 10 min. 2 jars.</li>
+    <li><strong>Ranch</strong> — mayo + sour cream + heavy cream + ACV + dried dill/parsley/chives + garlic/onion powder. Whisk. 3 min. 2 jars.</li>
+    <li><strong>Caesar</strong> — egg yolk + avocado oil + lemon + anchovy paste + garlic + Dijon + Parmesan + pepper. Immersion blender. 5 min. 2 jars.</li>
+    <li><strong>Homemade ranch seasoning</strong> (dry) — dill + parsley + chives + garlic/onion powder + salt + pepper. Mix. 2 min. 1 jar.</li>
+    <li><strong>Optional</strong> — BBQ sauce, chimichurri, garlic aioli, sugar-free teriyaki. Same kitchen session for a full clean-keto condiment library.</li>
+  </ul>
+</div>
+
+<footer>
+  Shopping List By Store &nbsp;|&nbsp; <a href="index.html">← Cookbook</a> &nbsp;|&nbsp; <a href="shopping-list.html">By-category version</a> &nbsp;|&nbsp; Master grocery list &nbsp;|&nbsp; Updated 2026-05-30
+</footer>
+
+<script>
+(function() {
+  var STORAGE_KEY = 'keto-shop-by-store';
+
+  function hash(s) {
+    var h = 0;
+    for (var i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    return h.toString(36);
+  }
+  function getState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+    catch(e) { return {}; }
+  }
+  function setState(s) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch(e) {}
+  }
+
+  var stores = ['costco', 'publix', 'amazon'];
+  var itemsByStore = {};
+  stores.forEach(function(name) {
+    var container = document.querySelector('.store-' + name);
+    itemsByStore[name] = container ? Array.from(container.querySelectorAll('.item')) : [];
+  });
+  var allItems = stores.reduce(function(acc, s) { return acc.concat(itemsByStore[s]); }, []);
+  var state = getState();
+
+  allItems.forEach(function(item) {
+    var key = hash((item.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 200));
+    item.dataset.key = key;
+    if (state[key]) item.classList.add('checked');
+    item.addEventListener('click', function(e) {
+      if (e.target.tagName === 'A') return;
+      var checked = item.classList.toggle('checked');
+      var s = getState();
+      if (checked) s[key] = 1; else delete s[key];
+      setState(s);
+      update();
+    });
+  });
+
+  function countChecked(items) {
+    return items.filter(function(i) { return i.classList.contains('checked'); }).length;
+  }
+
+  function update() {
+    var totalAll = allItems.length;
+    var doneAll = countChecked(allItems);
+    var pct = totalAll ? (doneAll / totalAll * 100) : 0;
+    var c = document.getElementById('progress-count');
+    var f = document.getElementById('progress-fill');
+    if (c) c.textContent = doneAll + ' / ' + totalAll;
+    if (f) f.style.width = pct.toFixed(1) + '%';
+
+    stores.forEach(function(name) {
+      var el = document.getElementById('count-' + name);
+      var total = itemsByStore[name].length;
+      var done = countChecked(itemsByStore[name]);
+      if (el) el.textContent = done + '/' + total;
+      var headerCounter = document.querySelector('.store-' + name + ' .count');
+      if (headerCounter) headerCounter.textContent = done + ' / ' + total + ' checked';
+    });
+  }
+  update();
+
+  var resetBtn = document.getElementById('reset-list');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function() {
+      if (confirm('Clear all checked items?')) {
+        try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+        allItems.forEach(function(i) { i.classList.remove('checked'); });
+        update();
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

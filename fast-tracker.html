@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fast Tracker — Live</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d0d0f; color: #e8e8e8; padding: 20px; max-width: 700px; margin: 0 auto; padding-bottom: 60px; }
+
+  header { text-align: center; margin-bottom: 20px; }
+  h1 { font-size: 1.3rem; font-weight: 800; color: #fff; letter-spacing: -0.01em; }
+  .subtitle { font-size: 0.75rem; color: #666; margin-top: 4px; }
+
+  /* Live timer */
+  .timer-card {
+    background: linear-gradient(160deg, #14141a, #0f0f14);
+    border: 1px solid #2a2a3a;
+    border-radius: 16px;
+    padding: 28px 20px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .timer-elapsed { font-size: 3.2rem; font-weight: 800; color: #fff; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .timer-unit { font-size: 0.7rem; color: #666; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 8px; }
+  .timer-phase { font-size: 1rem; font-weight: 700; margin-top: 16px; padding: 6px 16px; border-radius: 20px; display: inline-block; }
+  .timer-since { font-size: 0.72rem; color: #555; margin-top: 12px; }
+
+  .phase-fasting { background: #1a2a4a; color: #6aaae0; }
+  .phase-deep { background: #2a1a4a; color: #a080e0; }
+  .phase-peak { background: #1a3a2a; color: #5ad080; }
+  .phase-notstarted { background: #2a2a2a; color: #888; }
+
+  /* Start control */
+  .start-control {
+    background: #14141a;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .start-control label { font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 8px; }
+  .start-control input { background: #0a0a0d; border: 1px solid #333; color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-family: inherit; width: 100%; max-width: 280px; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+  .btn { font-size: 0.8rem; font-weight: 700; padding: 9px 18px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; }
+  .btn-primary { background: #2a6a4a; color: #fff; }
+  .btn-secondary { background: #1a1a22; color: #aaa; border: 1px solid #333; }
+  .btn-reset { background: transparent; color: #a05050; border: 1px solid #4a2a2a; }
+
+  /* Section headers */
+  h2 { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; color: #666; margin-top: 28px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #1e1e26; }
+
+  /* Milestones */
+  .milestone { display: flex; align-items: center; gap: 14px; padding: 12px 14px; background: #131318; border: 1px solid #1e1e26; border-radius: 10px; margin-bottom: 8px; transition: all 0.3s; }
+  .milestone.passed { border-color: #2a4a3a; background: #0f1a14; }
+  .milestone.current { border-color: #4a6aaa; background: #131a2a; box-shadow: 0 0 16px rgba(74,106,170,0.2); }
+  .ms-mark { width: 44px; font-size: 0.95rem; font-weight: 800; color: #888; flex-shrink: 0; }
+  .milestone.passed .ms-mark { color: #5ad080; }
+  .milestone.current .ms-mark { color: #6aaae0; }
+  .ms-body { flex: 1; }
+  .ms-time { font-size: 0.7rem; color: #666; font-weight: 600; }
+  .ms-label { font-size: 0.88rem; color: #ccc; font-weight: 600; margin-top: 1px; }
+  .ms-detail { font-size: 0.74rem; color: #777; margin-top: 2px; line-height: 1.4; }
+  .ms-check { font-size: 1.2rem; }
+
+  .decision { border-color: #5a4a1a !important; }
+  .decision.current { background: #1a160a !important; }
+  .decision-badge { font-size: 0.6rem; background: #4a3a1a; color: #ccaa55; padding: 2px 7px; border-radius: 4px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 8px; }
+
+  /* Electrolyte tracker */
+  .elec-card { background: #131318; border: 1px solid #1e1e26; border-radius: 10px; padding: 14px; margin-bottom: 8px; }
+  .elec-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #1a1a20; }
+  .elec-row:last-child { border-bottom: none; }
+  .elec-check { width: 22px; height: 22px; border: 2px solid #444; border-radius: 6px; flex-shrink: 0; cursor: pointer; position: relative; transition: all 0.15s; }
+  .elec-check.done { background: #2a6a4a; border-color: #2a6a4a; }
+  .elec-check.done::after { content: ''; position: absolute; left: 6px; top: 2px; width: 6px; height: 11px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
+  .elec-body { flex: 1; }
+  .elec-name { font-size: 0.85rem; font-weight: 600; color: #ddd; }
+  .elec-detail { font-size: 0.72rem; color: #777; margin-top: 1px; }
+  .elec-reset { font-size: 0.68rem; color: #666; background: none; border: none; cursor: pointer; text-decoration: underline; margin-top: 8px; font-family: inherit; }
+
+  /* Allowed / Not allowed */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .allow-card { border-radius: 10px; padding: 14px; font-size: 0.78rem; line-height: 1.7; }
+  .allow-yes { background: #0f1a12; border: 1px solid #1e3a2a; }
+  .allow-no { background: #1a0f0f; border: 1px solid #3a1e1e; }
+  .allow-title { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .allow-yes .allow-title { color: #5ad080; }
+  .allow-no .allow-title { color: #e07a7a; }
+  .allow-card div { color: #aaa; }
+  .flag { color: #ccaa55 !important; }
+
+  /* Stop signals — always prominent */
+  .stop-card { background: #1a0d0d; border: 2px solid #5a2020; border-radius: 12px; padding: 16px; margin-bottom: 8px; }
+  .stop-title { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #e05555; margin-bottom: 10px; }
+  .stop-list { list-style: none; }
+  .stop-list li { font-size: 0.82rem; color: #dd8888; padding: 5px 0 5px 24px; position: relative; line-height: 1.4; }
+  .stop-list li::before { content: '🔴'; position: absolute; left: 0; font-size: 0.7rem; top: 6px; }
+  .stop-ok { font-size: 0.76rem; color: #888; margin-top: 12px; padding-top: 10px; border-top: 1px solid #2a1a1a; line-height: 1.5; }
+  .stop-ok strong { color: #aaa; }
+
+  /* Break protocol */
+  .break-step { display: flex; gap: 14px; align-items: flex-start; background: #0f1a14; border: 1px solid #1e3a2a; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+  .break-num { width: 26px; height: 26px; border-radius: 50%; background: #1a4a2a; color: #5ad080; font-size: 0.78rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .break-body { flex: 1; font-size: 0.82rem; color: #bbb; line-height: 1.5; }
+  .break-wait { font-size: 0.68rem; color: #5ad080; background: #0a1f0a; border-radius: 4px; padding: 2px 8px; margin-top: 6px; display: inline-block; font-weight: 700; }
+
+  footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid #1e1e26; font-size: 0.68rem; color: #555; text-align: center; line-height: 1.6; }
+  footer a { color: #777; text-decoration: none; }
+
+  .disclaimer { font-size: 0.68rem; color: #666; background: #14140a; border: 1px solid #2a2a1a; border-radius: 8px; padding: 12px; margin-top: 16px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Fast Tracker</h1>
+  <p class="subtitle">DeLauer extended-fast protocol · Live timer</p>
+</header>
+
+<div class="timer-card">
+  <div class="timer-elapsed" id="elapsed">--:--</div>
+  <div class="timer-unit" id="elapsed-unit">not started</div>
+  <div class="timer-phase phase-notstarted" id="phase">Set start time below</div>
+  <div class="timer-since" id="since"></div>
+</div>
+
+<div class="start-control">
+  <label for="start-input">Fast Start (last bite of food)</label>
+  <input type="datetime-local" id="start-input">
+  <div class="btn-row">
+    <button class="btn btn-primary" id="set-start">Set / Update Start</button>
+    <button class="btn btn-secondary" id="set-now">Start Now</button>
+    <button class="btn btn-reset" id="reset-fast">Clear</button>
+  </div>
+</div>
+
+<h2>Milestones</h2>
+<div id="milestones"></div>
+
+<h2>Electrolytes — Non-Negotiable (tap to check off, resets each new dose)</h2>
+<div class="elec-card">
+  <div class="elec-row"><div class="elec-check" data-elec="sodium"></div><div class="elec-body"><div class="elec-name">Sodium 3,000–5,000 mg/day</div><div class="elec-detail">Salt water (¼ tsp pink salt in water) + bone broth. Salt MORE than feels normal.</div></div></div>
+  <div class="elec-row"><div class="elec-check" data-elec="potassium"></div><div class="elec-body"><div class="elec-name">Potassium 1,000–3,500 mg/day</div><div class="elec-detail">Bone broth, LMNT if you have it.</div></div></div>
+  <div class="elec-row"><div class="elec-check" data-elec="magnesium"></div><div class="elec-body"><div class="elec-name">Magnesium 300–400 mg (evening)</div><div class="elec-detail">Magnesium glycinate before bed. Prevents cramps.</div></div></div>
+  <div class="elec-row"><div class="elec-check" data-elec="broth"></div><div class="elec-body"><div class="elec-name">Bone broth — 1–2 cups today</div><div class="elec-detail">Kettle &amp; Fire. Your lifeline. Doesn't meaningfully break the fast.</div></div></div>
+  <button class="elec-reset" id="elec-reset">↺ Reset checkboxes for next dose / new day</button>
+</div>
+
+<h2>Allowed vs Not Allowed</h2>
+<div class="two-col">
+  <div class="allow-card allow-yes">
+    <div class="allow-title">✓ Allowed</div>
+    <div>Black coffee<br>Green tea<br>Water (lots)<br>Sparkling water (plain)<br>Bone broth (1–2 cups)<br>ACV in water<br>Electrolytes (zero sugar)</div>
+  </div>
+  <div class="allow-card allow-no">
+    <div class="allow-title">✗ Breaks the Fast</div>
+    <div>MCT oil <span style="color:#666;">(OK in 16:8, not here)</span><br>Heavy cream<br>Any sweetener (even erythritol)<br>Food of any kind<br><span class="flag">⚠ 5-Hour Energy — see note</span></div>
+  </div>
+</div>
+
+<div class="disclaimer">
+  <strong style="color:#ccaa55;">5-Hour Energy note:</strong> ~4 cal, won't break the fast metabolically. BUT it's sweetened with sucralose — the sweetener you reacted to this morning — and can trigger a small insulin response. Black coffee does the same caffeine job clean. If you have it, watch your stomach and treat it as the one "dirty" input of the fast.
+</div>
+
+<h2>🔴 Stop the Fast NOW If…</h2>
+<div class="stop-card">
+  <ul class="stop-list">
+    <li>Dizziness that doesn't resolve after salt water + sitting</li>
+    <li>Extreme weakness / graying out when standing</li>
+    <li>Sharp headache electrolytes don't fix in 20 min</li>
+    <li>Heart palpitations or irregular beat</li>
+    <li>Confusion or disorientation</li>
+  </ul>
+  <div class="stop-ok"><strong>Normal — push through:</strong> hunger waves (pass in minutes), mild headache (electrolytes fix it), boredom, mildly cold hands. No ego — break early if a red signal hits. Breaking the fast is never failure.</div>
+</div>
+
+<h2>Breaking the Fast (matters as much as the fast)</h2>
+<div class="break-step"><div class="break-num">1</div><div class="break-body">1 cup bone broth first.<div class="break-wait">WAIT 20–30 MIN</div></div></div>
+<div class="break-step"><div class="break-num">2</div><div class="break-body">Something small &amp; gentle — 2–3 boiled eggs, a few oz salmon, or ½ avocado.<div class="break-wait">WAIT 1 HOUR</div></div></div>
+<div class="break-step"><div class="break-num">3</div><div class="break-body">Then a normal keto meal. Never break a long fast with a big fatty meal — cramps and nausea.</div></div>
+
+<h2>No Training</h2>
+<div class="elec-card" style="font-size:0.82rem; color:#bbb; line-height:1.6;">
+  Walking only — actually helps. No WOD, no lifting, no metcon during an extended fast in adaptation phase. Ease back in the day after you break.
+</div>
+
+<footer>
+  Fast Tracker · DeLauer extended-fast protocol<br>
+  Target: aim 48h, stop earlier on any red signal, extend to 72h only if genuinely strong at the 48h mark.<br>
+  Not medical advice. Listen to your body over any clock.
+</footer>
+
+<script>
+(function() {
+  var KEY_START = 'fast-start-time';
+  var KEY_ELEC = 'fast-elec-state';
+
+  var MILESTONES = [
+    { h: 0,  label: 'Fast begins', detail: 'Last bite of food. Start water + electrolytes.' },
+    { h: 12, label: 'Glycogen depleting', detail: 'Ketones rising. Hunger may peak here — it passes.' },
+    { h: 24, label: 'Decision Point #1', detail: 'Deep ketosis, HGH climbing. Stop here for a solid 24h, or continue.', decision: true },
+    { h: 36, label: 'Peak clarity zone', detail: 'Most people feel sharpest here. Keep electrolytes up — cramps can hit.' },
+    { h: 48, label: 'Decision Point #2', detail: 'Stop here, or commit to 72 only if genuinely strong. No ego.', decision: true },
+    { h: 72, label: 'Break the fast', detail: 'Max autophagy / HGH benefit. Follow the break protocol below.' }
+  ];
+
+  var startInput = document.getElementById('start-input');
+  var elapsedEl = document.getElementById('elapsed');
+  var unitEl = document.getElementById('elapsed-unit');
+  var phaseEl = document.getElementById('phase');
+  var sinceEl = document.getElementById('since');
+  var msContainer = document.getElementById('milestones');
+
+  function getStart() {
+    var v = localStorage.getItem(KEY_START);
+    return v ? parseInt(v, 10) : null;
+  }
+  function setStart(ms) {
+    localStorage.setItem(KEY_START, String(ms));
+    render();
+  }
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function toLocalInputValue(ms) {
+    var d = new Date(ms);
+    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+
+  function fmtSince(ms) {
+    var d = new Date(ms);
+    var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    var h = d.getHours(); var ampm = h >= 12 ? 'PM' : 'AM'; var h12 = h % 12 || 12;
+    return 'Started ' + days[d.getDay()] + ' ' + h12 + ':' + pad(d.getMinutes()) + ' ' + ampm;
+  }
+
+  function buildMilestones() {
+    msContainer.innerHTML = '';
+    MILESTONES.forEach(function(m, i) {
+      var div = document.createElement('div');
+      div.className = 'milestone' + (m.decision ? ' decision' : '');
+      div.dataset.idx = i;
+      var badge = m.decision ? '<span class="decision-badge">decide</span>' : '';
+      div.innerHTML =
+        '<div class="ms-mark">' + m.h + 'h</div>' +
+        '<div class="ms-body"><div class="ms-time" data-clock="'+i+'"></div>' +
+        '<div class="ms-label">' + m.label + badge + '</div>' +
+        '<div class="ms-detail">' + m.detail + '</div></div>' +
+        '<div class="ms-check" data-check="'+i+'"></div>';
+      msContainer.appendChild(div);
+    });
+  }
+
+  function render() {
+    var start = getStart();
+    if (start) startInput.value = toLocalInputValue(start);
+
+    if (!start) {
+      elapsedEl.textContent = '--:--';
+      unitEl.textContent = 'not started';
+      phaseEl.textContent = 'Set start time below';
+      phaseEl.className = 'timer-phase phase-notstarted';
+      sinceEl.textContent = '';
+      document.querySelectorAll('.milestone').forEach(function(el){ el.classList.remove('passed','current'); });
+      document.querySelectorAll('[data-clock]').forEach(function(el){ el.textContent=''; });
+      document.querySelectorAll('[data-check]').forEach(function(el){ el.textContent=''; });
+      return;
+    }
+
+    var now = Date.now();
+    var elapsedMs = now - start;
+    var elapsedH = elapsedMs / 3600000;
+    var hh = Math.floor(elapsedMs / 3600000);
+    var mm = Math.floor((elapsedMs % 3600000) / 60000);
+
+    if (elapsedMs < 0) {
+      elapsedEl.textContent = 'soon';
+      unitEl.textContent = 'starts in ' + Math.abs(Math.round(elapsedH*10)/10) + 'h';
+      phaseEl.textContent = 'Scheduled';
+      phaseEl.className = 'timer-phase phase-notstarted';
+    } else {
+      elapsedEl.textContent = pad(hh) + ':' + pad(mm);
+      unitEl.textContent = 'hours : minutes fasted';
+      var phase, cls;
+      if (elapsedH < 12) { phase = 'Early Fast'; cls = 'phase-fasting'; }
+      else if (elapsedH < 24) { phase = 'Building Ketosis'; cls = 'phase-fasting'; }
+      else if (elapsedH < 48) { phase = 'Deep Ketosis'; cls = 'phase-deep'; }
+      else { phase = 'Peak Autophagy'; cls = 'phase-peak'; }
+      phaseEl.textContent = phase + ' · ' + (Math.round(elapsedH*10)/10) + 'h';
+      phaseEl.className = 'timer-phase ' + cls;
+    }
+    sinceEl.textContent = fmtSince(start);
+
+    // milestone clocks + states
+    var currentSet = false;
+    MILESTONES.forEach(function(m, i) {
+      var msTime = start + m.h * 3600000;
+      var d = new Date(msTime);
+      var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      var h = d.getHours(); var ampm = h >= 12 ? 'PM' : 'AM'; var h12 = h % 12 || 12;
+      var clockEl = document.querySelector('[data-clock="'+i+'"]');
+      if (clockEl) clockEl.textContent = days[d.getDay()] + ' ' + h12 + ':' + pad(d.getMinutes()) + ' ' + ampm;
+
+      var msEl = msContainer.querySelector('.milestone[data-idx="'+i+'"]');
+      var checkEl = document.querySelector('[data-check="'+i+'"]');
+      msEl.classList.remove('passed','current');
+      var nextH = (i < MILESTONES.length - 1) ? MILESTONES[i+1].h : Infinity;
+      if (elapsedH >= m.h && elapsedH < nextH) {
+        msEl.classList.add('current');
+        if (checkEl) checkEl.textContent = '▶';
+      } else if (elapsedH >= m.h) {
+        msEl.classList.add('passed');
+        if (checkEl) checkEl.textContent = '✓';
+      } else {
+        if (checkEl) checkEl.textContent = '';
+      }
+    });
+  }
+
+  buildMilestones();
+
+  // default the input to 6pm today if nothing set
+  if (!getStart()) {
+    var d = new Date();
+    d.setHours(18,0,0,0);
+    startInput.value = toLocalInputValue(d.getTime());
+  }
+
+  document.getElementById('set-start').addEventListener('click', function() {
+    if (startInput.value) {
+      var ms = new Date(startInput.value).getTime();
+      if (!isNaN(ms)) setStart(ms);
+    }
+  });
+  document.getElementById('set-now').addEventListener('click', function() {
+    setStart(Date.now());
+  });
+  document.getElementById('reset-fast').addEventListener('click', function() {
+    if (confirm('Clear the fast timer?')) {
+      localStorage.removeItem(KEY_START);
+      render();
+    }
+  });
+
+  // Electrolyte checkboxes
+  function getElec() {
+    try { return JSON.parse(localStorage.getItem(KEY_ELEC) || '{}'); } catch(e) { return {}; }
+  }
+  function setElec(s) { localStorage.setItem(KEY_ELEC, JSON.stringify(s)); }
+  var elecState = getElec();
+  document.querySelectorAll('.elec-check').forEach(function(box) {
+    var k = box.dataset.elec;
+    if (elecState[k]) box.classList.add('done');
+    box.addEventListener('click', function() {
+      var on = box.classList.toggle('done');
+      var s = getElec();
+      if (on) s[k] = 1; else delete s[k];
+      setElec(s);
+    });
+  });
+  document.getElementById('elec-reset').addEventListener('click', function() {
+    localStorage.removeItem(KEY_ELEC);
+    document.querySelectorAll('.elec-check').forEach(function(b){ b.classList.remove('done'); });
+  });
+
+  render();
+  setInterval(render, 1000 * 30); // update every 30s
+})();
+</script>
+
+</body>
+</html>

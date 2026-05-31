@@ -27,8 +27,8 @@
 
   .recipe {
     display: grid;
-    grid-template-columns: 1fr 80px 80px 100px 80px;
-    gap: 14px;
+    grid-template-columns: 1fr 64px 64px 84px 66px 58px;
+    gap: 12px;
     padding: 12px 16px;
     border-bottom: 1px solid #f0f0f0;
     align-items: center;
@@ -46,11 +46,12 @@
   .recipe-macro { font-size: 0.8rem; text-align: right; font-weight: 600; }
   .recipe-carb { color: #6a4a8a; }
   .recipe-cal { color: #555; }
+  .recipe-cost { font-size: 0.85rem; text-align: right; font-weight: 800; color: #15602f; }
 
   .header-row {
     display: grid;
-    grid-template-columns: 1fr 80px 80px 100px 80px;
-    gap: 14px;
+    grid-template-columns: 1fr 64px 64px 84px 66px 58px;
+    gap: 12px;
     padding: 8px 16px;
     background: #1a1a1a;
     color: #fff;
@@ -60,6 +61,19 @@
     font-weight: 700;
   }
   .header-row > div:nth-child(n+3) { text-align: right; }
+
+  /* Mobile / portrait: collapse to Recipe name + Cost only */
+  @media (max-width: 600px) {
+    .header-row { display: none; }
+    .recipe {
+      grid-template-columns: 1fr auto !important;
+      gap: 10px;
+      padding-left: 46px !important;
+    }
+    .recipe-meal, .recipe-time, .recipe-cal, .recipe-carb { display: none; }
+    .recipe-name { font-size: 0.92rem; }
+    .recipe-cost { font-size: 0.95rem; }
+  }
 
   .legend { margin-top: 24px; font-size: 0.75rem; color: #666; display: flex; gap: 24px; flex-wrap: wrap; }
   .legend-tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 10px; border-radius: 12px; color: #fff; }
@@ -110,7 +124,7 @@
 <div class="section-intro">Highest-cal, highest-fat options. Refuels from fasted training, anchors the day.</div>
 <div class="recipe-list">
   <div class="header-row">
-    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal / Serving</div><div>Net Carbs</div>
+    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal</div><div>Carbs</div><div>Cost</div>
   </div>
   <a class="recipe" href="almond-flour-pancakes.html">
     <div class="recipe-name">Almond Flour Pancakes</div>
@@ -132,7 +146,7 @@
 <div class="section-intro">Restaurant-quality protein-and-fat anchors. Pair with sautéed greens or a salad.</div>
 <div class="recipe-list">
   <div class="header-row">
-    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal / Serving</div><div>Net Carbs</div>
+    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal</div><div>Carbs</div><div>Cost</div>
   </div>
   <a class="recipe" href="fathead-pizza.html">
     <div class="recipe-name">Fathead Pizza</div>
@@ -217,7 +231,7 @@
 <div class="section-intro">Replaces Primal Kitchen products + Hidden Valley packets. ~30 min total Sunday session fills your mason jars. Each is &lt;0.5g net carbs per tbsp.</div>
 <div class="recipe-list">
   <div class="header-row">
-    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal / Serving</div><div>Net Carbs</div>
+    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal</div><div>Carbs</div><div>Cost</div>
   </div>
   <a class="recipe" href="keto-mayo.html">
     <div class="recipe-name">DIY Keto Mayo (base for ranch, dips, sauces)</div>
@@ -260,7 +274,7 @@
 <div class="section-intro">Sweet-craving release valve. 1-2 fat bombs at Meal 3 or post-WOD.</div>
 <div class="recipe-list">
   <div class="header-row">
-    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal / Serving</div><div>Net Carbs</div>
+    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal</div><div>Carbs</div><div>Cost</div>
   </div>
   <a class="recipe" href="chocolate-cheesecake-fat-bombs.html">
     <div class="recipe-name">Chocolate Cheesecake Fat Bombs</div>
@@ -300,8 +314,9 @@
     box-shadow: 0 -4px 16px rgba(0,0,0,0.18); font-size: 0.85rem;
   }
   .plan-tray.show { display: flex; }
-  .plan-tray .ct { font-weight: 800; }
-  .plan-tray .names { flex: 1; font-size: 0.72rem; opacity: 0.85; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .plan-tray .ct { font-weight: 800; white-space: nowrap; }
+  .plan-tray .cost { font-weight: 800; color: #b8eccb; font-size: 0.95rem; white-space: nowrap; }
+  .plan-tray .names { flex: 1; font-size: 0.72rem; opacity: 0.8; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; min-width: 0; }
   .plan-tray a.build { background: #fff; color: #15602f; font-weight: 800; padding: 8px 14px; border-radius: 7px; text-decoration: none; font-size: 0.8rem; white-space: nowrap; }
   .plan-tray button.clear { background: transparent; border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 7px 11px; border-radius: 7px; font-size: 0.72rem; cursor: pointer; font-family: inherit; }
   body { padding-bottom: 70px; }
@@ -309,9 +324,10 @@
 
 <div class="plan-tray" id="plan-tray">
   <span class="ct" id="plan-ct">0</span>
+  <span class="cost" id="plan-cost"></span>
   <span class="names" id="plan-names"></span>
   <button class="clear" id="plan-clear">Clear</button>
-  <a class="build" href="meal-plan-list.html">Build Shopping List →</a>
+  <a class="build" href="meal-plan-list.html">Build →</a>
 </div>
 
 <script src="recipes-data.js"></script>
@@ -323,13 +339,20 @@
 
   var tray = document.getElementById('plan-tray');
   var ctEl = document.getElementById('plan-ct');
+  var costEl = document.getElementById('plan-cost');
   var namesEl = document.getElementById('plan-names');
 
   function idFromHref(href) { return (href || '').replace(/^.*\//, '').replace(/\.html.*$/, ''); }
 
+  function weekCost(week) {
+    var costs = window.RECIPE_COST || {};
+    return week.reduce(function(sum, id){ return sum + (costs[id] || 0); }, 0);
+  }
+
   function refreshTray() {
     var week = getWeek();
     ctEl.textContent = week.length + (week.length === 1 ? ' recipe' : ' recipes');
+    costEl.textContent = week.length ? ('~$' + weekCost(week) + '/wk') : '';
     if (window.RECIPES) {
       namesEl.textContent = week.map(function(id){ return (window.RECIPES[id] || {}).name || id; }).join(' · ');
     }
@@ -339,6 +362,12 @@
   document.querySelectorAll('a.recipe').forEach(function(a) {
     var id = idFromHref(a.getAttribute('href'));
     if (!id) return;
+    // cost cell (column 6 on desktop, the one stat shown on mobile)
+    var costCell = document.createElement('div');
+    costCell.className = 'recipe-cost';
+    var c = (window.RECIPE_COST || {})[id];
+    costCell.textContent = c ? ('~$' + c) : '';
+    a.appendChild(costCell);
     var btn = document.createElement('button');
     btn.className = 'add-week';
     btn.type = 'button';

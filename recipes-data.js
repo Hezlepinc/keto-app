@@ -240,3 +240,30 @@ window.RECIPES = {
   ]}
 
 };
+
+/* Estimated full-batch grocery cost per recipe (USD, rough — FL grocery prices).
+ * Used by the cookbook cost column + weekly budget tray + meal-plan list.
+ * Weekly total = sum of picked recipes (UPPER BOUND — shared bulk staples like
+ * cheese/oil get bought once but counted per recipe, so real spend is usually lower).
+ */
+window.RECIPE_COST = {
+  "almond-flour-pancakes": 4,
+  "savory-chaffles": 2,
+  "fathead-pizza": 7,
+  "jalapeno-popper-stuffed-chicken": 14,
+  "creamy-mushroom-chicken": 13,
+  "pan-seared-salmon-dill-cream": 18,
+  "shrimp-scampi-zucchini": 15,
+  "indian-butter-chicken": 14,
+  "crispy-chicken-thighs": 10,
+  "crack-chicken": 13,
+  "bacon-cheeseburger-casserole": 16,
+  "egg-roll-in-a-bowl": 9,
+  "keto-beef-bulgogi": 18,
+  "chocolate-cheesecake-fat-bombs": 6,
+  "keto-mayo": 3,
+  "keto-ketchup": 2,
+  "ranch-dressing": 4,
+  "caesar-dressing": 5,
+  "bbq-sauce": 2
+};

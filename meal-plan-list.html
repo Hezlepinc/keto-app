@@ -137,9 +137,14 @@
       });
     });
 
+    var costs = window.RECIPE_COST || {};
+    var totalCost = week.reduce(function(s, id){ return s + (costs[id] || 0); }, 0);
+
     var html = '';
     html += '<div class="from-plan"><strong>This week:</strong> <span class="recipes">' +
-      recipeNames.join(' · ') + '</span></div>';
+      recipeNames.join(' · ') + '</span>' +
+      '<div style="margin-top:9px;font-weight:800;color:#15602f;font-size:1rem;">Estimated groceries: ~$' + totalCost + '</div>' +
+      '<div style="font-size:0.72rem;color:#888;margin-top:3px;line-height:1.4;">Upper-bound estimate — shared staples (cheese, oil, eggs) are bought once but counted per recipe, so your real spend is usually a bit lower.</div></div>';
 
     // progress bar
     html += '<div class="progress-bar"><div class="progress-row">' +

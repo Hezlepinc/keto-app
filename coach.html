@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coach</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d0d0f; color: #e8e8e8; display: flex; flex-direction: column; max-width: 760px; margin: 0 auto; }
+  header { flex: 0 0 auto; padding: 12px 18px 8px; border-bottom: 1px solid #15151b; }
+  h1 { font-size: 1.1rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+  h1 .gear { margin-left: auto; font-size: 0.95rem; color: #667; cursor: pointer; background: none; border: none; }
+  .sub { font-size: 0.68rem; color: #666; margin-top: 2px; }
+
+  .scroll { flex: 1 1 auto; overflow-y: auto; padding: 14px 16px; }
+  .msg { max-width: 88%; padding: 10px 13px; border-radius: 13px; margin-bottom: 10px; font-size: 0.88rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+  .msg.user { background: #1a3a2a; border: 1px solid #2a6a4a; color: #eafff0; margin-left: auto; border-bottom-right-radius: 4px; }
+  .msg.bot { background: #14141a; border: 1px solid #23232c; color: #dde; border-bottom-left-radius: 4px; }
+  .msg.sys { background: none; border: none; color: #777; font-size: 0.78rem; text-align: center; max-width: 100%; }
+  .typing { color: #6a9; font-size: 0.82rem; padding: 4px 13px; }
+
+  .suggest { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 8px; }
+  .suggest button { font-size: 0.72rem; background: #14141a; border: 1px solid #2a2a33; color: #9cc; border-radius: 14px; padding: 6px 11px; cursor: pointer; font-family: inherit; }
+
+  .bar { flex: 0 0 auto; display: flex; gap: 8px; padding: 10px 14px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #15151b; background: #0d0d0f; }
+  .bar textarea { flex: 1; resize: none; background: #131318; border: 1px solid #2a2a33; color: #fff; border-radius: 10px; padding: 11px 13px; font-size: 0.92rem; font-family: inherit; max-height: 120px; }
+  .bar button.send { background: #2a9a5a; border: none; color: #fff; border-radius: 10px; padding: 0 18px; font-size: 0.95rem; font-weight: 800; cursor: pointer; }
+  .bar button.send:disabled { background: #2a3a30; color: #678; }
+
+  /* Setup */
+  .setup { padding: 22px 18px; }
+  .setup h2 { font-size: 0.95rem; color: #fff; margin-bottom: 8px; }
+  .setup p { font-size: 0.82rem; color: #aab; line-height: 1.55; margin-bottom: 14px; }
+  .setup label { display: block; font-size: 0.64rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #888; margin: 12px 0 5px; }
+  .setup input { width: 100%; background: #131318; border: 1px solid #2a2a33; color: #fff; border-radius: 8px; padding: 11px 13px; font-size: 0.9rem; font-family: inherit; }
+  .setup .save { margin-top: 16px; width: 100%; background: #2a9a5a; border: none; color: #fff; border-radius: 9px; padding: 12px; font-size: 0.9rem; font-weight: 800; cursor: pointer; }
+  .setup .hint { font-size: 0.72rem; color: #667; margin-top: 12px; line-height: 1.5; }
+  .err { color: #e07a6a; font-size: 0.8rem; margin-top: 8px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏋️ Coach <button class="gear" id="gear" title="Settings">⚙︎</button></h1>
+  <div class="sub" id="sub">Plan-aware · knows your week, meals, macros &amp; fast</div>
+</header>
+
+<!-- Setup -->
+<div class="setup hidden" id="setup">
+  <h2>Connect your Coach</h2>
+  <p>Paste the <b>Worker URL</b> and the <b>access key</b> you set when you deployed it (see <code>coach-worker/DEPLOY.md</code>). Stored only on this device.</p>
+  <label>Worker URL</label>
+  <input id="cfg-url" type="url" placeholder="https://mytrainingapp-coach.you.workers.dev" autocomplete="off">
+  <label>Access key (COACH_KEY)</label>
+  <input id="cfg-key" type="password" placeholder="the password you chose" autocomplete="off">
+  <button class="save" id="cfg-save">Save &amp; start chatting</button>
+  <div class="err hidden" id="cfg-err"></div>
+  <div class="hint">No backend yet? It's a ~2-minute Cloudflare deploy — the steps are in <code>coach-worker/DEPLOY.md</code>. The app can't safely hold an API key itself, so the key lives in the Worker.</div>
+</div>
+
+<!-- Chat -->
+<div class="scroll hidden" id="scroll"></div>
+<div class="suggest hidden" id="suggest"></div>
+<div class="bar hidden" id="bar">
+  <textarea id="input" rows="1" placeholder="Ask your coach… (e.g. swap Friday's WOD for kettlebell-only)"></textarea>
+  <button class="send" id="send">➤</button>
+</div>
+
+<script src="recipes-data.js"></script>
+<script>
+(function() {
+  var URL_KEY = 'coach-url', KEY_KEY = 'coach-key', HIST_KEY = 'coach-history';
+  var setupEl = document.getElementById('setup');
+  var scrollEl = document.getElementById('scroll');
+  var barEl = document.getElementById('bar');
+  var suggestEl = document.getElementById('suggest');
+  var inputEl = document.getElementById('input');
+  var sendEl = document.getElementById('send');
+
+  var history = [];
+  try { history = JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { history = []; }
+
+  function configured() { return localStorage.getItem(URL_KEY) && localStorage.getItem(KEY_KEY); }
+
+  // ---------- context from the app's localStorage ----------
+  var DAYS = [['mon','Mon'],['tue','Tue'],['wed','Wed'],['thu','Thu'],['fri','Fri'],['sat','Sat'],['sun','Sun']];
+  var TYPE_NAMES = { lower:'Lower/Squat', upper:'Upper', push:'Push', pull:'Pull', legs:'Legs', hinge:'Hinge/Deadlift', fullbody:'Full Body', bodyweight:'Bodyweight', wod:'WOD', conditioning:'Conditioning', run:'Run', longrun:'Long Run', rest:'Rest' };
+  function getJSON(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } }
+
+  function buildContext() {
+    var lines = [];
+    // Training week
+    try {
+      var layout = getJSON('week-layout', {}), picks = getJSON('workout-picks-v2', {});
+      var tl = [], any = false;
+      DAYS.forEach(function(d) {
+        var t = TYPE_NAMES[layout[d[0]]] || layout[d[0]] || 'unset', dp = [];
+        Object.keys(picks).forEach(function(k) {
+          if (k.indexOf(d[0] + ':') === 0) { var v = picks[k]; if (Array.isArray(v)) dp = dp.concat(v); else if (v) dp.push(v); }
+        });
+        if (dp.length) any = true;
+        tl.push(d[1] + ': ' + t + (dp.length ? (' — ' + dp.join('; ')) : ''));
+      });
+      if (any || Object.keys(layout).length) lines.push('TRAINING WEEK:\n' + tl.join('\n'));
+    } catch (e) {}
+    // Meals
+    try {
+      var week = getJSON('meal-week-v2', {}), R = window.RECIPES || {}, M = window.RECIPE_META || {};
+      var ml = [], anyM = false;
+      DAYS.forEach(function(d) {
+        var ids = week[d[0]] || []; if (!ids.length) return; anyM = true;
+        var counts = {}; ids.forEach(function(id) { counts[id] = (counts[id] || 0) + 1; });
+        var names = Object.keys(counts).map(function(id) { var nm = (R[id] && R[id].name) || id; return nm + (counts[id] > 1 ? (' x' + counts[id]) : ''); });
+        var cal = 0, p = 0, c = 0, f = 0;
+        ids.forEach(function(id) { var m = M[id]; if (m) { cal += m[1]; p += m[2]; c += m[3]; f += m[4]; } });
+        ml.push(d[1] + ': ' + names.join(', ') + ' (' + cal + ' cal, ' + p + 'P/' + c + 'C/' + f + 'F)');
+      });
+      if (anyM) lines.push('MEALS PLANNED:\n' + ml.join('\n'));
+    } catch (e) {}
+    // Macro calc inputs
+    try {
+      var mc = getJSON('macro-calc-inputs', {});
+      if (mc.diet || mc.wt) lines.push('MACRO SETTINGS: diet=' + (mc.diet || '?') + ', bodyweight=' + (mc.wt || '?') + 'lb, goal=' + (mc.goal || '?') + ' cal, carbs=' + (mc.carbs || '?') + 'g, protein=' + (mc.ppl || '?') + 'g/lb');
+    } catch (e) {}
+    // Fast
+    try {
+      var fs = parseInt(localStorage.getItem('fast-start-time'), 10);
+      if (fs) { var h = (Date.now() - fs) / 3600000; if (h >= 0 && h < 100) lines.push('FASTING: in progress, ' + h.toFixed(1) + 'h elapsed (target 72h).'); }
+    } catch (e) {}
+    return lines.join('\n\n');
+  }
+
+  // ---------- rendering ----------
+  function addMsg(role, text) {
+    var d = document.createElement('div');
+    d.className = 'msg ' + (role === 'user' ? 'user' : role === 'system' ? 'sys' : 'bot');
+    d.textContent = text;
+    scrollEl.appendChild(d);
+    scrollEl.scrollTop = scrollEl.scrollHeight;
+    return d;
+  }
+  function renderHistory() {
+    scrollEl.innerHTML = '';
+    if (!history.length) {
+      addMsg('system', "Hey — I'm your coach. I can see your planned week, meals, macros and fast. Ask me anything, or tap a suggestion below.");
+    } else {
+      history.forEach(function(m) { addMsg(m.role, m.content); });
+    }
+  }
+  var SUGGEST = ["What should I train today?", "Am I hitting my protein this week?", "Swap Friday's WOD for kettlebell-only", "Is my fast going OK?", "Make my week harder"];
+  function renderSuggest() {
+    suggestEl.innerHTML = '';
+    SUGGEST.forEach(function(s) {
+      var b = document.createElement('button'); b.textContent = s;
+      b.onclick = function() { inputEl.value = s; send(); };
+      suggestEl.appendChild(b);
+    });
+  }
+
+  // ---------- send ----------
+  var busy = false;
+  function send() {
+    var text = (inputEl.value || '').trim();
+    if (!text || busy) return;
+    inputEl.value = ''; autoGrow();
+    addMsg('user', text);
+    history.push({ role: 'user', content: text });
+    busy = true; sendEl.disabled = true;
+    var typing = document.createElement('div'); typing.className = 'typing'; typing.textContent = 'Coach is thinking…';
+    scrollEl.appendChild(typing); scrollEl.scrollTop = scrollEl.scrollHeight;
+
+    var url = localStorage.getItem(URL_KEY), key = localStorage.getItem(KEY_KEY);
+    fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-coach-key': key },
+      body: JSON.stringify({ message: text, context: buildContext(), history: history.slice(0, -1).slice(-10) })
+    }).then(function(r) { return r.json().then(function(j) { return { ok: r.ok, j: j }; }); })
+      .then(function(res) {
+        typing.remove();
+        if (!res.ok) { addMsg('system', '⚠️ ' + (res.j.error === 'unauthorized' ? 'Access key rejected — check Settings ⚙︎.' : ('Error: ' + (res.j.detail || res.j.error || 'unknown')))); }
+        else { addMsg('bot', res.j.reply); history.push({ role: 'assistant', content: res.j.reply }); }
+        try { localStorage.setItem(HIST_KEY, JSON.stringify(history.slice(-40))); } catch (e) {}
+      })
+      .catch(function(e) { typing.remove(); addMsg('system', '⚠️ Network error — is the Worker URL right? (' + String(e).slice(0, 80) + ')'); })
+      .finally(function() { busy = false; sendEl.disabled = false; inputEl.focus(); });
+  }
+
+  function autoGrow() { inputEl.style.height = 'auto'; inputEl.style.height = Math.min(120, inputEl.scrollHeight) + 'px'; }
+  inputEl.addEventListener('input', autoGrow);
+  inputEl.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+  sendEl.onclick = send;
+
+  // ---------- setup flow ----------
+  function showSetup() {
+    setupEl.classList.remove('hidden');
+    scrollEl.classList.add('hidden'); barEl.classList.add('hidden'); suggestEl.classList.add('hidden');
+    document.getElementById('cfg-url').value = localStorage.getItem(URL_KEY) || '';
+    document.getElementById('cfg-key').value = localStorage.getItem(KEY_KEY) || '';
+  }
+  function showChat() {
+    setupEl.classList.add('hidden');
+    scrollEl.classList.remove('hidden'); barEl.classList.remove('hidden'); suggestEl.classList.remove('hidden');
+    renderHistory(); renderSuggest();
+  }
+  document.getElementById('cfg-save').onclick = function() {
+    var u = document.getElementById('cfg-url').value.trim().replace(/\/+$/, '');
+    var k = document.getElementById('cfg-key').value.trim();
+    var err = document.getElementById('cfg-err');
+    if (!/^https:\/\/.+/.test(u) || !k) { err.textContent = 'Enter a valid https:// URL and the access key.'; err.classList.remove('hidden'); return; }
+    localStorage.setItem(URL_KEY, u); localStorage.setItem(KEY_KEY, k);
+    err.classList.add('hidden'); showChat();
+  };
+  document.getElementById('gear').onclick = showSetup;
+
+  if (configured()) showChat(); else showSetup();
+})();
+</script>
+</body>
+</html>

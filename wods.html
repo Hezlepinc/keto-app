@@ -17,6 +17,8 @@
   .flabel { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #888; margin: 12px 0 6px; }
   .chips { display: flex; gap: 6px; flex-wrap: wrap; }
   .chip { font-size: 0.66rem; font-weight: 700; padding: 5px 11px; border-radius: 14px; background: #14141a; border: 1px solid #2a2a33; color: #999; cursor: pointer; }
+  #cat-chips .chip { font-size: 0.74rem; padding: 7px 16px; }
+  #cat-chips .chip.on { background: #3a2a14; border-color: #8a6a30; color: #e8c888; }
   #fmt-chips .chip.on { background: #1a4a2a; border-color: #2a8a52; color: #8ce0a8; }
   #eq-chips .chip.on { background: #16323f; border-color: #2a6a8a; color: #8cc8e0; }
   .count { font-size: 0.7rem; color: #666; margin: 12px 0 6px; }
@@ -41,6 +43,8 @@
 
 <div class="search">
   <input id="q" type="search" placeholder="Search WODs… (e.g. Fran, EMOM, burpee)" autocomplete="off">
+  <div class="flabel">Category</div>
+  <div class="chips" id="cat-chips"></div>
   <div class="flabel">Format</div>
   <div class="chips" id="fmt-chips"></div>
   <div class="flabel">Equipment used <span id="reset-wrap"></span></div>
@@ -73,6 +77,19 @@
   var countEl = document.getElementById('count');
   var fmtChipsEl = document.getElementById('fmt-chips');
   var eqChipsEl = document.getElementById('eq-chips');
+  var catChipsEl = document.getElementById('cat-chips');
+
+  var CATS = [['all','All'],['girl','Girls'],['hero','Heroes'],['other','Other']];
+  var selCat = localStorage.getItem('wod-cat') || 'all';
+  CATS.forEach(function(c) {
+    var b = document.createElement('button'); b.className = 'chip cat' + (selCat === c[0] ? ' on' : ''); b.textContent = c[1]; b.dataset.cat = c[0];
+    b.addEventListener('click', function() {
+      selCat = c[0]; localStorage.setItem('wod-cat', selCat);
+      Array.prototype.forEach.call(catChipsEl.children, function(ch){ ch.classList.toggle('on', ch.dataset.cat === selCat); });
+      render();
+    });
+    catChipsEl.appendChild(b);
+  });
 
   function anyOn(o) { return Object.keys(o).some(function(k){ return o[k]; }); }
 
@@ -90,6 +107,7 @@
     var filter = (qEl.value || '').toLowerCase().trim();
     var fmtActive = anyOn(selFmt), eqActive = anyOn(selEq);
     var shown = WODS.filter(function(w) {
+      if (selCat !== 'all' && w[4] !== selCat) return false;
       if (filter && w[0].toLowerCase().indexOf(filter) === -1 && w[1].toLowerCase().indexOf(filter) === -1) return false;
       if (fmtActive && !selFmt[w[1]]) return false;
       if (eqActive && !w[2].some(function(e){ return selEq[e]; })) return false;
@@ -108,8 +126,9 @@
 
   var reset = document.createElement('button'); reset.className = 'reset'; reset.textContent = 'Clear filters';
   reset.addEventListener('click', function() {
-    selFmt = {}; selEq = {}; saveSel();
+    selFmt = {}; selEq = {}; selCat = 'all'; localStorage.setItem('wod-cat', 'all'); saveSel();
     Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(c){ c.classList.remove('on'); });
+    Array.prototype.forEach.call(catChipsEl.children, function(ch){ ch.classList.toggle('on', ch.dataset.cat === 'all'); });
     render();
   });
   document.getElementById('reset-wrap').appendChild(reset);

@@ -74,8 +74,9 @@
     .recipe-cost { font-size: 0.95rem; }
   }
 
-  .legend { margin-top: 24px; font-size: 0.75rem; color: #666; display: flex; gap: 24px; flex-wrap: wrap; }
-  .legend-tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 10px; border-radius: 12px; color: #fff; }
+  .legend { margin-top: 24px; font-size: 0.8rem; color: #555; display: flex; flex-direction: column; gap: 8px; }
+  .legend-row { display: flex; align-items: center; gap: 12px; }
+  .legend-tag { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 0; border-radius: 6px; color: #fff; width: 52px; text-align: center; flex-shrink: 0; }
   .tag-m1 { background: #1a7a5a; }
   .tag-m2 { background: #4a7aaa; }
   .tag-m3 { background: #b05c20; }
@@ -106,12 +107,7 @@
 </header>
 
 <div class="intro">
-  <strong>How this works.</strong> Every recipe in this folder has been cross-checked against <a href="../keto-recipe-cross-check.md">keto-recipe-cross-check.md</a> — no seed oils, no maltitol/sucralose, no dirty seasoning packets, no processed cheese. All net carbs/serving fit the keto protocol carb ceilings. Click a row to open its printable card.
-</div>
-
-<h2>Shopping Lists</h2>
-<div class="section-intro">
-  Two views of the same list. <strong><a href="shopping-list-by-store.html">By store</a></strong> (Costco → Publix → Amazon) for the shopping trip itself. <strong><a href="shopping-list.html">By category</a></strong> for kitchen reference and meal prep.
+  <strong>How this works.</strong> Every recipe is clean-keto vetted — no seed oils, no maltitol/sucralose, no dirty seasoning packets, no processed cheese. Tap the <strong>+</strong> next to anything to add it to your week, then check the <strong>Shop</strong> tab for your built shopping list. Tap a recipe name to open its card.
 </div>
 
 <h2>Plan Your Week</h2>
@@ -123,30 +119,30 @@
 <div class="section-intro">Not cooking a full recipe? Add a plain protein (air-fryer salmon, a steak, eggs) or a side/staple straight to your list with the same stepper. <strong>Proteins count as meals</strong>; sides &amp; fats just go on the shopping list.</div>
 <div class="recipe-list">
   <div class="header-row"><div>Item</div><div>Type</div><div></div><div></div><div></div><div>Cost</div></div>
-  <a class="recipe" data-id="staple-salmon"><div class="recipe-name">Salmon fillet</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-ribeye"><div class="recipe-name">Ribeye steak</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-nystrip"><div class="recipe-name">NY strip steak</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-sirloin"><div class="recipe-name">Sirloin steak</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-chicken-thighs"><div class="recipe-name">Chicken thighs</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-chicken-breast"><div class="recipe-name">Chicken breast</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-ground-beef"><div class="recipe-name">Ground beef</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-venison"><div class="recipe-name">Venison (you have it)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-pork-chops"><div class="recipe-name">Pork chops</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-sausage"><div class="recipe-name">Sausage</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-bacon"><div class="recipe-name">Bacon</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-eggs"><div class="recipe-name">Eggs (dozen)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-shrimp"><div class="recipe-name">Shrimp</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-sardines"><div class="recipe-name">Canned sardines</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-avocado"><div class="recipe-name">Avocado</div><div class="recipe-meal">Side/Fat</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-spinach"><div class="recipe-name">Spinach / greens</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-broccoli"><div class="recipe-name">Broccoli</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-cauliflower"><div class="recipe-name">Cauliflower</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-asparagus"><div class="recipe-name">Asparagus</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-brussels"><div class="recipe-name">Brussels sprouts</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-green-beans"><div class="recipe-name">Green beans</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-butter"><div class="recipe-name">Butter</div><div class="recipe-meal">Fat</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-cheese"><div class="recipe-name">Block cheese</div><div class="recipe-meal">Fat</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-avocado-oil"><div class="recipe-name">Avocado oil</div><div class="recipe-meal">Fat</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-salmon"><div class="recipe-name">Salmon fillet (6 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-ribeye"><div class="recipe-name">Ribeye steak (8 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-nystrip"><div class="recipe-name">NY strip steak (8 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-sirloin"><div class="recipe-name">Sirloin steak (8 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-chicken-thighs"><div class="recipe-name">Chicken thighs (8 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-chicken-breast"><div class="recipe-name">Chicken breast (8 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-ground-beef"><div class="recipe-name">Ground beef (6 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-venison"><div class="recipe-name">Venison (6 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-pork-chops"><div class="recipe-name">Pork chop (6 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-sausage"><div class="recipe-name">Sausage (2 links)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-bacon"><div class="recipe-name">Bacon (3 slices)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-eggs"><div class="recipe-name">Eggs (3)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-shrimp"><div class="recipe-name">Shrimp (6 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-sardines"><div class="recipe-name">Canned sardines (1 tin)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-avocado"><div class="recipe-name">Avocado (1)</div><div class="recipe-meal">Side/Fat</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-spinach"><div class="recipe-name">Spinach (2 cups)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-broccoli"><div class="recipe-name">Broccoli (1.5 cups)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-cauliflower"><div class="recipe-name">Cauliflower (1.5 cups)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-asparagus"><div class="recipe-name">Asparagus (6 spears)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-brussels"><div class="recipe-name">Brussels sprouts (1 cup)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-green-beans"><div class="recipe-name">Green beans (1 cup)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-butter"><div class="recipe-name">Butter (1 lb)</div><div class="recipe-meal">Fat</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-cheese"><div class="recipe-name">Block cheese (8 oz)</div><div class="recipe-meal">Fat</div><div></div><div></div><div></div></a>
+  <a class="recipe" data-id="staple-avocado-oil"><div class="recipe-name">Avocado oil (1 bottle)</div><div class="recipe-meal">Fat</div><div></div><div></div><div></div></a>
 </div>
 
 <h2>Meal 1 — Post-WOD (largest meal)</h2>
@@ -315,14 +311,14 @@
 </div>
 
 <div class="legend">
-  <span class="legend-tag tag-m1">M1</span> Post-WOD (12pm)
-  <span class="legend-tag tag-m2">M2</span> Mid-window (4pm)
-  <span class="legend-tag tag-m3">M3</span> Final meal (7pm)
-  <span class="legend-tag tag-treat">Treat</span> Sweet-craving release
+  <div class="legend-row"><span class="legend-tag tag-m1">M1</span><span>Post-WOD · 12 pm · largest meal</span></div>
+  <div class="legend-row"><span class="legend-tag tag-m2">M2</span><span>Mid-window · 4 pm</span></div>
+  <div class="legend-row"><span class="legend-tag tag-m3">M3</span><span>Final meal · 7 pm</span></div>
+  <div class="legend-row"><span class="legend-tag tag-treat">Treat</span><span>Sweet-craving release</span></div>
 </div>
 
 <footer>
-  Keto Recipe Cookbook &nbsp;|&nbsp; Cross-checked against <a href="../keto-recipe-cross-check.md">clean-keto filter</a> &nbsp;|&nbsp; Companion to <a href="../keto-plan.md">keto-plan.md</a> &nbsp;|&nbsp; Created 2026-05-30
+  Keto Recipe Cookbook &nbsp;|&nbsp; Clean-keto vetted &nbsp;|&nbsp; Updated 2026-06
 </footer>
 
 <style>

@@ -1,468 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="robots" content="noindex,nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Keto Recipe Cookbook — Keto Protocol</title>
+<title>Meal Planner</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff; color: #1a1a1a; padding: 32px; max-width: 1000px; margin: 0 auto; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d0d0f; color: #e8e8e8; padding: 16px 18px 60px; max-width: 760px; margin: 0 auto; }
+  header { text-align: center; margin: 4px 0 10px; }
+  h1 { font-size: 1.25rem; font-weight: 800; color: #fff; }
+  .subtitle { font-size: 0.74rem; color: #666; margin-top: 3px; }
 
-  header { margin-bottom: 36px; border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; }
-  h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.01em; }
-  .subtitle { font-size: 0.82rem; color: #666; margin-top: 4px; }
+  /* Sticky diet filter */
+  .diet-bar { position: sticky; top: 0; z-index: 20; background: #0d0d0f; padding: 8px 0; border-bottom: 1px solid #15151b; }
+  .diet-label { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 6px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { font-size: 0.74rem; font-weight: 700; padding: 7px 15px; border-radius: 15px; background: #14141a; border: 1px solid #2a2a33; color: #999; cursor: pointer; }
+  .chip.on { background: #11302a; border-color: #2a8a6a; color: #7fe8c0; }
 
-  h2 { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: #fff; background: #1a1a1a; padding: 6px 10px; margin-top: 32px; border-radius: 4px 4px 0 0; }
+  .hint { font-size: 0.74rem; color: #777; line-height: 1.5; margin: 12px 0; background: #11160f; border-left: 4px solid #2a9a5a; padding: 10px 13px; border-radius: 0 8px 8px 0; }
+  .hint b { color: #6ad08a; }
 
-  .intro { background: #fef9e6; border-left: 4px solid #c8a040; padding: 14px 18px; margin: 20px 0; border-radius: 0 6px 6px 0; font-size: 0.85rem; line-height: 1.5; }
-  .intro strong { color: #8a6a20; }
+  /* Day cards */
+  .day { background: #131318; border: 1px solid #1e1e26; border-radius: 12px; margin-bottom: 9px; overflow: hidden; }
+  .day-head { display: flex; align-items: baseline; gap: 9px; padding: 12px 15px 8px; }
+  .day-name { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #88a; }
+  .day-macros { margin-left: auto; font-size: 0.72rem; color: #9aa; font-weight: 600; }
+  .day-macros .cal { color: #e8c888; font-weight: 800; }
+  .meals { padding: 0 15px; }
+  .meal { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid #1c1c24; font-size: 0.84rem; }
+  .meal:first-child { border-top: none; }
+  .meal .mn { flex: 1; color: #e8e8e8; line-height: 1.3; }
+  .meal .mm { font-size: 0.66rem; color: #778; white-space: nowrap; }
+  .meal .rm { color: #c66; font-size: 1.1rem; cursor: pointer; padding: 0 4px; line-height: 1; }
+  .empty-day { font-size: 0.78rem; color: #5a5a66; font-style: italic; padding: 4px 0 8px; }
+  .add-btn { width: 100%; background: #0f1a14; border: 1px dashed #2a6a4a; color: #7fe0a8; border-radius: 8px; padding: 9px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; margin: 6px 0 13px; }
+  .add-btn:active { transform: scale(0.99); }
 
-  .recipe-list {
-    border: 1px solid #ddd;
-    border-top: none;
-    border-radius: 0 0 4px 4px;
-    overflow: hidden;
-  }
+  /* Weekly total */
+  .week-total { background: linear-gradient(135deg,#15241c,#131820); border: 1px solid #2a5a44; border-radius: 12px; padding: 15px 17px; margin-top: 14px; }
+  .week-total .wt-h { font-size: 0.64rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #7fe8c0; margin-bottom: 8px; }
+  .week-total .wt-cal { font-size: 1.7rem; font-weight: 800; color: #fff; }
+  .week-total .wt-cal span { font-size: 0.8rem; color: #9aa; font-weight: 600; }
+  .week-total .wt-macros { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .wt-macros .m { font-size: 0.82rem; color: #cdd; }
+  .wt-macros .m b { color: #fff; font-size: 0.95rem; }
+  .wt-foot { font-size: 0.72rem; color: #8a8; margin-top: 11px; line-height: 1.5; }
+  .wt-foot a { color: #6ad08a; text-decoration: none; }
+  .avg { font-size: 0.72rem; color: #889; margin-top: 6px; }
+  .clear { font-size: 0.68rem; color: #888; background: none; border: 1px solid #2a2a33; border-radius: 7px; padding: 7px 13px; cursor: pointer; font-family: inherit; margin-top: 12px; }
 
-  .recipe {
-    display: grid;
-    grid-template-columns: 1fr 64px 64px 84px 66px 58px;
-    gap: 12px;
-    padding: 12px 16px;
-    border-bottom: 1px solid #f0f0f0;
-    align-items: center;
-    font-size: 0.85rem;
-    text-decoration: none;
-    color: #1a1a1a;
-  }
-  .recipe:last-child { border-bottom: none; }
-  .recipe:nth-child(even) { background: #fafafa; }
-  .recipe:hover { background: #f0f0f0; }
-
-  .recipe-name { font-weight: 600; }
-  .recipe-meal { font-size: 0.7rem; color: #1a7a5a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-  .recipe-time { font-size: 0.75rem; color: #888; text-align: right; }
-  .recipe-macro { font-size: 0.8rem; text-align: right; font-weight: 600; }
-  .recipe-carb { color: #6a4a8a; }
-  .recipe-cal { color: #555; }
-  .recipe-cost { font-size: 0.85rem; text-align: right; font-weight: 800; color: #15602f; }
-
-  .header-row {
-    display: grid;
-    grid-template-columns: 1fr 64px 64px 84px 66px 58px;
-    gap: 12px;
-    padding: 8px 16px;
-    background: #1a1a1a;
-    color: #fff;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 700;
-  }
-  .header-row > div:nth-child(n+3) { text-align: right; }
-
-  /* Mobile / portrait: collapse to Recipe name + Cost only */
-  @media (max-width: 600px) {
-    .header-row { display: none; }
-    .recipe {
-      grid-template-columns: 1fr auto !important;
-      gap: 10px;
-      padding-left: 46px !important;
-    }
-    .recipe-meal, .recipe-time, .recipe-cal, .recipe-carb { display: none; }
-    .recipe-name { font-size: 0.92rem; }
-    .recipe-cost { font-size: 0.95rem; }
-  }
-
-  .legend { margin-top: 24px; font-size: 0.8rem; color: #555; display: flex; flex-direction: column; gap: 8px; }
-  .legend-row { display: flex; align-items: center; gap: 12px; }
-  .legend-tag { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 0; border-radius: 6px; color: #fff; width: 52px; text-align: center; flex-shrink: 0; }
-  .tag-m1 { background: #1a7a5a; }
-  .tag-m2 { background: #4a7aaa; }
-  .tag-m3 { background: #b05c20; }
-  .tag-treat { background: #8a6a20; }
-
-  .section-intro {
-    padding: 12px 16px;
-    background: #f5f5f5;
-    border-left: 4px solid #1a1a1a;
-    font-size: 0.85rem;
-    margin-bottom: 0;
-  }
-
-  footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #ddd; font-size: 0.72rem; color: #888; text-align: center; }
-  footer a { color: #555; text-decoration: none; }
-
-  @media print {
-    body { padding: 20px; }
-    .recipe:hover { background: inherit; }
-  }
+  /* Picker overlay */
+  .overlay { position: fixed; inset: 0; background: rgba(8,8,10,0.96); z-index: 100; display: none; flex-direction: column; padding: 16px 16px 0; }
+  .overlay.show { display: flex; }
+  .ov-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .ov-title { font-size: 0.95rem; font-weight: 800; color: #fff; flex: 1; }
+  .ov-title span { color: #7fe8c0; }
+  .ov-close { font-size: 0.8rem; color: #aaa; background: #1a1a22; border: 1px solid #2a2a33; border-radius: 7px; padding: 7px 13px; cursor: pointer; font-family: inherit; }
+  .ov-search { width: 100%; background: #131318; border: 1px solid #2a2a33; color: #fff; border-radius: 9px; padding: 11px 14px; font-size: 0.95rem; font-family: inherit; margin-bottom: 8px; }
+  .ov-diet { font-size: 0.72rem; color: #778; margin-bottom: 8px; }
+  .ov-list { flex: 1; overflow-y: auto; padding-bottom: 16px; }
+  .pick { display: flex; align-items: center; gap: 10px; padding: 11px 13px; background: #131318; border: 1px solid #1e1e26; border-radius: 9px; margin-bottom: 6px; cursor: pointer; }
+  .pick:active { background: #18181f; }
+  .pick .pn { flex: 1; }
+  .pick .pn .nm { font-size: 0.88rem; font-weight: 700; color: #eee; }
+  .pick .pn .mc { font-size: 0.68rem; color: #889; margin-top: 2px; }
+  .pick .dtag { font-size: 0.56rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 7px; border-radius: 9px; }
+  .dtag.keto { background: #2a1830; color: #d8a8e8; } .dtag.paleo { background: #2a2410; color: #e0c878; }
+  .dtag.standard { background: #16263a; color: #88c0e8; } .dtag.plant { background: #14301e; color: #8ce0a8; }
+  .dtag.any { background: #222; color: #aaa; }
+  .pick .plus { font-size: 1.3rem; color: #2a9a5a; font-weight: 800; }
+  footer { margin-top: 22px; padding-top: 14px; border-top: 1px solid #1e1e26; font-size: 0.66rem; color: #555; text-align: center; line-height: 1.5; }
 </style>
 </head>
 <body>
-
 <header>
-  <h1>Keto Recipe Cookbook</h1>
-  <p class="subtitle">Clean-keto cross-checked &nbsp;|&nbsp; Keto Protocol &nbsp;|&nbsp; 14 approved recipes</p>
+  <h1>Meal Planner</h1>
+  <p class="subtitle">Build your week by day · macros per day + weekly total</p>
 </header>
 
-<div class="intro">
-  <strong>How this works.</strong> Every recipe is clean-keto vetted — no seed oils, no maltitol/sucralose, no dirty seasoning packets, no processed cheese. Tap the <strong>+</strong> next to anything to add it to your week, then check the <strong>Shop</strong> tab for your built shopping list. Tap a recipe name to open its card.
+<div class="diet-bar">
+  <div class="diet-label">Diet</div>
+  <div class="chips" id="diet-chips"></div>
 </div>
 
-<h2>Plan Your Week</h2>
-<div class="section-intro">
-  Use the <strong>+ / −</strong> stepper next to each recipe to set how many times you'll make it (e.g. pancakes ×4). The bar at the bottom counts your <strong>meals toward your weekly target</strong> (default 21 = 3/day — tap the number to change it) and totals the cost. Hit <strong>"Build →"</strong> for the shopping list, scaled to your quantities. <a href="meal-plan-list.html">View current list →</a>
-</div>
+<div class="hint">Pick a <b>diet</b> up top, then <b>+ Add meal</b> to any day. Each day totals its macros; the <b>weekly total</b> is at the bottom. Your picks flow to the <b>Shop</b> tab automatically.</div>
 
-<h2>Quick Proteins &amp; Staples — no recipe needed</h2>
-<div class="section-intro">Not cooking a full recipe? Add a plain protein (air-fryer salmon, a steak, eggs) or a side/staple straight to your list with the same stepper. <strong>Proteins count as meals</strong>; sides &amp; fats just go on the shopping list.</div>
-<div class="recipe-list">
-  <div class="header-row"><div>Item</div><div>Type</div><div></div><div></div><div></div><div>Cost</div></div>
-  <a class="recipe" data-id="staple-salmon"><div class="recipe-name">Salmon fillet (6 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-ribeye"><div class="recipe-name">Ribeye steak (8 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-nystrip"><div class="recipe-name">NY strip steak (8 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-sirloin"><div class="recipe-name">Sirloin steak (8 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-chicken-thighs"><div class="recipe-name">Chicken thighs (8 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-chicken-breast"><div class="recipe-name">Chicken breast (8 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-ground-beef"><div class="recipe-name">Ground beef (6 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-venison"><div class="recipe-name">Venison (6 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-pork-chops"><div class="recipe-name">Pork chop (6 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-sausage"><div class="recipe-name">Sausage (2 links)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-bacon"><div class="recipe-name">Bacon (3 slices)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-eggs"><div class="recipe-name">Eggs (3)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-shrimp"><div class="recipe-name">Shrimp (6 oz)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-sardines"><div class="recipe-name">Canned sardines (1 tin)</div><div class="recipe-meal">Protein</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-avocado"><div class="recipe-name">Avocado (1)</div><div class="recipe-meal">Side/Fat</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-spinach"><div class="recipe-name">Spinach (2 cups)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-broccoli"><div class="recipe-name">Broccoli (1.5 cups)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-cauliflower"><div class="recipe-name">Cauliflower (1.5 cups)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-asparagus"><div class="recipe-name">Asparagus (6 spears)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-brussels"><div class="recipe-name">Brussels sprouts (1 cup)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-green-beans"><div class="recipe-name">Green beans (1 cup)</div><div class="recipe-meal">Side</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-butter"><div class="recipe-name">Butter (1 lb)</div><div class="recipe-meal">Fat</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-cheese"><div class="recipe-name">Block cheese (8 oz)</div><div class="recipe-meal">Fat</div><div></div><div></div><div></div></a>
-  <a class="recipe" data-id="staple-avocado-oil"><div class="recipe-name">Avocado oil (1 bottle)</div><div class="recipe-meal">Fat</div><div></div><div></div><div></div></a>
-</div>
+<div id="week"></div>
 
-<h2>Meal 1 — Post-WOD (largest meal)</h2>
-<div class="section-intro">Highest-cal, highest-fat options. Refuels from fasted training, anchors the day.</div>
-<div class="recipe-list">
-  <div class="header-row">
-    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal</div><div>Carbs</div><div>Cost</div>
+<div class="week-total" id="week-total"></div>
+<button class="clear" id="clear-week">↺ Clear the whole week</button>
+
+<div class="overlay" id="overlay">
+  <div class="ov-head">
+    <div class="ov-title">Add to <span id="ov-day">Monday</span></div>
+    <button class="ov-close" id="ov-close">Done</button>
   </div>
-  <a class="recipe" href="almond-flour-pancakes.html">
-    <div class="recipe-name">Almond Flour Pancakes</div>
-    <div class="recipe-meal">M1</div>
-    <div class="recipe-time">15 min</div>
-    <div class="recipe-macro recipe-cal">710 kcal</div>
-    <div class="recipe-macro recipe-carb">7.5g</div>
-  </a>
-  <a class="recipe" href="savory-chaffles.html">
-    <div class="recipe-name">Savory Chaffles</div>
-    <div class="recipe-meal">M1/M2/M3</div>
-    <div class="recipe-time">10 min</div>
-    <div class="recipe-macro recipe-cal">280 kcal</div>
-    <div class="recipe-macro recipe-carb">3g</div>
-  </a>
+  <input class="ov-search" id="ov-search" type="search" placeholder="Search meals…" autocomplete="off">
+  <div class="ov-diet" id="ov-diet"></div>
+  <div class="ov-list" id="ov-list"></div>
 </div>
 
-<h2>Mains — Meal 1 or Meal 3</h2>
-<div class="section-intro">Restaurant-quality protein-and-fat anchors. Pair with sautéed greens or a salad.</div>
-<div class="recipe-list">
-  <div class="header-row">
-    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal</div><div>Carbs</div><div>Cost</div>
-  </div>
-  <a class="recipe" href="fathead-pizza.html">
-    <div class="recipe-name">Fathead Pizza</div>
-    <div class="recipe-meal">M1/M3</div>
-    <div class="recipe-time">35 min</div>
-    <div class="recipe-macro recipe-cal">215 kcal/slice</div>
-    <div class="recipe-macro recipe-carb">4g</div>
-  </a>
-  <a class="recipe" href="jalapeno-popper-stuffed-chicken.html">
-    <div class="recipe-name">Jalapeño Popper Stuffed Chicken</div>
-    <div class="recipe-meal">M1/M3</div>
-    <div class="recipe-time">45 min</div>
-    <div class="recipe-macro recipe-cal">499 kcal</div>
-    <div class="recipe-macro recipe-carb">2.5g</div>
-  </a>
-  <a class="recipe" href="creamy-mushroom-chicken.html">
-    <div class="recipe-name">Creamy Mushroom Chicken</div>
-    <div class="recipe-meal">M1/M3</div>
-    <div class="recipe-time">30 min</div>
-    <div class="recipe-macro recipe-cal">669 kcal</div>
-    <div class="recipe-macro recipe-carb">3.5g</div>
-  </a>
-  <a class="recipe" href="pan-seared-salmon-dill-cream.html">
-    <div class="recipe-name">Pan-Seared Salmon with Dill Cream</div>
-    <div class="recipe-meal">M1/M3</div>
-    <div class="recipe-time">20 min</div>
-    <div class="recipe-macro recipe-cal">623 kcal</div>
-    <div class="recipe-macro recipe-carb">1.5g</div>
-  </a>
-  <a class="recipe" href="shrimp-scampi-zucchini.html">
-    <div class="recipe-name">Shrimp Scampi with Zucchini</div>
-    <div class="recipe-meal">M1/M3</div>
-    <div class="recipe-time">20 min</div>
-    <div class="recipe-macro recipe-cal">610 kcal</div>
-    <div class="recipe-macro recipe-carb">8.5g</div>
-  </a>
-  <a class="recipe" href="indian-butter-chicken.html">
-    <div class="recipe-name">Indian Butter Chicken</div>
-    <div class="recipe-meal">M1/M3</div>
-    <div class="recipe-time">40 min</div>
-    <div class="recipe-macro recipe-cal">793 kcal</div>
-    <div class="recipe-macro recipe-carb">7g</div>
-  </a>
-  <a class="recipe" href="crispy-chicken-thighs.html">
-    <div class="recipe-name">Crispy Chicken Thighs</div>
-    <div class="recipe-meal">M1/M3</div>
-    <div class="recipe-time">45 min</div>
-    <div class="recipe-macro recipe-cal">733 kcal</div>
-    <div class="recipe-macro recipe-carb">1.5g</div>
-  </a>
-  <a class="recipe" href="crack-chicken.html">
-    <div class="recipe-name">Crack Chicken (slow cooker)</div>
-    <div class="recipe-meal">M1/M3</div>
-    <div class="recipe-time">4-6 hrs</div>
-    <div class="recipe-macro recipe-cal">450 kcal</div>
-    <div class="recipe-macro recipe-carb">2.5g</div>
-  </a>
-  <a class="recipe" href="bacon-cheeseburger-casserole.html">
-    <div class="recipe-name">Bacon Cheeseburger Casserole</div>
-    <div class="recipe-meal">M1/M3</div>
-    <div class="recipe-time">45 min</div>
-    <div class="recipe-macro recipe-cal">725 kcal</div>
-    <div class="recipe-macro recipe-carb">3.5g</div>
-  </a>
-  <a class="recipe" href="egg-roll-in-a-bowl.html">
-    <div class="recipe-name">Egg Roll in a Bowl</div>
-    <div class="recipe-meal">M1/M3</div>
-    <div class="recipe-time">20 min</div>
-    <div class="recipe-macro recipe-cal">343 kcal</div>
-    <div class="recipe-macro recipe-carb">7.5g</div>
-  </a>
-  <a class="recipe" href="keto-beef-bulgogi.html">
-    <div class="recipe-name">Keto Beef Bulgogi</div>
-    <div class="recipe-meal">M1/M3</div>
-    <div class="recipe-time">30 min + marinade</div>
-    <div class="recipe-macro recipe-cal">543 kcal</div>
-    <div class="recipe-macro recipe-carb">5g</div>
-  </a>
-</div>
-
-<h2>DIY Condiments — Batch Prep Sunday</h2>
-<div class="section-intro">Replaces Primal Kitchen products + Hidden Valley packets. ~30 min total Sunday session fills your mason jars. Each is &lt;0.5g net carbs per tbsp.</div>
-<div class="recipe-list">
-  <div class="header-row">
-    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal</div><div>Carbs</div><div>Cost</div>
-  </div>
-  <a class="recipe" href="keto-mayo.html">
-    <div class="recipe-name">DIY Keto Mayo (base for ranch, dips, sauces)</div>
-    <div class="recipe-meal">Prep</div>
-    <div class="recipe-time">2 min</div>
-    <div class="recipe-macro recipe-cal">125 kcal/tbsp</div>
-    <div class="recipe-macro recipe-carb">0g</div>
-  </a>
-  <a class="recipe" href="keto-ketchup.html">
-    <div class="recipe-name">DIY Keto Ketchup</div>
-    <div class="recipe-meal">Prep</div>
-    <div class="recipe-time">12 min</div>
-    <div class="recipe-macro recipe-cal">10 kcal/tbsp</div>
-    <div class="recipe-macro recipe-carb">1.5g</div>
-  </a>
-  <a class="recipe" href="ranch-dressing.html">
-    <div class="recipe-name">Ranch Dressing (uses DIY mayo)</div>
-    <div class="recipe-meal">Prep</div>
-    <div class="recipe-time">3 min</div>
-    <div class="recipe-macro recipe-cal">102 kcal/tbsp</div>
-    <div class="recipe-macro recipe-carb">0.4g</div>
-  </a>
-  <a class="recipe" href="caesar-dressing.html">
-    <div class="recipe-name">Caesar Dressing</div>
-    <div class="recipe-meal">Prep</div>
-    <div class="recipe-time">5 min</div>
-    <div class="recipe-macro recipe-cal">90 kcal/tbsp</div>
-    <div class="recipe-macro recipe-carb">0.3g</div>
-  </a>
-  <a class="recipe" href="bbq-sauce.html">
-    <div class="recipe-name">Keto BBQ Sauce</div>
-    <div class="recipe-meal">Prep</div>
-    <div class="recipe-time">15 min</div>
-    <div class="recipe-macro recipe-cal">8 kcal/tbsp</div>
-    <div class="recipe-macro recipe-carb">1.3g</div>
-  </a>
-</div>
-
-<h2>Treats — Use Sparingly</h2>
-<div class="section-intro">Sweet-craving release valve. 1-2 fat bombs at Meal 3 or post-WOD.</div>
-<div class="recipe-list">
-  <div class="header-row">
-    <div>Recipe</div><div>Meal</div><div>Time</div><div>Cal</div><div>Carbs</div><div>Cost</div>
-  </div>
-  <a class="recipe" href="chocolate-cheesecake-fat-bombs.html">
-    <div class="recipe-name">Chocolate Cheesecake Fat Bombs</div>
-    <div class="recipe-meal">M3</div>
-    <div class="recipe-time">15 min + chill</div>
-    <div class="recipe-macro recipe-cal">122 kcal/bomb</div>
-    <div class="recipe-macro recipe-carb">1g</div>
-  </a>
-</div>
-
-<div class="legend">
-  <div class="legend-row"><span class="legend-tag tag-m1">M1</span><span>Post-WOD · 12 pm · largest meal</span></div>
-  <div class="legend-row"><span class="legend-tag tag-m2">M2</span><span>Mid-window · 4 pm</span></div>
-  <div class="legend-row"><span class="legend-tag tag-m3">M3</span><span>Final meal · 7 pm</span></div>
-  <div class="legend-row"><span class="legend-tag tag-treat">Treat</span><span>Sweet-craving release</span></div>
-</div>
-
-<footer>
-  Keto Recipe Cookbook &nbsp;|&nbsp; Clean-keto vetted &nbsp;|&nbsp; Updated 2026-06
-</footer>
-
-<style>
-  .recipe { position: relative; padding-left: 78px !important; transition: background 0.1s; }
-  .recipe:active { background: #ececec; }
-  .mp-step { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 3px; z-index: 5; }
-  .mp-btn { width: 23px; height: 23px; border-radius: 50%; border: 2px solid #c0c0c0; background: #fff; color: #1f7a3f; font-size: 1rem; font-weight: 800; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: transform 0.08s, background 0.12s, border-color 0.12s; }
-  .mp-btn:active { transform: scale(0.82); }
-  .mp-plus.has { background: #1f7a3f; border-color: #1f7a3f; color: #fff; }
-  .mp-count { min-width: 15px; text-align: center; font-weight: 800; font-size: 0.86rem; color: #15602f; }
-  .mp-step.zero .mp-minus, .mp-step.zero .mp-count { display: none; }
-  .plan-tray {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
-    background: #15602f; color: #fff; padding: 10px 14px;
-    display: none; align-items: center; gap: 12px;
-    box-shadow: 0 -4px 16px rgba(0,0,0,0.18); font-size: 0.85rem;
-  }
-  .plan-tray.show { display: flex; }
-  .tray-meals { display: flex; align-items: center; gap: 4px; font-weight: 800; white-space: nowrap; }
-  .tray-meals #plan-meals { font-size: 1.15rem; }
-  .tray-meals.hit #plan-meals { color: #b8eccb; }
-  .tray-meals input { width: 38px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; border-radius: 5px; font-size: 0.9rem; font-weight: 800; text-align: center; font-family: inherit; padding: 2px 0; }
-  .tray-meals .mlbl { font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.85; }
-  .plan-tray .cost { font-weight: 800; color: #b8eccb; font-size: 0.9rem; white-space: nowrap; flex: 1; }
-  .plan-tray a.build { background: #fff; color: #15602f; font-weight: 800; padding: 8px 13px; border-radius: 7px; text-decoration: none; font-size: 0.8rem; white-space: nowrap; }
-  .plan-tray a.build:active { transform: scale(0.95); }
-  .plan-tray button.clear { background: transparent; border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 7px 10px; border-radius: 7px; font-size: 0.7rem; cursor: pointer; font-family: inherit; }
-  .plan-tray button.clear:active { transform: scale(0.95); }
-  body { padding-bottom: 74px; }
-  h2.collapsible { cursor: pointer; position: relative; padding-right: 28px; user-select: none; }
-  h2.collapsible::after { content: '▾'; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); transition: transform 0.2s; font-size: 0.8rem; opacity: 0.8; }
-  h2.collapsible.collapsed::after { transform: translateY(-50%) rotate(-90deg); }
-</style>
-
-<div class="plan-tray" id="plan-tray">
-  <div class="tray-meals" id="tray-meals">
-    <span id="plan-meals">0</span><span>/</span><input id="plan-target" type="number" min="1" max="99" value="21"><span class="mlbl">meals</span>
-  </div>
-  <span class="cost" id="plan-cost"></span>
-  <button class="clear" id="plan-clear">Clear</button>
-  <a class="build" href="meal-plan-list.html">Build →</a>
-</div>
+<footer>Macros are per-serving estimates for planning. Add a meal more than once for multiple servings.</footer>
 
 <script src="recipes-data.js"></script>
 <script>
 (function() {
-  var COUNTS = 'meal-plan-counts', TARGET = 'meal-target';
-  function getCounts() { try { return JSON.parse(localStorage.getItem(COUNTS) || '{}'); } catch(e) { return {}; } }
-  function setCounts(c) { localStorage.setItem(COUNTS, JSON.stringify(c)); }
-  function getTarget() { var t = parseInt(localStorage.getItem(TARGET) || '21', 10); return (t > 0) ? t : 21; }
+  var R = window.RECIPES || {}, M = window.RECIPE_META || {}, COST = window.RECIPE_COST || {}, NOPLAN = window.NOPLAN || {};
+  var WEEK_KEY = 'meal-week-v2', DIET_KEY = 'cook-diet';
+  var DAYS = [['mon','Monday'],['tue','Tuesday'],['wed','Wednesday'],['thu','Thursday'],['fri','Friday'],['sat','Saturday'],['sun','Sunday']];
+  var DIETS = [['all','All'],['keto','Keto'],['paleo','Paleo'],['standard','Standard'],['plant','Plant']];
 
-  var tray = document.getElementById('plan-tray');
-  var mealsEl = document.getElementById('plan-meals');
-  var costEl = document.getElementById('plan-cost');
-  var trayMeals = document.getElementById('tray-meals');
-  var targetInput = document.getElementById('plan-target');
-  targetInput.value = getTarget();
+  function getJSON(k,d){ try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e){ return d; } }
+  function setJSON(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 
-  function idFromHref(href) { return (href || '').replace(/^.*\//, '').replace(/\.html.*$/, ''); }
-  function isMeal(id) { return !(window.NOT_MEAL && window.NOT_MEAL[id]); }
-  function totalMeals(c) { return Object.keys(c).reduce(function(s, id){ return s + (isMeal(id) ? c[id] : 0); }, 0); }
-  function totalCost(c) { var costs = window.RECIPE_COST || {}; return Object.keys(c).reduce(function(s, id){ return s + (costs[id] || 0) * c[id]; }, 0); }
+  var week = getJSON(WEEK_KEY, {});
+  DAYS.forEach(function(d){ if (!Array.isArray(week[d[0]])) week[d[0]] = []; });
+  var diet = localStorage.getItem(DIET_KEY) || 'all';
+  var pickerDay = null;
 
-  function refreshTray() {
-    var c = getCounts();
-    var meals = totalMeals(c);
-    var target = getTarget();
-    mealsEl.textContent = meals;
-    costEl.textContent = meals ? ('~$' + totalCost(c) + '/wk') : '';
-    trayMeals.classList.toggle('hit', meals >= target && meals > 0);
-    tray.classList.toggle('show', meals > 0);
+  var weekEl = document.getElementById('week');
+  var totalEl = document.getElementById('week-total');
+  var dietChipsEl = document.getElementById('diet-chips');
+  var overlay = document.getElementById('overlay');
+  var ovList = document.getElementById('ov-list');
+  var ovSearch = document.getElementById('ov-search');
+  var ovDayEl = document.getElementById('ov-day');
+  var ovDietEl = document.getElementById('ov-diet');
+
+  function macros(id){ var m = M[id]; return m ? { cal:m[1], p:m[2], c:m[3], f:m[4] } : { cal:0,p:0,c:0,f:0 }; }
+  function dayTotals(key){
+    var t = { cal:0,p:0,c:0,f:0,n:0 };
+    (week[key]||[]).forEach(function(id){ var m = macros(id); t.cal+=m.cal; t.p+=m.p; t.c+=m.c; t.f+=m.f; t.n++; });
+    return t;
   }
 
-  document.querySelectorAll('a.recipe').forEach(function(a) {
-    var id = a.dataset.id || idFromHref(a.getAttribute('href'));
-    if (!id) return;
-    var cost = (window.RECIPE_COST || {})[id];
-    var costCell = document.createElement('div');
-    costCell.className = 'recipe-cost';
-    costCell.textContent = cost ? ('~$' + cost) : '';
-    a.appendChild(costCell);
+  // Keep the Shop tab in sync: meal-plan-counts = tally across all days
+  function syncCounts(){
+    var counts = {};
+    DAYS.forEach(function(d){ (week[d[0]]||[]).forEach(function(id){ counts[id] = (counts[id]||0)+1; }); });
+    setJSON('meal-plan-counts', counts);
+  }
+  function save(){ setJSON(WEEK_KEY, week); syncCounts(); }
 
-    var step = document.createElement('div'); step.className = 'mp-step';
-    var minus = document.createElement('button'); minus.className = 'mp-btn mp-minus'; minus.type = 'button'; minus.textContent = '−'; minus.setAttribute('aria-label', 'one less');
-    var cnt = document.createElement('span'); cnt.className = 'mp-count';
-    var plus = document.createElement('button'); plus.className = 'mp-btn mp-plus'; plus.type = 'button'; plus.textContent = '+'; plus.setAttribute('aria-label', 'add one');
-    step.appendChild(minus); step.appendChild(cnt); step.appendChild(plus);
-    a.appendChild(step);
-
-    function sync() {
-      var n = getCounts()[id] || 0;
-      cnt.textContent = n;
-      step.classList.toggle('zero', n === 0);
-      plus.classList.toggle('has', n > 0);
-    }
-    function bump(d, e) {
-      e.preventDefault(); e.stopPropagation();
-      var c = getCounts();
-      var n = (c[id] || 0) + d;
-      if (n <= 0) delete c[id]; else c[id] = n;
-      setCounts(c); sync(); refreshTray();
-    }
-    plus.addEventListener('click', function(e){ bump(1, e); });
-    minus.addEventListener('click', function(e){ bump(-1, e); });
-    sync();
+  // Diet chips
+  DIETS.forEach(function(d){
+    var b = document.createElement('button');
+    b.className = 'chip' + (diet===d[0] ? ' on' : ''); b.textContent = d[1]; b.dataset.diet = d[0];
+    b.onclick = function(){
+      diet = d[0]; localStorage.setItem(DIET_KEY, diet);
+      Array.prototype.forEach.call(dietChipsEl.children, function(c){ c.classList.toggle('on', c.dataset.diet===diet); });
+      if (overlay.classList.contains('show')) renderPicker();
+    };
+    dietChipsEl.appendChild(b);
   });
 
-  targetInput.addEventListener('input', function() {
-    var t = parseInt(targetInput.value, 10);
-    if (t > 0) { localStorage.setItem(TARGET, String(t)); refreshTray(); }
-  });
-
-  document.getElementById('plan-clear').addEventListener('click', function() {
-    setCounts({});
-    document.querySelectorAll('.mp-step').forEach(function(s){
-      s.classList.add('zero');
-      s.querySelector('.mp-count').textContent = '0';
-      s.querySelector('.mp-plus').classList.remove('has');
+  function renderWeek(){
+    var html = '';
+    DAYS.forEach(function(d){
+      var key = d[0], t = dayTotals(key);
+      html += '<div class="day"><div class="day-head"><span class="day-name">' + d[1] + '</span>';
+      if (t.n) html += '<span class="day-macros"><span class="cal">' + t.cal + ' cal</span> · ' + t.p + 'P ' + t.c + 'C ' + t.f + 'F</span>';
+      html += '</div><div class="meals">';
+      var meals = week[key] || [];
+      if (!meals.length) {
+        html += '<div class="empty-day">No meals yet — tap + Add meal</div>';
+      } else {
+        meals.forEach(function(id, i){
+          var nm = (R[id] && R[id].name) || id, m = macros(id);
+          html += '<div class="meal"><span class="mn">' + nm + '</span>' +
+            '<span class="mm">' + m.cal + ' cal · ' + m.p + 'P ' + m.c + 'C ' + m.f + 'F</span>' +
+            '<span class="rm" data-day="' + key + '" data-i="' + i + '">×</span></div>';
+        });
+      }
+      html += '</div><button class="add-btn" data-add="' + key + '">+ Add meal</button></div>';
     });
-    refreshTray();
-  });
+    weekEl.innerHTML = html;
+    weekEl.querySelectorAll('.add-btn').forEach(function(b){ b.onclick = function(){ openPicker(b.dataset.add); }; });
+    weekEl.querySelectorAll('.rm').forEach(function(x){ x.onclick = function(){
+      week[x.dataset.day].splice(+x.dataset.i, 1); save(); renderWeek(); renderTotal();
+    }; });
+  }
 
-  refreshTray();
+  function renderTotal(){
+    var t = { cal:0,p:0,c:0,f:0,n:0,cost:0 };
+    DAYS.forEach(function(d){ (week[d[0]]||[]).forEach(function(id){ var m=macros(id); t.cal+=m.cal; t.p+=m.p; t.c+=m.c; t.f+=m.f; t.n++; t.cost+=(COST[id]||0); }); });
+    var days = DAYS.filter(function(d){ return (week[d[0]]||[]).length; }).length || 1;
+    totalEl.innerHTML = '<div class="wt-h">Weekly Total · ' + t.n + ' meal' + (t.n===1?'':'s') + '</div>' +
+      '<div class="wt-cal">' + t.cal.toLocaleString() + ' <span>cal / week</span></div>' +
+      '<div class="wt-macros"><span class="m">Protein <b>' + t.p + 'g</b></span><span class="m">Carbs <b>' + t.c + 'g</b></span><span class="m">Fat <b>' + t.f + 'g</b></span></div>' +
+      '<div class="avg">≈ ' + Math.round(t.cal/days) + ' cal/day across ' + days + ' planned day' + (days===1?'':'s') + ' · est. groceries ~$' + t.cost + '</div>' +
+      '<div class="wt-foot">These meals feed your <a href="meal-plan-list.html">Shop list →</a> automatically.</div>';
+  }
 
-  // Collapsible category headers — any <h2> that has a recipe-list under it.
-  document.querySelectorAll('h2').forEach(function(h) {
-    var sibs = [], el = h.nextElementSibling;
-    while (el && el.tagName !== 'H2') { sibs.push(el); el = el.nextElementSibling; }
-    if (!sibs.some(function(s){ return s.classList && s.classList.contains('recipe-list'); })) return;
-    h.classList.add('collapsible');
-    var key = 'cat-collapsed:' + h.textContent.trim().slice(0, 40);
-    function apply(collapsed) {
-      sibs.forEach(function(s){ s.style.display = collapsed ? 'none' : ''; });
-      h.classList.toggle('collapsed', collapsed);
-    }
-    apply(localStorage.getItem(key) === '1');
-    h.addEventListener('click', function() {
-      var now = !h.classList.contains('collapsed');
-      apply(now);
-      localStorage.setItem(key, now ? '1' : '0');
+  function openPicker(dayKey){
+    pickerDay = dayKey;
+    ovDayEl.textContent = (DAYS.filter(function(d){ return d[0]===dayKey; })[0]||['','Day'])[1];
+    ovSearch.value = '';
+    overlay.classList.add('show');
+    renderPicker();
+    ovSearch.focus();
+  }
+  function closePicker(){ overlay.classList.remove('show'); pickerDay = null; }
+
+  function renderPicker(){
+    var q = (ovSearch.value||'').toLowerCase().trim();
+    ovDietEl.textContent = (diet==='all' ? 'All diets' : DIETS.filter(function(d){return d[0]===diet;})[0][1]) + ' · tap to add';
+    var ids = Object.keys(R).filter(function(id){
+      if (NOPLAN[id]) return false;
+      var d = M[id] ? M[id][0] : 'any';
+      if (diet !== 'all' && d !== diet && d !== 'any') return false;
+      var nm = (R[id].name||'').toLowerCase();
+      if (q && nm.indexOf(q) === -1) return false;
+      return true;
     });
-  });
+    // meals first (specific diet), then 'any' staples; alpha within
+    ids.sort(function(a,b){
+      var da = M[a][0]==='any'?1:0, db = M[b][0]==='any'?1:0;
+      if (da!==db) return da-db;
+      return (R[a].name||'').localeCompare(R[b].name||'');
+    });
+    if (!ids.length) { ovList.innerHTML = '<div class="empty-day" style="padding:20px;text-align:center">No meals match.</div>'; return; }
+    ovList.innerHTML = ids.map(function(id){
+      var m = M[id], nm = R[id].name;
+      return '<div class="pick" data-id="' + id + '"><div class="pn"><div class="nm">' + nm + '</div>' +
+        '<div class="mc">' + m[1] + ' cal · ' + m[2] + 'P ' + m[3] + 'C ' + m[4] + 'F · ~$' + (COST[id]||0) + '</div></div>' +
+        '<span class="dtag ' + m[0] + '">' + m[0] + '</span><span class="plus">+</span></div>';
+    }).join('');
+    ovList.querySelectorAll('.pick').forEach(function(p){ p.onclick = function(){
+      week[pickerDay].push(p.dataset.id); save(); renderWeek(); renderTotal();
+      var plus = p.querySelector('.plus'); plus.textContent = '✓'; setTimeout(function(){ plus.textContent='+'; }, 350);
+    }; });
+  }
+
+  ovSearch.oninput = renderPicker;
+  document.getElementById('ov-close').onclick = closePicker;
+  document.getElementById('clear-week').onclick = function(){
+    if (confirm('Clear every meal from all 7 days? This cannot be undone.')) {
+      DAYS.forEach(function(d){ week[d[0]] = []; }); save(); renderWeek(); renderTotal();
+    }
+  };
+
+  renderWeek();
+  renderTotal();
 })();
 </script>
-
 </body>
 </html>

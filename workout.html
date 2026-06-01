@@ -4,357 +4,310 @@
 <meta name="robots" content="noindex,nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Training — Modular Builder</title>
+<title>Training — Build Your Week</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d0d0f; color: #e8e8e8; padding: 20px; max-width: 760px; margin: 0 auto; padding-bottom: 60px; }
-  header { text-align: center; margin-bottom: 18px; }
+  header { text-align: center; margin-bottom: 16px; }
   h1 { font-size: 1.3rem; font-weight: 800; color: #fff; letter-spacing: -0.01em; }
   .subtitle { font-size: 0.75rem; color: #666; margin-top: 4px; }
   .intro { background: #11160f; border-left: 4px solid #2a9a5a; padding: 13px 16px; border-radius: 0 8px 8px 0; font-size: 0.82rem; line-height: 1.55; color: #bbb; margin-bottom: 8px; }
   .intro strong { color: #6ad08a; }
-  h2 { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; color: #666; margin-top: 30px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #1e1e26; }
-  .week { display: grid; grid-template-columns: 1fr; gap: 8px; }
-  .day-card { background: #131318; border: 1px solid #1e1e26; border-radius: 12px; overflow: hidden; transition: border-color 0.2s; }
+  h2 { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; color: #666; margin-top: 28px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #1e1e26; }
+
+  .day-card { background: #131318; border: 1px solid #1e1e26; border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
   .day-card.done { border-color: #2a5a3a; }
-  .day-head { display: flex; align-items: center; gap: 14px; padding: 14px 16px; cursor: pointer; user-select: none; }
+  .day-head { display: flex; align-items: center; gap: 13px; padding: 14px 16px; cursor: pointer; user-select: none; }
   .day-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .stress-high .day-dot { background: #e0703a; box-shadow: 0 0 8px #e0703a; }
-  .stress-mod .day-dot { background: #4a8ad0; box-shadow: 0 0 8px #4a8ad0; }
-  .stress-low .day-dot { background: #4a9a5a; box-shadow: 0 0 8px #4a9a5a; }
-  .day-meta { flex: 1; }
-  .day-name { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #777; }
-  .day-title { font-size: 1rem; font-weight: 700; color: #eee; margin-top: 1px; }
-  .day-focus { font-size: 0.72rem; color: #666; margin-top: 2px; }
-  .day-check { width: 26px; height: 26px; border: 2px solid #333; border-radius: 50%; flex-shrink: 0; position: relative; cursor: pointer; transition: all 0.15s; }
+  .s-high .day-dot { background: #e0703a; box-shadow: 0 0 8px #e0703a; }
+  .s-mod .day-dot { background: #4a8ad0; box-shadow: 0 0 8px #4a8ad0; }
+  .s-low .day-dot { background: #4a9a5a; box-shadow: 0 0 8px #4a9a5a; }
+  .day-meta { flex: 1; min-width: 0; }
+  .day-name { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #777; }
+  .day-type { font-size: 1rem; font-weight: 700; color: #eee; margin-top: 1px; }
+  .day-check { width: 26px; height: 26px; border: 2px solid #333; border-radius: 50%; flex-shrink: 0; position: relative; cursor: pointer; transition: transform 0.08s; }
+  .day-check:active { transform: scale(0.9); }
   .day-card.done .day-check { background: #2a6a4a; border-color: #2a6a4a; }
   .day-card.done .day-check::after { content: ''; position: absolute; left: 8px; top: 3px; width: 6px; height: 12px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
-  .chevron { color: #555; font-size: 0.85rem; transition: transform 0.2s; }
+  .chevron { color: #555; font-size: 0.85rem; transition: transform 0.2s; flex-shrink: 0; }
   .day-card.open .chevron { transform: rotate(90deg); }
   .day-body { display: none; padding: 0 16px 16px; }
   .day-card.open .day-body { display: block; }
 
-  .block { margin-top: 12px; }
-  .block-label { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #5a8aaa; margin-bottom: 5px; }
-  .block-body { font-size: 0.85rem; color: #ccc; line-height: 1.6; }
-  .hr-tag { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 2px 9px; border-radius: 10px; margin-top: 8px; }
-  .hr-z2 { background: #0f1f2a; color: #5aaae0; }
-  .hr-z3 { background: #0f2a1a; color: #5ad080; }
-  .hr-z45 { background: #2a1a0f; color: #e0903a; }
-  .scale-note { font-size: 0.74rem; color: #888; font-style: italic; margin-top: 10px; line-height: 1.5; }
+  .type-row { display: flex; align-items: center; gap: 10px; margin: 4px 0 8px; }
+  .type-row label { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #5a8aaa; flex-shrink: 0; }
+  .type-select { flex: 1; background: #0a0a0d; border: 1px solid #2a2a33; color: #fff; border-radius: 7px; padding: 9px 11px; font-size: 0.9rem; font-family: inherit; }
+  .day-note { font-size: 0.84rem; color: #bcc; line-height: 1.55; margin-top: 4px; }
 
-  /* Modules + pick options */
-  .module { margin-top: 15px; }
+  .module { margin-top: 14px; }
   .module-label { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #5a8aaa; margin-bottom: 6px; }
-  .opt { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: #0f0f13; border: 1px solid #20202a; border-radius: 8px; margin-bottom: 5px; cursor: pointer; font-size: 0.82rem; color: #ccc; line-height: 1.4; transition: all 0.12s; }
-  .opt { transition: all 0.12s, transform 0.08s; }
-  .opt:active { background: #161620; transform: scale(0.985); }
-  .day-head { transition: background 0.1s; }
-  .day-head:active { background: #16161c; }
-  .day-check:active, .reset-week:active { transform: scale(0.92); }
+  .opt { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: #0f0f13; border: 1px solid #20202a; border-radius: 8px; margin-bottom: 5px; cursor: pointer; font-size: 0.82rem; color: #ccc; line-height: 1.4; transition: all 0.12s, transform 0.08s; }
+  .opt:active { transform: scale(0.985); }
   .opt.sel { background: #11251a; border-color: #2a8a52; color: #eafff0; }
   .opt .pick { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #444; flex-shrink: 0; position: relative; }
   .opt.sel .pick { background: #2a9a5a; border-color: #2a9a5a; }
   .opt.sel .pick::after { content: ''; position: absolute; left: 4px; top: 1px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
-  .opt b { color: #6ad08a; font-weight: 700; }
-  .opt.sel b { color: #8ce0a8; }
+  .opt b { color: #6ad08a; }
 
-  .bank-card { background: #131318; border: 1px solid #1e1e26; border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
-  .bank-head { padding: 13px 16px; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 12px; }
-  .bank-title { flex: 1; font-size: 0.9rem; font-weight: 700; color: #ddd; }
+  /* WOD picker */
+  .wod-search { width: 100%; background: #0a0a0d; border: 1px solid #2a2a33; color: #fff; border-radius: 8px; padding: 9px 12px; font-size: 0.88rem; font-family: inherit; }
+  .wod-chosen { background: #11251a; border: 1px solid #2a8a52; border-radius: 8px; padding: 10px 12px; margin-top: 6px; font-size: 0.84rem; color: #eafff0; }
+  .wod-chosen .wc-name { font-weight: 800; }
+  .wod-chosen .wc-desc { color: #aceec0; font-size: 0.78rem; margin-top: 3px; line-height: 1.4; }
+  .wod-chosen .wc-clear { float: right; color: #9cc; font-size: 0.7rem; text-decoration: underline; cursor: pointer; }
+  .wod-results { margin-top: 6px; max-height: 240px; overflow-y: auto; }
+  .wod-opt { padding: 8px 11px; background: #0f0f13; border: 1px solid #20202a; border-radius: 7px; margin-bottom: 4px; cursor: pointer; }
+  .wod-opt:active { background: #161620; }
+  .wod-opt .wo-name { font-size: 0.84rem; font-weight: 700; color: #ddd; }
+  .wod-opt .wo-fmt { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; color: #8ce0a8; margin-left: 6px; }
+  .wod-opt .wo-desc { font-size: 0.74rem; color: #888; margin-top: 2px; line-height: 1.35; }
+  .wod-hint { font-size: 0.72rem; color: #666; margin-top: 4px; }
+
   .info-card { background: #131318; border: 1px solid #1e1e26; border-radius: 10px; padding: 15px; font-size: 0.83rem; color: #bbb; line-height: 1.6; margin-bottom: 8px; }
-  .info-card strong { color: #ddd; }
   .info-card .lbl { color: #6ad08a; font-weight: 700; }
-  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.72rem; color: #777; margin: 10px 0 4px; }
-  .legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .lg-dot { width: 9px; height: 9px; border-radius: 50%; }
-  .reset-week { font-size: 0.7rem; color: #666; background: none; border: 1px solid #2a2a33; border-radius: 6px; padding: 7px 14px; cursor: pointer; font-family: inherit; margin-top: 4px; }
-  footer { margin-top: 30px; padding-top: 14px; border-top: 1px solid #1e1e26; font-size: 0.68rem; color: #555; text-align: center; line-height: 1.6; }
-  footer a { color: #777; text-decoration: none; }
+  .reset-week { font-size: 0.7rem; color: #666; background: none; border: 1px solid #2a2a33; border-radius: 6px; padding: 7px 14px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+  footer { margin-top: 28px; padding-top: 14px; border-top: 1px solid #1e1e26; font-size: 0.68rem; color: #555; text-align: center; line-height: 1.6; }
+  footer a { color: #6ad08a; text-decoration: none; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>Training</h1>
-  <p class="subtitle">6-day modular builder · pick your modules, structure stays fixed</p>
+  <p class="subtitle">Build your week — set each day's type, pick the work</p>
 </header>
 
 <div class="intro">
-  <strong>How it works:</strong> the 6 day-slots never change. Inside each day, <strong>tap one option per module</strong> (A: squat, B: accessories…) to build that session — your picks are saved. Next week, swap picks for variety without ever redesigning the week. Tap a day to expand; tap the circle to mark it done.
+  <strong>Make it yours:</strong> tap a day, then use the <strong>day-type dropdown</strong> to set what that day is (Lower, Upper, WOD, Run, Rest…). Pick one option per module. On a <strong>WOD day, search the library</strong> to drop in any workout. Your picks + layout save automatically.
 </div>
 
-<div class="legend">
-  <span><span class="lg-dot" style="background:#e0703a"></span> High stress</span>
-  <span><span class="lg-dot" style="background:#4a8ad0"></span> Moderate</span>
-  <span><span class="lg-dot" style="background:#4a9a5a"></span> Recovery</span>
-</div>
-
-<h2>The Week</h2>
-<div class="week" id="week">
-
-  <!-- MONDAY -->
-  <div class="day-card stress-mod" data-day="mon">
-    <div class="day-head"><div class="day-dot"></div><div class="day-meta"><div class="day-name">Monday</div><div class="day-title">Bodyweight</div><div class="day-focus">Engine + relative strength</div></div><div class="chevron">▶</div><div class="day-check" data-check="mon"></div></div>
-    <div class="day-body">
-      <div class="block"><div class="block-label">Warm-up (8 min)</div><div class="block-body">Jump rope 3 min · 2 rounds: 10 air squats, 10 push-ups, 10 lunges, 5 inchworms.</div></div>
-      <div class="module" data-mod="mon-session"><div class="module-label">Pick a session</div>
-        <div class="opt"><div class="pick"></div><div><b>Murph</b> — 1 mi run · 100 pull-ups · 200 push-ups · 300 squats · 1 mi run (partition 20×[5/10/15], wear vest if able)</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Half Murph</b> — 800 m · 50 · 100 · 150 · 800 m</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Cindy</b> — 20 min AMRAP: 5 pull-ups, 10 push-ups, 15 air squats</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Mary (scaled)</b> — 20 min AMRAP: 3 wall-walks, 10 alt pistols, 15 pull-ups</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Chipper</b> — 50 squats, 40 lunges, 30 push-ups, 20 sit-ups, 10 burpees, 100 jump rope</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Tabata Mix</b> — 4 moves × 8 (20/10): squats, push-ups, mt. climbers, hollow rocks</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Ladder</b> — run 400 m, 10→1 push-ups + air squats, run 400 m</div></div>
-      </div>
-      <div class="module" data-mod="mon-core"><div class="module-label">Finisher — core (optional)</div>
-        <div class="opt"><div class="pick"></div><div>Plank ladder (30-45-60s)</div></div>
-        <div class="opt"><div class="pick"></div><div>Hollow hold + superman 3×</div></div>
-        <div class="opt"><div class="pick"></div><div>Hanging knee raises 3×12</div></div>
-      </div>
-      <div class="scale-note">Scaling: jumping pull-ups / ring rows for strict, knee push-ups late, step-ups for box jumps. Walk to recover — that's pacing. Target Zone 3–4.</div>
-    </div>
-  </div>
-
-  <!-- TUESDAY -->
-  <div class="day-card stress-high" data-day="tue">
-    <div class="day-head"><div class="day-dot"></div><div class="day-meta"><div class="day-name">Tuesday</div><div class="day-title">Lower — Squat Strength</div><div class="day-focus">Heavy. No oly/OHS here · HIGH</div></div><div class="chevron">▶</div><div class="day-check" data-check="tue"></div></div>
-    <div class="day-body">
-      <div class="block"><div class="block-label">Warm-up</div><div class="block-body">5 min easy treadmill/row · empty bar 2×10, build to working weight.</div></div>
-      <div class="module" data-mod="tue-a"><div class="module-label">A — Main squat (heavy strength)</div>
-        <div class="opt"><div class="pick"></div><div><b>Back Squat</b> 5×5 @ 70–75% (RPE 7)</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Front Squat</b> 4×6 @ 65–70%</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Box Squat</b> 5×3 @ 75–80%</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Tempo Back Squat</b> 4×5 (3s down)</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Pause Squat</b> 5×3 (2s in the hole)</div></div>
-      </div>
-      <div class="module" data-mod="tue-b"><div class="module-label">B — Unilateral</div>
-        <div class="opt"><div class="pick"></div><div>Bulgarian split squat 3×10/leg (DBs)</div></div>
-        <div class="opt"><div class="pick"></div><div>Walking lunge 3×12/leg (DBs)</div></div>
-        <div class="opt"><div class="pick"></div><div>DB step-up 3×10/leg (plyo box)</div></div>
-        <div class="opt"><div class="pick"></div><div>Reverse lunge 3×10/leg</div></div>
-      </div>
-      <div class="module" data-mod="tue-c"><div class="module-label">C — Posterior chain</div>
-        <div class="opt"><div class="pick"></div><div>Romanian deadlift 3×10</div></div>
-        <div class="opt"><div class="pick"></div><div>Good morning 3×10</div></div>
-        <div class="opt"><div class="pick"></div><div>DB hip thrust 3×12</div></div>
-        <div class="opt"><div class="pick"></div><div>KB/DB swing 4×15</div></div>
-      </div>
-      <div class="module" data-mod="tue-d"><div class="module-label">D — Calves + core</div>
-        <div class="opt"><div class="pick"></div><div>Calf raise 3×20 (box edge) + plank</div></div>
-        <div class="opt"><div class="pick"></div><div>Weighted carry 3×40 m (50s)</div></div>
-        <div class="opt"><div class="pick"></div><div>Hanging knee raise 3×12</div></div>
-        <div class="opt"><div class="pick"></div><div>Slam ball 3×15 + side plank</div></div>
-      </div>
-      <div class="scale-note">Fasted AM: optional 5g BCAA pre-session in early adaptation; drop to 4×3 if recovery is poor. Last rep solid, never a grind. <strong>Overhead squat / snatch belong on Friday, not here.</strong></div>
-    </div>
-  </div>
-
-  <!-- WEDNESDAY -->
-  <div class="day-card stress-mod" data-day="wed">
-    <div class="day-head"><div class="day-dot"></div><div class="day-meta"><div class="day-name">Wednesday</div><div class="day-title">Medium Run — 2–3 mi</div><div class="day-focus">Aerobic base · keep it pure</div></div><div class="chevron">▶</div><div class="day-check" data-check="wed"></div></div>
-    <div class="day-body">
-      <div class="block"><div class="block-label">The run</div><div class="block-body">2–3 miles at a <strong>conversational pace</strong> — short sentences possible. Engine-builder, not a race. Walk the hills if HR spikes.</div><span class="hr-tag hr-z3">Zone 3 · fat-burning</span></div>
-      <div class="block"><div class="block-label">Progression</div><div class="block-body">Hold 2–3 mi for 3–4 weeks, then add ½ mile OR a 4×1 min tempo pickup mid-run.</div></div>
-      <div class="scale-note">No barbell, no technical lifts here — this is a recovery/aerobic day. Outdoor preferred (terrain = mud-run carryover); treadmill if needed.</div>
-    </div>
-  </div>
-
-  <!-- THURSDAY -->
-  <div class="day-card stress-mod" data-day="thu">
-    <div class="day-head"><div class="day-dot"></div><div class="day-meta"><div class="day-name">Thursday</div><div class="day-title">Upper Body</div><div class="day-focus">Push / pull hypertrophy</div></div><div class="chevron">▶</div><div class="day-check" data-check="thu"></div></div>
-    <div class="day-body">
-      <div class="block"><div class="block-label">Warm-up</div><div class="block-body">Band pull-aparts + shoulder dislocates · push-ups 2×10 · light press sets.</div></div>
-      <div class="module" data-mod="thu-a"><div class="module-label">A — Horizontal press</div>
-        <div class="opt"><div class="pick"></div><div><b>Bench Press</b> 5×5 @ 70–75%</div></div>
-        <div class="opt"><div class="pick"></div><div><b>DB Bench</b> 4×8</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Incline DB Press</b> 3×10</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Weighted Push-up</b> 4×12</div></div>
-      </div>
-      <div class="module" data-mod="thu-b"><div class="module-label">B — Vertical pull</div>
-        <div class="opt"><div class="pick"></div><div>Pull-ups 4×max</div></div>
-        <div class="opt"><div class="pick"></div><div>Negatives 4×4 (5s lower)</div></div>
-        <div class="opt"><div class="pick"></div><div>Banded pull-ups 4×8</div></div>
-        <div class="opt"><div class="pick"></div><div>DB pullover 3×12</div></div>
-      </div>
-      <div class="module" data-mod="thu-c"><div class="module-label">C — Vertical press</div>
-        <div class="opt"><div class="pick"></div><div>DB shoulder press 3×10</div></div>
-        <div class="opt"><div class="pick"></div><div>Arnold press 3×10</div></div>
-        <div class="opt"><div class="pick"></div><div>Landmine press 3×10/arm</div></div>
-        <div class="opt"><div class="pick"></div><div>Push press 4×6</div></div>
-      </div>
-      <div class="module" data-mod="thu-d"><div class="module-label">D — Horizontal pull</div>
-        <div class="opt"><div class="pick"></div><div>1-arm DB row 3×10/arm (50s)</div></div>
-        <div class="opt"><div class="pick"></div><div>Chest-supported DB row 3×12</div></div>
-        <div class="opt"><div class="pick"></div><div>Bent-over barbell row 4×8</div></div>
-        <div class="opt"><div class="pick"></div><div>Inverted row 3×max</div></div>
-      </div>
-      <div class="module" data-mod="thu-e"><div class="module-label">E — Arms + delts (pick your favorite)</div>
-        <div class="opt"><div class="pick"></div><div>DB curls + overhead triceps 3×12</div></div>
-        <div class="opt"><div class="pick"></div><div>Lateral raises 3×15 (shoulder caps)</div></div>
-        <div class="opt"><div class="pick"></div><div>Hammer curls + dips 3×12</div></div>
-        <div class="opt"><div class="pick"></div><div>21s + skullcrushers</div></div>
-      </div>
-      <div class="scale-note">Pull-up volume drives the V-taper that reads lean even mid-cut. Push/pull balance keeps shoulders healthy.</div>
-    </div>
-  </div>
-
-  <!-- FRIDAY -->
-  <div class="day-card stress-high" data-day="fri">
-    <div class="day-head"><div class="day-dot"></div><div class="day-meta"><div class="day-name">Friday</div><div class="day-title">WOD</div><div class="day-focus">Oly/OHS skill + metcon · HIGH</div></div><div class="chevron">▶</div><div class="day-check" data-check="fri"></div></div>
-    <div class="day-body">
-      <div class="module" data-mod="fri-skill"><div class="module-label">Skill primer (fresh, BEFORE the metcon — oly/OHS lives here)</div>
-        <div class="opt"><div class="pick"></div><div><b>Overhead Squat</b> 5×3 (light — technique + mobility)</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Snatch</b> technique 6×2 (light)</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Clean</b> technique 6×2</div></div>
-        <div class="opt"><div class="pick"></div><div>Pistol progression 10 min</div></div>
-        <div class="opt"><div class="pick"></div><div>Double-under practice 10 min</div></div>
-        <div class="opt"><div class="pick"></div><div>Handstand holds / wall walks</div></div>
-        <div class="opt"><div class="pick"></div><div>Skip skill — straight to WOD</div></div>
-      </div>
-      <div class="module" data-mod="fri-wod"><div class="module-label">Pick a WOD (~15 library · barbell light, engine is the limiter)</div>
-        <div class="opt"><div class="pick"></div><div><b>Fran</b> — 21-15-9: thrusters (95) + pull-ups</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Helen</b> — 3 RFT: 400 m run, 21 KB swings, 12 pull-ups</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Grace</b> — 30 clean &amp; jerks for time (light)</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Cindy</b> — 20 min AMRAP: 5/10/15</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Annie</b> — 50-40-30-20-10: double-unders + sit-ups</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Jackie</b> — 1000 m row, 50 thrusters (45), 30 pull-ups</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Diane</b> — 21-15-9: deadlift + HSPU (scale HSPU)</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Karen</b> — 150 wall balls / slam-ball sub, for time</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Nancy</b> — 5 RFT: 400 m run + 15 overhead squats (95)</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Barbara</b> — 5 rds: 20 pull-ups, 30 push-ups, 40 sit-ups, 50 squats</div></div>
-        <div class="opt"><div class="pick"></div><div><b>DT</b> — 5 rds: 12 deadlift, 9 hang clean, 6 push jerk (light)</div></div>
-        <div class="opt"><div class="pick"></div><div><b>The Chief</b> — 5× [3 min AMRAP: 3 cleans, 6 push-ups, 9 squats]</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Fight Gone Bad</b> — 3 rds, 5 stations × 1 min (wall ball/SDHP/box/push press/row)</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Filthy Fifty</b> — 50 reps × 10 movements chipper</div></div>
-        <div class="opt"><div class="pick"></div><div><b>Run Ladder (default)</b> — 200/400/800/400/200 + 1-2-3-2-1 triplet</div></div>
-      </div>
-      <span class="hr-tag hr-z45">Zone 4–5 OK · this is the hard day · scale reps not intensity</span>
-      <div class="scale-note">This is the session that keeps you mud-run / drop-in ready. Skill primer first while fresh, then the metcon.</div>
-    </div>
-  </div>
-
-  <!-- SATURDAY -->
-  <div class="day-card stress-mod" data-day="sat">
-    <div class="day-head"><div class="day-dot"></div><div class="day-meta"><div class="day-name">Saturday</div><div class="day-title">Long Run</div><div class="day-focus">Engine · biggest aerobic builder</div></div><div class="chevron">▶</div><div class="day-check" data-check="sat"></div></div>
-    <div class="day-body">
-      <div class="block"><div class="block-label">The run</div><div class="block-body">Start 3–4 mi, build toward 5–6 over months. <strong>Slow and steady.</strong> Walk-run: run until HR climbs, walk until it settles, repeat — the intervals lengthen on their own over weeks.</div><span class="hr-tag hr-z2">Zone 2–3 · easy aerobic</span></div>
-      <div class="block"><div class="block-label">Progression</div><div class="block-body">Add ~½ mile every 2–3 weeks until ~6 mi, then hold and add pace.</div></div>
-      <div class="scale-note">Fasted long runs are deep fat-burning — keep electrolytes up (salt + water before, broth after).</div>
-    </div>
-  </div>
-
-  <!-- SUNDAY -->
-  <div class="day-card stress-low" data-day="sun">
-    <div class="day-head"><div class="day-dot"></div><div class="day-meta"><div class="day-name">Sunday</div><div class="day-title">Rest / Mobility</div><div class="day-focus">Recovery — makes 6 days work</div></div><div class="chevron">▶</div><div class="day-check" data-check="sun"></div></div>
-    <div class="day-body">
-      <div class="block"><div class="block-label">Do</div><div class="block-body">Easy 20–30 min walk · 10 min mobility on what's tight (hips, shoulders, ankles) · foam roll.</div></div>
-      <div class="block"><div class="block-label">Don't</div><div class="block-body">No lifting, no metcon. The plan works <em>because</em> Sunday is real recovery.</div></div>
-    </div>
-  </div>
-
-</div>
-
+<h2>Your Week</h2>
+<div id="week"></div>
 <button class="reset-week" id="reset-week">↺ Reset day checkmarks (new week)</button>
-
-<h2>Progression & Deload</h2>
-<div class="info-card">
-  <span class="lbl">Strength (Tue/Thu):</span> wave the main lift over 3–4 week blocks (5×5 → 4×4 heavier → back-off), then repeat one notch up. Add weight OR reps, never both.<br><br>
-  <span class="lbl">Runs (Wed/Sat):</span> extend distance or add tempo month over month.<br><br>
-  <span class="lbl">WOD / Bodyweight (Fri/Mon):</span> swap module picks each week — fresh stimulus, fixed format.<br><br>
-  <span class="lbl">Deload every 4–6 weeks:</span> one lighter week, ~40% less volume. Joint insurance. Come back stronger.
-</div>
 
 <h2>Why Squat Day &amp; WOD Day Stay Separate</h2>
 <div class="info-card">
-  <span class="lbl">Heavy squat (Tue)</span> is a strength/CNS day — keep it heavy and low-rep. Don't mix it with technical Olympic or overhead work when you're loaded and fatigued.<br><br>
-  <span class="lbl">Overhead squat, snatch, clean, thrusters, CrossFit skill (Fri)</span> go on WOD day as a <strong>skill primer when you're fresh</strong>, before the metcon. Technical + mobility-heavy = needs a fresh nervous system, not a fried one.<br><br>
-  <span class="lbl">Never before Wednesday's run</span> — that's a recovery/aerobic day; a technical barbell lift muddies its purpose.
+  <span class="lbl">Heavy squat</span> is a strength/CNS day — keep it heavy and low-rep, no technical oly work when fatigued. <span class="lbl">Overhead squat, snatch, clean, CrossFit skill</span> go on a WOD day as a fresh skill primer <em>before</em> the metcon. Don't put technical barbell work before a recovery run.
+</div>
+
+<h2>Progression &amp; Deload</h2>
+<div class="info-card">
+  <span class="lbl">Strength:</span> wave the main lift over 3–4 week blocks (5×5 → 4×4 heavier → back-off), then repeat one notch up.<br>
+  <span class="lbl">Runs:</span> extend distance or add tempo month over month.<br>
+  <span class="lbl">WOD / Bodyweight:</span> swap picks each week — fresh stimulus, fixed structure.<br>
+  <span class="lbl">Deload every 4–6 weeks:</span> one lighter week, ~40% less volume. Joint insurance.
 </div>
 
 <h2>Fasted-AM + Keto Notes</h2>
 <div class="info-card">
-  <span class="lbl">All sessions fasted AM.</span> The two hard days (Tue squat, Fri WOD): optional 5g BCAA pre-session in early adaptation; scale intensity ~20% while adapting.<br><br>
-  <span class="lbl">Electrolytes before every session</span> — salt + water, magnesium at night. Same targets as the <a href="fast-tracker.html" style="color:#6ad08a;">fast tracker</a>.<br><br>
-  <span class="lbl">Rower note:</span> if shoes slip the stirrups, use flat-soled shoes or socks — or sub bike / run / jump rope.
+  All sessions fasted AM. The hard days (heavy squat, WOD): optional 5g BCAA pre-session in early adaptation; scale intensity ~20% while adapting. Electrolytes before every session — same targets as the <a href="fast-tracker.html">fast tracker</a>. Rower note: if shoes slip the stirrups, use flat-soled shoes or socks, or sub bike / run / jump rope.
 </div>
 
 <footer>
-  Training · 6-day modular builder · pick modules, structure stays fixed<br>
-  Engine-priority, sustainable for years. Listen to your body over any number. Not medical advice.
+  Build your week · picks &amp; layout save on your phone · Need a WOD? <a href="wods.html">browse the full WOD Finder →</a>
 </footer>
 
+<script src="wods-data.js"></script>
 <script>
 (function() {
-  // Schema guard: if the module structure changes (this constant bumps), clear stale
-  // picks so saved indexes can't point at the wrong options. Bump WV when modules change.
-  try {
-    var WV = '2026-06-01';
-    if (localStorage.getItem('workout-schema') !== WV) {
-      localStorage.removeItem('workout-picks');
-      localStorage.removeItem('workout-pick-labels');
-      localStorage.setItem('workout-schema', WV);
-    }
-  } catch (e) {}
+  var LAYOUT_KEY = 'week-layout';
+  var PICKS_KEY = 'workout-picks-v2';
+  var DONE_KEY = 'workout-week-done';
 
-  // Expand/collapse days
-  document.querySelectorAll('.day-card').forEach(function(card) {
-    card.querySelector('.day-head').addEventListener('click', function(e) {
-      if (e.target.classList.contains('day-check')) return;
-      card.classList.toggle('open');
-    });
-  });
+  var TYPES = {
+    rest:       { title:'Rest / Mobility',        stress:'s-low',  note:'Easy 20–30 min walk + 10 min mobility on what\'s tight. No lifting, no metcon — recovery is the point.', modules:[] },
+    run:        { title:'Medium Run — 2–3 mi',    stress:'s-mod',  note:'Conversational pace, Zone 3. Walk the hills if heart rate spikes. Engine builder, not a race.', modules:[] },
+    longrun:    { title:'Long Run',               stress:'s-mod',  note:'Build 3 → 6 mi over months. Slow, Zone 2–3. Walk-run: run until HR climbs, walk until it settles.', modules:[] },
+    bodyweight: { title:'Bodyweight',             stress:'s-mod',  modules:[
+      { id:'session', label:'Pick a session', opts:[
+        'Murph — 1 mi run · 100 pull-ups · 200 push-ups · 300 squats · 1 mi run','Half Murph — 800 m · 50 · 100 · 150 · 800 m',
+        'Cindy — 20 min AMRAP: 5 pull-ups, 10 push-ups, 15 squats','Mary (scaled) — 20 min AMRAP: 3 wall-walks, 10 alt pistols, 15 pull-ups',
+        'Chipper — 50 squats, 40 lunges, 30 push-ups, 20 sit-ups, 10 burpees, 100 jump rope','Tabata Mix — squats / push-ups / mt. climbers / hollow (8×20-10)',
+        'Ladder — run 400 m, 10→1 push-ups + squats, run 400 m' ]},
+      { id:'core', label:'Finisher — core (optional)', opts:['Plank ladder (30-45-60s)','Hollow hold + superman ×3','Hanging knee raises 3×12'] }
+    ]},
+    lower:      { title:'Lower — Squat Strength',  stress:'s-high', modules:[
+      { id:'squat', label:'A — Main squat (heavy)', opts:['Back Squat 5×5 @ 70–75% (RPE 7)','Front Squat 4×6 @ 65–70%','Box Squat 5×3 @ 75–80%','Tempo Back Squat 4×5 (3s down)','Pause Squat 5×3 (2s bottom)'] },
+      { id:'uni', label:'B — Unilateral', opts:['Bulgarian split squat 3×10/leg','Walking lunge 3×12/leg','DB step-up 3×10/leg','Reverse lunge 3×10/leg'] },
+      { id:'post', label:'C — Posterior chain', opts:['Romanian deadlift 3×10','Good morning 3×10','DB hip thrust 3×12','KB/DB swing 4×15'] },
+      { id:'calf', label:'D — Calves + core', opts:['Calf raise 3×20 + plank','Weighted carry 3×40 m','Hanging knee raise 3×12','Slam ball 3×15 + side plank'] }
+    ]},
+    upper:      { title:'Upper Body',              stress:'s-mod',  modules:[
+      { id:'hpress', label:'A — Horizontal press', opts:['Bench Press 5×5 @ 70–75%','DB Bench 4×8','Incline DB Press 3×10','Weighted Push-up 4×12'] },
+      { id:'vpull', label:'B — Vertical pull', opts:['Pull-ups 4×max','Negatives 4×4 (5s)','Banded pull-ups 4×8','DB pullover 3×12'] },
+      { id:'vpress', label:'C — Vertical press', opts:['DB shoulder press 3×10','Arnold press 3×10','Landmine press 3×10/arm','Push press 4×6'] },
+      { id:'hpull', label:'D — Horizontal pull', opts:['1-arm DB row 3×10/arm','Chest-supported DB row 3×12','Bent-over barbell row 4×8','Inverted row 3×max'] },
+      { id:'arms', label:'E — Arms + delts', opts:['DB curls + overhead triceps 3×12','Lateral raises 3×15','Hammer curls + dips 3×12','21s + skullcrushers'] }
+    ]},
+    wod:        { title:'WOD',                     stress:'s-high', modules:[
+      { id:'skill', label:'Skill primer (oly/OHS lives here)', opts:['Overhead Squat 5×3 (light)','Snatch technique 6×2','Clean technique 6×2','Pistol progression 10 min','Double-under practice 10 min','Handstand holds / wall walks','Skip skill — straight to WOD'] },
+      { id:'wod', label:'Pick a WOD (search the library)', wod:true }
+    ]}
+  };
 
-  // Day done checkmarks
-  var DONE = 'workout-week-done';
-  function getDone() { try { return JSON.parse(localStorage.getItem(DONE) || '{}'); } catch(e) { return {}; } }
-  function setDone(s) { localStorage.setItem(DONE, JSON.stringify(s)); }
-  var done = getDone();
-  document.querySelectorAll('.day-check').forEach(function(box) {
-    var day = box.dataset.check;
-    var card = document.querySelector('.day-card[data-day="'+day+'"]');
-    if (done[day]) card.classList.add('done');
-    box.addEventListener('click', function(e) {
-      e.stopPropagation();
-      var on = card.classList.toggle('done');
-      var s = getDone();
-      if (on) s[day] = 1; else delete s[day];
-      setDone(s);
-    });
-  });
-  document.getElementById('reset-week').addEventListener('click', function() {
-    if (confirm('Reset all day checkmarks for a new week? (Your module picks stay saved.)')) {
-      localStorage.removeItem(DONE);
-      document.querySelectorAll('.day-card').forEach(function(c){ c.classList.remove('done'); });
-    }
-  });
+  var TYPE_ORDER = ['bodyweight','lower','run','upper','wod','longrun','rest'];
+  var TYPE_NAMES = { bodyweight:'Bodyweight', lower:'Lower / Squat', run:'Medium Run', upper:'Upper Body', wod:'WOD', longrun:'Long Run', rest:'Rest / Mobility' };
+  var DAYS = [['mon','Monday'],['tue','Tuesday'],['wed','Wednesday'],['thu','Thursday'],['fri','Friday'],['sat','Saturday'],['sun','Sunday']];
+  var DEFAULT_LAYOUT = { mon:'bodyweight', tue:'lower', wed:'run', thu:'upper', fri:'wod', sat:'longrun', sun:'rest' };
+  var WODS = window.WODS || [];
 
-  // Module pick selection (single-select per module, persisted).
-  // Stores both the index (PICKS) and the human label (LABELS) so the
-  // Schedule tab can show what you picked without duplicating the option lists.
-  var PICKS = 'workout-picks';
-  var LABELS = 'workout-pick-labels';
-  function getJSON(k) { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch(e) { return {}; } }
+  function getJSON(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e) { return d; } }
   function setJSON(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
-  document.querySelectorAll('.module[data-mod]').forEach(function(mod) {
-    var id = mod.dataset.mod;
-    var opts = Array.prototype.slice.call(mod.querySelectorAll('.opt'));
-    var picks = getJSON(PICKS);
-    if (picks[id] != null && opts[picks[id]]) opts[picks[id]].classList.add('sel');
-    opts.forEach(function(opt, i) {
-      opt.addEventListener('click', function() {
-        var s = getJSON(PICKS), lab = getJSON(LABELS);
-        if (s[id] === i) { delete s[id]; delete lab[id]; opt.classList.remove('sel'); }
-        else {
-          s[id] = i; lab[id] = (opt.textContent || '').replace(/\s+/g, ' ').trim();
-          opts.forEach(function(o){ o.classList.remove('sel'); }); opt.classList.add('sel');
-        }
-        setJSON(PICKS, s); setJSON(LABELS, lab);
-      });
+  var layout = Object.assign({}, DEFAULT_LAYOUT, getJSON(LAYOUT_KEY, {}));
+  var picks = getJSON(PICKS_KEY, {});
+  var done = getJSON(DONE_KEY, {});
+
+  var weekEl = document.getElementById('week');
+
+  function esc(s){ return s; }
+
+  function moduleHTML(day, mod) {
+    if (mod.wod) {
+      var chosen = picks[day + ':wod'];
+      var html = '<div class="module" data-mod="wod"><div class="module-label">' + mod.label + '</div>';
+      html += '<input class="wod-search" data-day="' + day + '" placeholder="Search WODs… (Fran, EMOM, burpee)" autocomplete="off">';
+      html += '<div class="wod-chosen-wrap" data-day="' + day + '">' + wodChosenHTML(chosen) + '</div>';
+      html += '<div class="wod-results" data-day="' + day + '"></div>';
+      html += '<div class="wod-hint">Type to search the full library. Tap one to lock it in for this day.</div>';
+      html += '</div>';
+      return html;
+    }
+    var sel = picks[day + ':' + mod.id];
+    var opts = mod.opts.map(function(o) {
+      var on = (o === sel) ? ' sel' : '';
+      return '<div class="opt' + on + '" data-day="' + day + '" data-mod="' + mod.id + '" data-val="' + o.replace(/"/g,'&quot;') + '"><div class="pick"></div><div>' + o + '</div></div>';
+    }).join('');
+    return '<div class="module"><div class="module-label">' + mod.label + '</div>' + opts + '</div>';
+  }
+
+  function wodChosenHTML(name) {
+    if (!name) return '';
+    var w = WODS.filter(function(x){ return x[0] === name; })[0];
+    var desc = w ? w[3] : '';
+    var fmt = w ? w[1] : '';
+    return '<div class="wod-chosen"><span class="wc-clear" data-clear="1">clear</span><span class="wc-name">' + name + '</span>' +
+      (fmt ? ' <span style="font-size:0.62rem;color:#8ce0a8;font-weight:800;">' + fmt + '</span>' : '') +
+      (desc ? '<div class="wc-desc">' + desc + '</div>' : '') + '</div>';
+  }
+
+  function bodyHTML(day) {
+    var type = layout[day];
+    var T = TYPES[type];
+    var html = '<div class="type-row"><label>Day type</label><select class="type-select" data-day="' + day + '">';
+    TYPE_ORDER.forEach(function(t){ html += '<option value="' + t + '"' + (t === type ? ' selected' : '') + '>' + TYPE_NAMES[t] + '</option>'; });
+    html += '</select></div>';
+    if (T.note) html += '<div class="day-note">' + T.note + '</div>';
+    T.modules.forEach(function(m){ html += moduleHTML(day, m); });
+    return html;
+  }
+
+  function buildWeek() {
+    var html = '';
+    DAYS.forEach(function(d) {
+      var day = d[0], name = d[1];
+      var T = TYPES[layout[day]];
+      var doneCls = done[day] ? ' done' : '';
+      html += '<div class="day-card ' + T.stress + doneCls + '" data-day="' + day + '">' +
+        '<div class="day-head"><div class="day-dot"></div>' +
+        '<div class="day-meta"><div class="day-name">' + name + '</div><div class="day-type" data-title="' + day + '">' + T.title + '</div></div>' +
+        '<div class="chevron">▶</div><div class="day-check" data-check="' + day + '"></div></div>' +
+        '<div class="day-body" data-body="' + day + '">' + bodyHTML(day) + '</div></div>';
     });
-  });
+    weekEl.innerHTML = html;
+    wire();
+  }
+
+  function refreshDay(day) {
+    var bodyEl = weekEl.querySelector('[data-body="' + day + '"]');
+    var card = weekEl.querySelector('.day-card[data-day="' + day + '"]');
+    var T = TYPES[layout[day]];
+    bodyEl.innerHTML = bodyHTML(day);
+    weekEl.querySelector('[data-title="' + day + '"]').textContent = T.title;
+    card.className = 'day-card ' + T.stress + (done[day] ? ' done' : '') + ' open';
+    wire();
+  }
+
+  function wire() {
+    // expand/collapse + done
+    weekEl.querySelectorAll('.day-head').forEach(function(head) {
+      head.onclick = function(e) {
+        if (e.target.classList.contains('day-check')) return;
+        head.parentNode.classList.toggle('open');
+      };
+    });
+    weekEl.querySelectorAll('.day-check').forEach(function(box) {
+      box.onclick = function(e) {
+        e.stopPropagation();
+        var day = box.dataset.check;
+        if (done[day]) delete done[day]; else done[day] = 1;
+        setJSON(DONE_KEY, done);
+        box.parentNode.parentNode.classList.toggle('done', !!done[day]);
+      };
+    });
+    // type selectors
+    weekEl.querySelectorAll('.type-select').forEach(function(sel) {
+      sel.onchange = function() {
+        var day = sel.dataset.day;
+        layout[day] = sel.value;
+        setJSON(LAYOUT_KEY, layout);
+        refreshDay(day);
+      };
+    });
+    // module options
+    weekEl.querySelectorAll('.opt').forEach(function(opt) {
+      opt.onclick = function() {
+        var day = opt.dataset.day, mod = opt.dataset.mod, val = opt.dataset.val;
+        var key = day + ':' + mod;
+        var mods = opt.parentNode;
+        if (picks[key] === val) { delete picks[key]; opt.classList.remove('sel'); }
+        else { picks[key] = val; mods.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('sel'); }); opt.classList.add('sel'); }
+        setJSON(PICKS_KEY, picks);
+      };
+    });
+    // WOD search
+    weekEl.querySelectorAll('.wod-search').forEach(function(inp) {
+      inp.oninput = function() { renderWodResults(inp.dataset.day, inp.value); };
+    });
+    weekEl.querySelectorAll('.wod-chosen-wrap').forEach(function(wrap) {
+      wrap.onclick = function(e) {
+        if (e.target.dataset.clear) {
+          var day = wrap.dataset.day;
+          delete picks[day + ':wod']; setJSON(PICKS_KEY, picks);
+          wrap.innerHTML = '';
+        }
+      };
+    });
+  }
+
+  function renderWodResults(day, q) {
+    var box = weekEl.querySelector('.wod-results[data-day="' + day + '"]');
+    q = (q || '').toLowerCase().trim();
+    if (!q) { box.innerHTML = ''; return; }
+    var matches = WODS.filter(function(w){ return w[0].toLowerCase().indexOf(q) !== -1 || w[1].toLowerCase().indexOf(q) !== -1; }).slice(0, 12);
+    if (!matches.length) { box.innerHTML = '<div class="wod-hint">No WODs match “' + q + '”.</div>'; return; }
+    box.innerHTML = matches.map(function(w) {
+      return '<div class="wod-opt" data-day="' + day + '" data-wod="' + w[0].replace(/"/g,'&quot;') + '"><span class="wo-name">' + w[0] + '</span><span class="wo-fmt">' + w[1] + '</span><div class="wo-desc">' + w[3] + '</div></div>';
+    }).join('');
+    box.querySelectorAll('.wod-opt').forEach(function(o) {
+      o.onclick = function() {
+        var d = o.dataset.day, name = o.dataset.wod;
+        picks[d + ':wod'] = name; setJSON(PICKS_KEY, picks);
+        weekEl.querySelector('.wod-chosen-wrap[data-day="' + d + '"]').innerHTML = wodChosenHTML(name);
+        box.innerHTML = '';
+        var inp = weekEl.querySelector('.wod-search[data-day="' + d + '"]'); if (inp) inp.value = '';
+      };
+    });
+  }
+
+  document.getElementById('reset-week').onclick = function() {
+    if (confirm('Reset all day checkmarks for a new week? (Your layout & picks stay saved.)')) {
+      done = {}; setJSON(DONE_KEY, done);
+      weekEl.querySelectorAll('.day-card').forEach(function(c){ c.classList.remove('done'); });
+    }
+  };
+
+  buildWeek();
 })();
 </script>
-
 </body>
 </html>

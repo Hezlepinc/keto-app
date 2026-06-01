@@ -78,13 +78,14 @@
   var LAYOUT = 'week-layout';
   var PICKS = 'workout-picks-v2';
   var WMAP = {}; (window.WODS || []).forEach(function(w){ WMAP[w[0].toLowerCase()] = w; });
-  var schedShowNormal = false;
-  function fastActive(){ try { var s = parseInt(localStorage.getItem('fast-start-time'),10); if(!s) return false; var h=(Date.now()-s)/3600000; return h>=0 && h<80; } catch(e){ return false; } }
-  function fastCardHTML(){
-    return '<div class="fast-ov"><div class="fo-h">🟡 Fast in progress — fasted-training mode</div>' +
-      '<p class="fo-p">Your normal week is paused while you fast. <b>No WOD, heavy lifting, or hard metcon.</b> Approved: easy walk (Zone 1–2), mobility/stretch, light bodyweight greasing-the-groove, or easy Zone-2 bike/row. Electrolytes before &amp; during; resume hard training the day after you break.</p>' +
-      '<button class="fo-toggle" id="sched-shownormal">View my normal week anyway →</button></div>';
-  }
+  // Module ids per day-type — used to hide picks left over from a previous type on the same day
+  var TYPE_MODULES = {
+    rest:[], run:[], longrun:[], conditioning:['session','core'], bodyweight:['wod','core'],
+    lower:['squat','uni','post','calf'], upper:['hpress','vpull','vpress','hpull','arms'],
+    push:['hpress','vpress','acc','tri'], pull:['vpull','hpull','rear','bi'],
+    legs:['squat','hinge','uni','calf'], hinge:['dl','acc','uni','grip'],
+    fullbody:['legs','press','pull','fin'], wod:['skill','wod']
+  };
 
   var DAYS = [['mon','Monday'],['tue','Tuesday'],['wed','Wednesday'],['thu','Thursday'],['fri','Friday'],['sat','Saturday'],['sun','Sunday']];
   var DEFAULT_LAYOUT = { mon:'bodyweight', tue:'lower', wed:'run', thu:'upper', fri:'wod', sat:'longrun', sun:'rest' };
@@ -102,18 +103,6 @@
     var layout = Object.assign({}, DEFAULT_LAYOUT, getJSON(LAYOUT, {}));
     var picks = getJSON(PICKS, {});
     var weekEl = document.getElementById('week');
-    var summaryBar = document.querySelector('.summary-bar');
-
-    // Fast-override: if a fast is running, replace the week with fasted-approved guidance
-    if (fastActive() && !schedShowNormal) {
-      if (summaryBar) summaryBar.style.display = 'none';
-      weekEl.innerHTML = fastCardHTML();
-      var sn = document.getElementById('sched-shownormal');
-      if (sn) sn.onclick = function(){ schedShowNormal = true; render(); };
-      return;
-    }
-    if (summaryBar) summaryBar.style.display = '';
-
     var html = '', doneN = 0;
 
     DAYS.forEach(function(d) {
@@ -127,8 +116,11 @@
         '<div class="day-type">' + title + '</div></div>' +
         '<div class="check" data-check="' + day + '"></div></div>';
       html += '<div class="picks">';
+      var typeMods = TYPE_MODULES[type] || [];
       var dayPicks = [];
-      Object.keys(picks).filter(function(k){ return k.indexOf(day + ':') === 0; }).forEach(function(k){
+      Object.keys(picks).filter(function(k){
+        return k.indexOf(day + ':') === 0 && typeMods.indexOf(k.split(':')[1]) > -1;   // only the current type's modules
+      }).forEach(function(k){
         var v = picks[k];
         if (Array.isArray(v)) dayPicks = dayPicks.concat(v);
         else if (v) dayPicks.push(v);

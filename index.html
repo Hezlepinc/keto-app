@@ -71,6 +71,24 @@
   .dtag.standard { background: #16263a; color: #88c0e8; } .dtag.plant { background: #14301e; color: #8ce0a8; }
   .dtag.any { background: #222; color: #aaa; }
   .pick .plus { font-size: 1.3rem; color: #2a9a5a; font-weight: 800; }
+  .pick .info { font-size: 1.05rem; color: #6a9a8a; cursor: pointer; padding: 0 3px; }
+  .meal .mn.tap { cursor: pointer; }
+  .meal .mn.tap:active { color: #7fe8c0; }
+  .meal .mn.tap::after { content: ' ›'; color: #556; }
+
+  /* Recipe detail */
+  .dt-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .dt-cost { margin-left: auto; font-size: 0.8rem; color: #9a8; }
+  .dt-macros { display: flex; gap: 8px; margin-bottom: 16px; }
+  .dt-macros .mb { flex: 1; background: #131318; border: 1px solid #1e1e26; border-radius: 9px; padding: 11px 6px; text-align: center; }
+  .dt-macros .mb .v { font-size: 1.15rem; font-weight: 800; color: #fff; }
+  .dt-macros .mb .l { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.06em; color: #778; margin-top: 3px; }
+  .dt-store { margin-bottom: 13px; }
+  .dt-store-h { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #6ad08a; margin-bottom: 5px; }
+  .dt-ing { font-size: 0.86rem; color: #cdd; padding: 5px 0; border-top: 1px solid #1a1a22; }
+  .dt-ing:first-of-type { border-top: none; }
+  .dt-ing b { color: #fff; }
+  .dt-ing .stp { font-size: 0.62rem; color: #778; }
   footer { margin-top: 22px; padding-top: 14px; border-top: 1px solid #1e1e26; font-size: 0.66rem; color: #555; text-align: center; line-height: 1.5; }
 </style>
 </head>
@@ -100,6 +118,14 @@
   <input class="ov-search" id="ov-search" type="search" placeholder="Search meals…" autocomplete="off">
   <div class="ov-diet" id="ov-diet"></div>
   <div class="ov-list" id="ov-list"></div>
+</div>
+
+<div class="overlay" id="detail">
+  <div class="ov-head">
+    <div class="ov-title" id="dt-name">Recipe</div>
+    <button class="ov-close" id="dt-close">Done</button>
+  </div>
+  <div class="ov-list" id="dt-body"></div>
 </div>
 
 <footer>Macros are per-serving estimates for planning. Add a meal more than once for multiple servings.</footer>
@@ -169,7 +195,7 @@
       } else {
         meals.forEach(function(id, i){
           var nm = (R[id] && R[id].name) || id, m = macros(id);
-          html += '<div class="meal"><span class="mn">' + nm + '</span>' +
+          html += '<div class="meal"><span class="mn tap" data-id="' + id + '">' + nm + '</span>' +
             '<span class="mm">' + m.cal + ' cal · ' + m.p + 'P ' + m.c + 'C ' + m.f + 'F</span>' +
             '<span class="rm" data-day="' + key + '" data-i="' + i + '">×</span></div>';
         });
@@ -181,6 +207,7 @@
     weekEl.querySelectorAll('.rm').forEach(function(x){ x.onclick = function(){
       week[x.dataset.day].splice(+x.dataset.i, 1); save(); renderWeek(); renderTotal();
     }; });
+    weekEl.querySelectorAll('.mn.tap').forEach(function(s){ s.onclick = function(){ openDetail(s.dataset.id); }; });
   }
 
   function renderTotal(){
@@ -226,13 +253,41 @@
       var m = M[id], nm = R[id].name;
       return '<div class="pick" data-id="' + id + '"><div class="pn"><div class="nm">' + nm + '</div>' +
         '<div class="mc">' + m[1] + ' cal · ' + m[2] + 'P ' + m[3] + 'C ' + m[4] + 'F · ~$' + (COST[id]||0) + '</div></div>' +
-        '<span class="dtag ' + m[0] + '">' + m[0] + '</span><span class="plus">+</span></div>';
+        '<span class="info" data-info="' + id + '">&#9432;</span><span class="dtag ' + m[0] + '">' + m[0] + '</span><span class="plus">+</span></div>';
     }).join('');
     ovList.querySelectorAll('.pick').forEach(function(p){ p.onclick = function(){
       week[pickerDay].push(p.dataset.id); save(); renderWeek(); renderTotal();
       var plus = p.querySelector('.plus'); plus.textContent = '✓'; setTimeout(function(){ plus.textContent='+'; }, 350);
     }; });
+    ovList.querySelectorAll('.info').forEach(function(ic){ ic.onclick = function(e){ e.stopPropagation(); openDetail(ic.dataset.info); }; });
   }
+
+  function openDetail(id){
+    var r = R[id]; if (!r) return;
+    var m = M[id] || ['any',0,0,0,0];
+    var storeNames = { costco:'Costco', publix:'Publix', amazon:'Amazon' };
+    var byStore = {};
+    (r.ingredients||[]).forEach(function(ing){ (byStore[ing.store] || (byStore[ing.store]=[])).push(ing); });
+    var html = '<div class="dt-top"><span class="dtag ' + m[0] + '">' + m[0] + '</span><span class="dt-cost">est. ~$' + (COST[id]||0) + '</span></div>';
+    html += '<div class="dt-macros">' +
+      '<div class="mb"><div class="v">' + m[1] + '</div><div class="l">cal</div></div>' +
+      '<div class="mb"><div class="v">' + m[2] + 'g</div><div class="l">protein</div></div>' +
+      '<div class="mb"><div class="v">' + m[3] + 'g</div><div class="l">carbs</div></div>' +
+      '<div class="mb"><div class="v">' + m[4] + 'g</div><div class="l">fat</div></div></div>';
+    ['costco','publix','amazon'].forEach(function(s){
+      if (!byStore[s]) return;
+      html += '<div class="dt-store"><div class="dt-store-h">' + storeNames[s] + '</div>';
+      byStore[s].forEach(function(ing){
+        var q = (ing.qty==null?'':ing.qty) + (ing.unit?(' '+ing.unit):'');
+        html += '<div class="dt-ing">' + (q.trim()?('<b>'+q.trim()+'</b> '):'') + ing.item + (ing.staple?' <span class="stp">· staple</span>':'') + '</div>';
+      });
+      html += '</div>';
+    });
+    document.getElementById('dt-name').textContent = r.name;
+    document.getElementById('dt-body').innerHTML = html;
+    document.getElementById('detail').classList.add('show');
+  }
+  document.getElementById('dt-close').onclick = function(){ document.getElementById('detail').classList.remove('show'); };
 
   ovSearch.oninput = renderPicker;
   document.getElementById('ov-close').onclick = closePicker;

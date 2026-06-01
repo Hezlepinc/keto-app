@@ -42,11 +42,17 @@
 <a class="back" href="tools.html">← Tools</a>
 <header>
   <h1>Macro & TDEE Calculator</h1>
-  <p class="subtitle">Mifflin–St Jeor · keto split · saves your inputs</p>
+  <p class="subtitle">Mifflin–St Jeor · diet-aware split · saves your inputs</p>
 </header>
 
 <h2>Your Stats</h2>
 <div class="grid">
+  <div class="field" style="grid-column:1/-1"><label>Diet (sets suggested ratios)</label><select id="diet">
+    <option value="keto">Keto — high fat, very low carb</option>
+    <option value="paleo">Paleo — high protein, moderate carb</option>
+    <option value="standard">Standard — balanced 40/30/30</option>
+    <option value="plant">Plant-based — carb-forward</option>
+  </select></div>
   <div class="field"><label>Sex</label><select id="sex"><option value="m">Male</option><option value="f">Female</option></select></div>
   <div class="field"><label>Age</label><input id="age" type="number" min="14" max="99" value="40"></div>
   <div class="field"><label>Height</label><div class="row2"><div><input id="ft" type="number" min="3" max="7" value="5" aria-label="feet"></div><div><input id="in" type="number" min="0" max="11" value="6" aria-label="inches"></div></div></div>
@@ -77,7 +83,8 @@
   <div class="rc carb"><div class="n" id="r-carb">—</div><div class="u">net g</div><div class="l">Carbs</div></div>
 </div>
 <div class="tdee-line" id="tdee-line"></div>
-<div class="note">Protein defaults to 0.8 g/lb body weight (muscle-preserving in a deficit). Carbs are capped low for keto; fat fills the rest of your calories. Adjust any input and the targets update live.</div>
+<div class="note" id="diet-note"></div>
+<div class="note">Picking a diet sets suggested protein &amp; carb starting points — tweak either and fat auto-fills the rest of your calories. Targets update live.</div>
 
 <h2>1-Rep Max Calculator</h2>
 <div class="grid">
@@ -92,7 +99,18 @@
 <script>
 (function() {
   var KEY = 'macro-calc-inputs';
-  var ids = ['sex','age','ft','in','wt','act','goal','carbs','ppl','orm-w','orm-r'];
+  var ids = ['diet','sex','age','ft','in','wt','act','goal','carbs','ppl','orm-w','orm-r'];
+  var DIET_PRESETS = {
+    keto:     { ppl:0.8, carbs:25,  note:'<b>Keto</b> — carbs capped low, protein moderate, fat fills the rest (~70% fat / 25% protein / 5% carb).' },
+    paleo:    { ppl:1.0, carbs:100, note:'<b>Paleo</b> — whole-food, higher protein (1.0 g/lb), moderate carb from fruit, veg &amp; tubers; no grains/dairy/legumes.' },
+    standard: { ppl:0.8, carbs:200, note:'<b>Standard / balanced</b> — roughly 40% carbs / 30% protein / 30% fat. Carbs around grains, fruit &amp; starch.' },
+    plant:    { ppl:0.7, carbs:250, note:'<b>Plant-based</b> — carb-forward; protein needs attention (legumes, tofu, tempeh, seitan, pea protein).' }
+  };
+  function applyDiet() {
+    var p = DIET_PRESETS[document.getElementById('diet').value];
+    if (p) { document.getElementById('ppl').value = p.ppl; document.getElementById('carbs').value = p.carbs; }
+    update();
+  }
   function save() { var o={}; ids.forEach(function(id){ o[id]=document.getElementById(id).value; }); localStorage.setItem(KEY, JSON.stringify(o)); }
   function load() { try { var o=JSON.parse(localStorage.getItem(KEY)||'{}'); ids.forEach(function(id){ if(o[id]!=null) document.getElementById(id).value=o[id]; }); } catch(e){} }
 
@@ -120,6 +138,8 @@
     document.getElementById('tdee-line').innerHTML =
       'BMR <b>' + Math.round(bmr) + '</b> · maintenance (TDEE) <b>' + Math.round(tdee) + '</b> · target <b>' + target + '</b> kcal/day' +
       '<br>Split ≈ <b>' + fp + '% fat / ' + pp + '% protein / ' + cp + '% carbs</b>';
+    var dp = DIET_PRESETS[document.getElementById('diet').value];
+    document.getElementById('diet-note').innerHTML = dp ? dp.note : '';
   }
 
   function calcORM() {
@@ -135,7 +155,9 @@
   function update(){ calcMacros(); calcORM(); save(); }
 
   load();
-  ids.forEach(function(id){ document.getElementById(id).addEventListener('input', update); });
+  ids.forEach(function(id){
+    document.getElementById(id).addEventListener(id === 'diet' ? 'change' : 'input', id === 'diet' ? applyDiet : update);
+  });
   update();
 })();
 </script>

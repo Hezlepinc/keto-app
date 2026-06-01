@@ -4,7 +4,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Keto Food Catalog</title>
+<title>Food Catalog</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d0d0f; color: #e8e8e8; padding: 20px; max-width: 720px; margin: 0 auto; padding-bottom: 50px; }
@@ -30,8 +30,8 @@
 <body>
 <a class="back" href="tools.html">← Tools</a>
 <header>
-  <h1>Keto Food Catalog</h1>
-  <p class="subtitle">Per serving · cal / fat / protein / net carbs · search to filter</p>
+  <h1>Food Catalog</h1>
+  <p class="subtitle">All diets · per serving · cal / fat / protein / net carbs · search to filter</p>
 </header>
 
 <div class="search"><input id="q" type="search" placeholder="Search foods… (e.g. salmon, cheese, avocado)" autocomplete="off"></div>
@@ -105,7 +105,55 @@
     ["Black coffee","Other","1 cup",2,0,0,0],
     ["Bone broth","Other","1 cup",45,1,9,1],
     ["Pork rinds","Other","1 oz",150,9,17,0],
-    ["Dark chocolate 85%","Other","1 oz",170,14,3,5]
+    ["Dark chocolate 85%","Other","1 oz",170,14,3,5],
+
+    // ===== Added for Paleo / Standard / Plant diets =====
+    ["White rice (cooked)","Grains & Starches","1 cup",205,0,4,44],
+    ["Brown rice (cooked)","Grains & Starches","1 cup",215,2,5,44],
+    ["Quinoa (cooked)","Grains & Starches","1 cup",220,4,8,34],
+    ["Rolled oats (dry)","Grains & Starches","1/2 cup",150,3,5,23],
+    ["Whole-wheat bread","Grains & Starches","1 slice",80,1,4,12],
+    ["Pasta (cooked)","Grains & Starches","1 cup",220,1,8,42],
+    ["Lentil pasta (cooked)","Grains & Starches","1 cup",210,1,14,30],
+    ["Baked potato","Grains & Starches","1 medium",160,0,4,33],
+    ["Sweet potato (baked)","Grains & Starches","1 medium",110,0,2,23],
+    ["Corn tortilla","Grains & Starches","1",50,1,1,10],
+    ["Flour tortilla","Grains & Starches","1",140,4,4,22],
+    ["Bagel","Grains & Starches","1",250,2,10,47],
+    ["Granola","Grains & Starches","1/2 cup",230,8,5,35],
+
+    ["Black beans","Legumes & Plant Protein","1/2 cup",110,1,7,12],
+    ["Chickpeas","Legumes & Plant Protein","1/2 cup",130,2,7,18],
+    ["Lentils (cooked)","Legumes & Plant Protein","1/2 cup",115,0,9,15],
+    ["Kidney beans","Legumes & Plant Protein","1/2 cup",110,0,7,15],
+    ["Edamame","Legumes & Plant Protein","1/2 cup",95,4,9,4],
+    ["Tofu (firm)","Legumes & Plant Protein","4 oz",90,5,10,1],
+    ["Tempeh","Legumes & Plant Protein","4 oz",220,13,21,7],
+    ["Seitan","Legumes & Plant Protein","3 oz",110,1,21,4],
+    ["Hummus","Legumes & Plant Protein","2 tbsp",70,5,2,4],
+    ["Peanut butter","Legumes & Plant Protein","2 tbsp",190,16,7,5],
+    ["Pea protein powder","Legumes & Plant Protein","1 scoop",120,2,24,2],
+
+    ["Banana","Fruit","1 medium",105,0,1,24],
+    ["Apple","Fruit","1 medium",95,0,0,22],
+    ["Orange","Fruit","1 medium",62,0,1,12],
+    ["Grapes","Fruit","1 cup",104,0,1,26],
+    ["Mango","Fruit","1/2 cup",50,0,1,12],
+    ["Pineapple","Fruit","1/2 cup",40,0,0,10],
+
+    ["Milk (2%)","Dairy & Fats","1 cup",120,5,8,12],
+    ["Almond milk (unsweet)","Dairy & Fats","1 cup",30,3,1,1],
+    ["Oat milk","Dairy & Fats","1 cup",120,5,3,16],
+    ["Ricotta","Dairy & Fats","1/4 cup",110,8,7,3],
+    ["Cottage cheese","Dairy & Fats","1/2 cup",110,5,12,4],
+
+    ["Carrots","Veg","1 cup",50,0,1,9],
+    ["Green peas","Veg","1/2 cup",62,0,4,8],
+    ["Sweet corn","Veg","1/2 cup",75,1,2,15],
+    ["Butternut squash","Veg","1 cup",82,0,2,16],
+
+    ["Honey","Other","1 tbsp",64,0,0,17],
+    ["Maple syrup","Other","1 tbsp",52,0,0,13]
   ];
 
   var listEl = document.getElementById('list');

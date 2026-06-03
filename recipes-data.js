@@ -403,6 +403,67 @@ window.RECIPE_META = {
   "staple-butter":["any",100,0,0,11], "staple-cheese":["any",110,7,1,9], "staple-avocado-oil":["any",120,0,0,14]
 };
 
+/* Meal-type tags for the planner's meal-type filter. Arrays — a recipe can fit
+ * more than one slot. Taxonomy: breakfast | lunch | dinner | snack | side.
+ * The planner has no fixed meal slots, so this just narrows the picker list:
+ * breakfast/snack/side are the meaningful discriminators, while mains are tagged
+ * BOTH lunch+dinner (interchangeable). EVERY pickable recipe (RECIPES minus
+ * NOPLAN) must have an entry here or it vanishes under a specific filter. */
+window.RECIPE_MEAL = {
+  // keto
+  "almond-flour-pancakes":["breakfast"], "savory-chaffles":["breakfast","side"],
+  "fathead-pizza":["lunch","dinner"], "jalapeno-popper-stuffed-chicken":["lunch","dinner"],
+  "creamy-mushroom-chicken":["lunch","dinner"], "pan-seared-salmon-dill-cream":["lunch","dinner"],
+  "shrimp-scampi-zucchini":["lunch","dinner"], "indian-butter-chicken":["lunch","dinner"],
+  "crispy-chicken-thighs":["lunch","dinner"], "crack-chicken":["lunch","dinner"],
+  "bacon-cheeseburger-casserole":["lunch","dinner"], "egg-roll-in-a-bowl":["lunch","dinner"],
+  "keto-beef-bulgogi":["lunch","dinner"], "chocolate-cheesecake-fat-bombs":["snack"],
+  "keto-cobb-salad":["lunch","dinner"], "keto-philly-cheesesteak-bowl":["lunch","dinner"],
+  "keto-tuna-stuffed-avocado":["lunch","dinner"], "keto-garlic-butter-steak-bites":["lunch","dinner"],
+  "keto-sausage-peppers":["lunch","dinner"], "keto-chicken-alfredo-zoodles":["lunch","dinner"],
+  // paleo
+  "paleo-grilled-chicken-veggies":["lunch","dinner"], "paleo-beef-chili":["lunch","dinner"],
+  "paleo-salmon-asparagus":["lunch","dinner"], "paleo-shrimp-stir-fry":["lunch","dinner"],
+  "paleo-pork-carnitas":["lunch","dinner"], "paleo-meatballs-marinara":["lunch","dinner"],
+  "paleo-chicken-lettuce-wraps":["lunch","dinner"], "paleo-steak-sweet-potato":["lunch","dinner"],
+  "paleo-turkey-hash":["breakfast","dinner"], "paleo-egg-muffins":["breakfast"],
+  "paleo-tuna-avocado-salad":["lunch","dinner"], "paleo-baked-cod-veg":["lunch","dinner"],
+  "paleo-bunless-burger":["lunch","dinner"], "paleo-chicken-curry":["lunch","dinner"],
+  "paleo-sausage-veggie-skillet":["breakfast","lunch","dinner"], "paleo-stuffed-peppers":["lunch","dinner"],
+  "paleo-beef-stew":["lunch","dinner"], "paleo-cobb-salad":["lunch","dinner"],
+  "paleo-zoodle-bolognese":["lunch","dinner"], "paleo-banana-almond-pancakes":["breakfast"],
+  // standard
+  "std-chicken-rice-broccoli":["lunch","dinner"], "std-spaghetti-meat-sauce":["lunch","dinner"],
+  "std-turkey-tacos":["lunch","dinner"], "std-grilled-cheese-tomato-soup":["lunch","dinner"],
+  "std-beef-burrito-bowl":["lunch","dinner"], "std-baked-ziti":["lunch","dinner"],
+  "std-chicken-caesar-wrap":["lunch","dinner"], "std-salmon-rice-veg":["lunch","dinner"],
+  "std-cheeseburger-fries":["lunch","dinner"], "std-pancakes-eggs":["breakfast"],
+  "std-chicken-stir-fry-rice":["lunch","dinner"], "std-bbq-pork-sandwich":["lunch","dinner"],
+  "std-mac-and-cheese":["lunch","dinner"], "std-chili-cornbread":["lunch","dinner"],
+  "std-pasta-primavera":["lunch","dinner"], "std-club-sandwich":["lunch","dinner"],
+  "std-shrimp-tacos":["lunch","dinner"], "std-meatloaf-mashed":["lunch","dinner"],
+  "std-greek-yogurt-bowl":["breakfast","snack"], "std-pepperoni-pizza":["lunch","dinner"],
+  // plant
+  "plant-chickpea-curry":["lunch","dinner"], "plant-tofu-stir-fry":["lunch","dinner"],
+  "plant-black-bean-tacos":["lunch","dinner"], "plant-lentil-soup":["lunch","dinner"],
+  "plant-quinoa-buddha-bowl":["lunch","dinner"], "plant-veggie-chili":["lunch","dinner"],
+  "plant-peanut-noodles":["lunch","dinner"], "plant-falafel-bowl":["lunch","dinner"],
+  "plant-tempeh-stir-fry":["lunch","dinner"], "plant-hummus-veggie-wrap":["lunch","dinner"],
+  "plant-mushroom-risotto":["lunch","dinner"], "plant-sweet-potato-bean-bowl":["lunch","dinner"],
+  "plant-pasta-marinara":["lunch","dinner"], "plant-tofu-scramble":["breakfast"],
+  "plant-overnight-oats":["breakfast"], "plant-veggie-burger":["lunch","dinner"],
+  "plant-coconut-lentils":["lunch","dinner"], "plant-stuffed-peppers":["lunch","dinner"],
+  "plant-edamame-rice-bowl":["lunch","dinner"], "plant-pb-banana-smoothie":["breakfast","snack"],
+  // staples / quick proteins + veg sides
+  "staple-salmon":["lunch","dinner"], "staple-ribeye":["lunch","dinner"], "staple-nystrip":["lunch","dinner"],
+  "staple-sirloin":["lunch","dinner"], "staple-chicken-thighs":["lunch","dinner"], "staple-chicken-breast":["lunch","dinner"],
+  "staple-ground-beef":["lunch","dinner"], "staple-venison":["lunch","dinner"], "staple-pork-chops":["lunch","dinner"],
+  "staple-sausage":["breakfast","dinner"], "staple-bacon":["breakfast","side"], "staple-eggs":["breakfast"],
+  "staple-shrimp":["lunch","dinner"], "staple-sardines":["lunch","dinner","snack"], "staple-avocado":["side"],
+  "staple-spinach":["side"], "staple-broccoli":["side"], "staple-cauliflower":["side"],
+  "staple-asparagus":["side"], "staple-brussels":["side"], "staple-green-beans":["side"]
+};
+
 /* Recipes that should NOT appear in the day-by-day meal picker (condiments,
  * bulk fats/cheese) — they go on the shopping list but aren't a "meal." */
 window.NOPLAN = {

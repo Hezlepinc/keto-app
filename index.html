@@ -19,6 +19,15 @@
   .chip { font-size: 0.74rem; font-weight: 700; padding: 7px 15px; border-radius: 15px; background: #14141a; border: 1px solid #2a2a33; color: #999; cursor: pointer; }
   .chip.on { background: #11302a; border-color: #2a8a6a; color: #7fe8c0; }
 
+  /* Filters inside the picker overlay (the overlay covers the sticky bar) */
+  .ov-filters { margin-bottom: 8px; }
+  .ov-frow { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .ov-flabel { font-size: 0.56rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #778; width: 36px; flex-shrink: 0; }
+  .ov-frow .chips { flex: 1; }
+  .ov-chip { font-size: 0.68rem; font-weight: 700; padding: 5px 11px; border-radius: 13px; background: #14141a; border: 1px solid #2a2a33; color: #999; cursor: pointer; }
+  .ov-chip.on { background: #11302a; border-color: #2a8a6a; color: #7fe8c0; }
+  .ov-count { font-size: 0.68rem; color: #667; margin-bottom: 8px; }
+
   .hint { font-size: 0.74rem; color: #777; line-height: 1.5; margin: 12px 0; background: #11160f; border-left: 4px solid #2a9a5a; padding: 10px 13px; border-radius: 0 8px 8px 0; }
   .hint b { color: #6ad08a; }
 
@@ -123,7 +132,11 @@
     <button class="ov-close" id="ov-close">Done</button>
   </div>
   <input class="ov-search" id="ov-search" type="search" placeholder="Search meals…" autocomplete="off">
-  <div class="ov-diet" id="ov-diet"></div>
+  <div class="ov-filters">
+    <div class="ov-frow"><span class="ov-flabel">Meal</span><div class="chips" id="ov-meal-chips"></div></div>
+    <div class="ov-frow"><span class="ov-flabel">Diet</span><div class="chips" id="ov-diet-chips"></div></div>
+  </div>
+  <div class="ov-count" id="ov-count"></div>
   <div class="ov-list" id="ov-list"></div>
 </div>
 
@@ -141,7 +154,8 @@
 <script>
 (function() {
   var R = window.RECIPES || {}, M = window.RECIPE_META || {}, COST = window.RECIPE_COST || {}, NOPLAN = window.NOPLAN || {};
-  var WEEK_KEY = 'meal-week-v2', DIET_KEY = 'cook-diet';
+  var MEAL = window.RECIPE_MEAL || {};
+  var WEEK_KEY = 'meal-week-v2', DIET_KEY = 'cook-diet', MEALTYPE_KEY = 'cook-mealtype';
   var DAYS = [['mon','Monday'],['tue','Tuesday'],['wed','Wednesday'],['thu','Thursday'],['fri','Friday'],['sat','Saturday'],['sun','Sunday']];
 
   // Anchor day labels to THIS WEEK's actual calendar dates (Mon..Sun containing today).
@@ -162,6 +176,7 @@
     return out;
   }
   var DIETS = [['all','All'],['keto','Keto'],['paleo','Paleo'],['standard','Standard'],['plant','Plant']];
+  var MEALS = [['all','All'],['breakfast','Breakfast'],['lunch','Lunch'],['dinner','Dinner'],['snack','Snack'],['side','Side']];
 
   function getJSON(k,d){ try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e){ return d; } }
   function setJSON(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
@@ -169,6 +184,7 @@
   var week = getJSON(WEEK_KEY, {});
   DAYS.forEach(function(d){ if (!Array.isArray(week[d[0]])) week[d[0]] = []; });
   var diet = localStorage.getItem(DIET_KEY) || 'all';
+  var mealType = localStorage.getItem(MEALTYPE_KEY) || 'all';
   var pickerDay = null;
 
   var weekEl = document.getElementById('week');
@@ -178,7 +194,9 @@
   var ovList = document.getElementById('ov-list');
   var ovSearch = document.getElementById('ov-search');
   var ovDayEl = document.getElementById('ov-day');
-  var ovDietEl = document.getElementById('ov-diet');
+  var ovMealChipsEl = document.getElementById('ov-meal-chips');
+  var ovDietChipsEl = document.getElementById('ov-diet-chips');
+  var ovCountEl = document.getElementById('ov-count');
 
   function macros(id){ var m = M[id]; return m ? { cal:m[1], p:m[2], c:m[3], f:m[4] } : { cal:0,p:0,c:0,f:0 }; }
   function dayTotals(key){
@@ -195,17 +213,40 @@
   }
   function save(){ setJSON(WEEK_KEY, week); syncCounts(); }
 
-  // Diet chips
-  DIETS.forEach(function(d){
-    var b = document.createElement('button');
-    b.className = 'chip' + (diet===d[0] ? ' on' : ''); b.textContent = d[1]; b.dataset.diet = d[0];
-    b.onclick = function(){
-      diet = d[0]; localStorage.setItem(DIET_KEY, diet);
-      Array.prototype.forEach.call(dietChipsEl.children, function(c){ c.classList.toggle('on', c.dataset.diet===diet); });
-      if (overlay.classList.contains('show')) renderPicker();
-    };
-    dietChipsEl.appendChild(b);
-  });
+  // ----- filters: single source of truth = `diet` + `mealType` -----
+  // Both the top bar and the overlay chip rows re-derive their on-state from these,
+  // so there's no two-way sync to drift. Diet chips appear in both places (the
+  // overlay covers the sticky top bar while picking); meal chips live in the overlay.
+  function syncChips(container, current, attr){
+    Array.prototype.forEach.call(container.children, function(c){ c.classList.toggle('on', c.dataset[attr] === current); });
+  }
+  function refreshFilterChips(){
+    syncChips(dietChipsEl, diet, 'diet');
+    syncChips(ovDietChipsEl, diet, 'diet');
+    syncChips(ovMealChipsEl, mealType, 'meal');
+  }
+  function setDiet(d){
+    diet = d; localStorage.setItem(DIET_KEY, diet);
+    refreshFilterChips();
+    if (overlay.classList.contains('show')) renderPicker();
+  }
+  function setMeal(m){
+    mealType = m; localStorage.setItem(MEALTYPE_KEY, mealType);
+    refreshFilterChips();
+    if (overlay.classList.contains('show')) renderPicker();
+  }
+  function buildChips(container, list, current, attr, cls, onPick){
+    container.innerHTML = '';
+    list.forEach(function(it){
+      var b = document.createElement('button');
+      b.className = cls + (current===it[0] ? ' on' : ''); b.textContent = it[1]; b.dataset[attr] = it[0];
+      b.onclick = function(){ onPick(it[0]); };
+      container.appendChild(b);
+    });
+  }
+  buildChips(dietChipsEl, DIETS, diet, 'diet', 'chip', setDiet);
+  buildChips(ovDietChipsEl, DIETS, diet, 'diet', 'ov-chip', setDiet);
+  buildChips(ovMealChipsEl, MEALS, mealType, 'meal', 'ov-chip', setMeal);
 
   function renderWeek(){
     var html = '';
@@ -273,15 +314,16 @@
 
   function renderPicker(){
     var q = (ovSearch.value||'').toLowerCase().trim();
-    ovDietEl.textContent = (diet==='all' ? 'All diets' : DIETS.filter(function(d){return d[0]===diet;})[0][1]) + ' · tap to add';
     var ids = Object.keys(R).filter(function(id){
       if (NOPLAN[id]) return false;
       var d = M[id] ? M[id][0] : 'any';
       if (diet !== 'all' && d !== diet && d !== 'any') return false;
+      if (mealType !== 'all') { var mt = MEAL[id]; if (!mt || mt.indexOf(mealType) === -1) return false; }   // meal-type filter
       var nm = (R[id].name||'').toLowerCase();
       if (q && nm.indexOf(q) === -1) return false;
       return true;
     });
+    ovCountEl.textContent = ids.length + ' meal' + (ids.length===1?'':'s') + ' match · tap to add';
     // meals first (specific diet), then 'any' staples; alpha within
     ids.sort(function(a,b){
       var da = M[a][0]==='any'?1:0, db = M[b][0]==='any'?1:0;
